@@ -1,0 +1,9 @@
+fastapi 
+uvicorn
+pytest
+psycopg2
+python-dotenv
+pydantic
+pydantic[email]
+phonenumbers
+pydantic_extra_types

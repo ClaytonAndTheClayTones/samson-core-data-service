@@ -1,0 +1,7 @@
+services:
+  dics_db:
+    image: postgres:16.2
+    container_name: dics_database
+    env_file: ./.env
+    ports:
+      - "5466:5432"
