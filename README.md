@@ -71,7 +71,7 @@ Note: all migrations are idempotent, meaning they can be run over and over.  If 
 1. Open the tests folder in Visual Studio Code
 2. Copy the .env-example file to a new file called ".env"
 3. Open the terminal and run ```pip install -r requirements.txt```
-4. 
+4. The Flask Tab on the left should detect tests and you can run them from there.  Otherwise, go into the validation/CRUD folder and select a test file, and you can right click in the code and run a case from there.
 
 
 
