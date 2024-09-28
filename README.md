@@ -1,60 +1,79 @@
+# Summary
 
-# Get Started
+The DICS Core Data Service repository has three major moving parts:
 
-## Clone the repository
+1. The Database Migrator
+2. The API itself built primarily as a CRUD service
+3. A QDK (Quality Development Kit) implementation that tests all endpoints as modules and provides a development kit for more advanced integration tests.
 
-```bash
-git clone git@github.com:Datavative/FastApiPrototype.git
+# Getting Started
+
+## Prerequisites
+
+### Install Pyenv and Python
+
+1. Install pyenv: https://github.com/pyenv/pyenv#installation
+2. Run ```pyenv install 3.12.6```
+3. Run ```pyenv local 3.12.6```
+4. Run ```pyenv global 3.12.6```
+
+### Install Docker Desktop
+
+Install instructions can be found here: https://docs.docker.com/get-started/get-docker/
+
+## Create and initialize the Database
+
+1. Open the /database folder in Visual Studio Code.
+2. Make sure your Docker is running.
+3. Copy the .env-example file and name it ".env" (these are default values for the database and are fine for local development)
+4. Open the terminal and run ```docker compose up -d```.
+5. You should see a database instance with the settings from your .env file running in your docker!
+6. Connect to your database using PgAdmin4 or similar and the settings prefixed with POSTGRES_ from your .env and run the following:
 ```
+CREATE USER migrator WITH PASSWORD 'mMiIgGrRaAtToOrR1!2@3#4$' SUPERUSER; 
 
-## Start the database
+GRANT ALL PRIVILEGES ON DATABASE dics TO migrator;
 
-You will need to have an instance of **Postgres** running on your machine. For added convenience this repo ships with a `docker-compose` file that will set up a Postgres instance for you using authentication credentials that are in the `.env` file. See the `.env-example` file for the required environment variables.
+CREATE USER service WITH PASSWORD 'sSeErRvViIcCeE1!2@3#4$' SUPERUSER;
 
-Duplicate the `.env-example` file and rename it to `.env` and update any credentials before proceeding.
+GRANT 
+	SELECT,
+	INSERT,
+	UPDATE,
+	DELETE
+ON ALL TABLES IN SCHEMA public TO service;
 
-```bash
-docker-compose up -d
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public to service;
 ```
+This is important for setting up the roles that would already exist in a deployed database.
 
-## Run the database migrations
+## Migrate the Database
 
-### Create a virtual environment for the database migrator service
+Note: all migrations are idempotent, meaning they can be run over and over.  If the step has already run, nothing will happen.
 
-```bash
-cd database
+1. Open the database folder in Visual Studio Code
+2. Open the terminal and run ```pip install -r requirements.txt```
+3. Go to the Debug Tab on the left and, near the top, select the "Python Debugger: DB Migrator" option.
+4. Hit F5 on your keyboard.  You should see the console run some steps.
+5. Connect to your database and check that all the steps ran.
 
-# Create a virtual environment
-python3 -m venv venv
+## Run the service
 
-# Activate the virtual environment
-source venv/bin/activate
-```
+1. Open the service folder in Visual Studio Code
+2. Copy the .env-example file to another file called ".env"
+3. Open the terminal and run ```pip install -r requirements.txt```
+4. Go to the Debug Tab on the left and, near the top, select "Python Debugger: Run API"
+5. Hit F5 on your keyboard.  You should see console output telling you that Uvicorn is running on 127.0.0.1:8001
+6. Your API is running!
 
-### Install the dependencies
+## Run the API Tests
 
-```bash
-pip install -r requirements.txt
-```
-## Run the API service
-Open a separate terminal tab and run run the following commands to start the API service.
+1. Open the tests folder in Visual Studio Code
+2. Copy the .env-example file to a new file called ".env"
+3. Open the terminal and run ```pip install -r requirements.txt```
+4. The Flask Tab on the left should detect tests and you can run them from there.  Otherwise, go into the validation/CRUD folder and select a test file, and you can right click in the code and run a case from there.
 
-### Create a virtual environment for the API service
 
-```bash
-cd service
-python3 -m venv venv
-source venv/bin/activate
-```
 
-### Install the dependencies
 
-```bash
-pip install -r requirements.txt
-```
 
-### Start the service
-
-```bash
-python main.py
-```
