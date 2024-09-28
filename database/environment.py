@@ -19,11 +19,11 @@ class Environment:
         # Database Connection
 
         self.pg_connection.create_connection(
-            host = self.configuration.POSTGRES_HOST,
-            port = self.configuration.POSTGRES_PORT,
-            database = self.configuration.POSTGRES_DB,
-            username = self.configuration.POSTGRES_USER,
-            password = self.configuration.POSTGRES_PASSWORD
+            host = self.configuration.MIGRATOR_POSTGRES_HOST,
+            port = self.configuration.MIGRATOR_POSTGRES_PORT,
+            database = self.configuration.MIGRATOR_POSTGRES_DB,
+            username = self.configuration.MIGRATOR_POSTGRES_USER,
+            password = self.configuration.MIGRATOR_POSTGRES_PASSWORD
         )
 
         print(f"Database Connection Created: { self.pg_connection.connection.get_dsn_parameters()['port'] }")
