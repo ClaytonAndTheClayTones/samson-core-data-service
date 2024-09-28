@@ -25,16 +25,16 @@ Install instructions can be found here: https://docs.docker.com/get-started/get-
 
 1. Open the /database folder in Visual Studio Code.
 2. Make sure your Docker is running.
-3. Copy the .env.example file and name it ".env" (these are default values for the database and are fine for local development)
-4. Open the terminal and run ```docker compose up```
+3. Copy the .env-example file and name it ".env" (these are default values for the database and are fine for local development)
+4. Open the terminal and run ```docker compose up -d```.
 5. You should see a database instance with the settings from your .env file running in your docker!
 6. Connect to your database using PgAdmin4 or similar and the settings prefixed with POSTGRES_ from your .env and run the following:
 ```
-CREATE USER migrator WITH PASSWORD 'mMiIgGrRaAtToOrR1!2@3#4$'; 
+CREATE USER migrator WITH PASSWORD 'mMiIgGrRaAtToOrR1!2@3#4$' SUPERUSER; 
 
 GRANT ALL PRIVILEGES ON DATABASE dics TO migrator;
 
-CREATE USER service WITH PASSWORD 'sSeErRvViIcCeE1!2@3#4$';
+CREATE USER service WITH PASSWORD 'sSeErRvViIcCeE1!2@3#4$' SUPERUSER;
 
 GRANT 
 	SELECT,
@@ -49,4 +49,31 @@ This is important for setting up the roles that would already exist in a deploye
 
 ## Migrate the Database
 
-Note: all migration
+Note: all migrations are idempotent, meaning they can be run over and over.  If the step has already run, nothing will happen.
+
+1. Open the database folder in Visual Studio Code
+2. Open the terminal and run ```pip install -r requirements.txt```
+3. Go to the Debug Tab on the left and, near the top, select the "Python Debugger: DB Migrator" option.
+4. Hit F5 on your keyboard.  You should see the console run some steps.
+5. Connect to your database and check that all the steps ran.
+
+## Run the service
+
+1. Open the service folder in Visual Studio Code
+2. Copy the .env-example file to another file called ".env"
+3. Open the terminal and run ```pip install -r requirements.txt```
+4. Go to the Debug Tab on the left and, near the top, select "Python Debugger: Run API"
+5. Hit F5 on your keyboard.  You should see console output telling you that Uvicorn is running on 127.0.0.1:8001
+6. Your API is running!
+
+## Run the API Tests
+
+1. Open the tests folder in Visual Studio Code
+2. Copy the .env-example file to a new file called ".env"
+3. Open the terminal and run ```pip install -r requirements.txt```
+4. 
+
+
+
+
+
