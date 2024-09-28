@@ -207,14 +207,16 @@ class PGConnection :
 
         keys = model.keys()
 
-        # Columns
+        # Columns 
+        values = model.values()
 
         for i, key in enumerate(keys): 
-            sqlstring += f"\t{key}"
-            if i < (len(keys)-1):
-                sqlstring+= ","
-            sqlstring += "\n"
- 
+            if(model[key] is not None):
+                sqlstring += f"\t{key}"
+                if i < (len(keys)-1):
+                    sqlstring+= ","
+                sqlstring += "\n"
+                
         sqlstring += (
              f")\n" 
              f"VALUES\n"
@@ -222,16 +224,14 @@ class PGConnection :
         )
 
         # Values
- 
-        values = model.values()
-
+  
         for i, value in enumerate(values): 
+            if(value is not None):
+                sqlstring += "\tNULL" if value is None else f"\t'{value}'"
 
-            sqlstring += "\tNULL" if value is None else f"\t'{value}'"
-
-            if i < (len(values)-1):
-                sqlstring+= ","
-            sqlstring += "\n"
+                if i < (len(values)-1):
+                    sqlstring+= ","
+                sqlstring += "\n"
         
         sqlstring += (  
              f")\n"

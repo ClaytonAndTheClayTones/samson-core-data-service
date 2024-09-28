@@ -19,7 +19,7 @@ class RetailerInboundCreateModel(BaseModel):
 # Pydantic causes these class variables to safely be instance variables.
 class RetailerInboundUpdateModel(BaseModel): 
     name: Optional[str] = Field(default=None,  max_length=255)
-    contact_email: Optional[EmailStr] = Field(..., max_length=320)
+    contact_email: Optional[EmailStr] = Field(default=None, max_length=320)
     hq_city: Optional[str] = Field(default=None,  max_length=255)
     hq_state: Optional[str] = Field(default=None,  max_length=255)
     hq_country: Optional[str] = Field(default=None,  max_length=2, min_length=2) 
@@ -36,7 +36,7 @@ class RetailerCreateModel():
 
     def __init__(self,
                 name: str,
-                contact_email: str,
+                contact_email: EmailStr | None = None,
                 hq_city: str | None = None,
                 hq_state: str | None = None,
                 hq_country: str | None = None) -> None:
@@ -51,7 +51,7 @@ class RetailerUpdateModel():
 
     def __init__(self,
                 name: str | None = None,
-                contact_email: str | None = None,
+                contact_email: EmailStr | None = None,
                 hq_city: str | None = None,
                 hq_state: str | None = None,
                 hq_country: str | None = None) -> None:
@@ -79,26 +79,6 @@ class RetailerSearchModel(CommonSearchModel):
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country
-
-class RetailerModel(CommonModel): 
-
-    def __init__(self, 
-                id: UUID,
-                name: str,
-                created_at: datetime, 
-                hq_city: str | None = None,
-                hq_state: str | None = None,
-                hq_country: str | None = None, 
-                contact_email: str | None = None,
-                updated_at: datetime | None = None):
-         
-        super().__init__(id, created_at, updated_at)
-        
-        self.name = name
-        self.contact_email = contact_email
-        self.hq_city = hq_city
-        self.hq_state = hq_state
-        self.hq_country = hq_country 
          
 class RetailerDatabaseModel(CommonDatabaseModel):  
     def __init__(self,
@@ -108,7 +88,7 @@ class RetailerDatabaseModel(CommonDatabaseModel):
                 hq_city: str | None = None,
                 hq_state: str | None = None,
                 hq_country: str | None = None, 
-                contact_email: str | None = None,
+                contact_email: EmailStr | None = None,
                 updated_at: datetime | None = None):
         
         super().__init__(id, created_at, updated_at)
@@ -119,10 +99,30 @@ class RetailerDatabaseModel(CommonDatabaseModel):
         self.hq_state = hq_state
         self.hq_country = hq_country 
 
+class RetailerModel(CommonModel): 
+
+    def __init__(self, 
+                id: UUID,
+                name: str,
+                created_at: datetime, 
+                hq_city: str | None = None,
+                hq_state: str | None = None,
+                hq_country: str | None = None, 
+                contact_email: EmailStr | None = None,
+                updated_at: datetime | None = None):
+         
+        super().__init__(id, created_at, updated_at)
+        
+        self.name = name
+        self.contact_email = contact_email
+        self.hq_city = hq_city
+        self.hq_state = hq_state
+        self.hq_country = hq_country 
+        
 # Pydantic causes these class variables to safely be instance variables.
 class RetailerOutboundModel(CommonOutboundResponseModel):   
     name: str
-    contact_email: str | None = None
+    contact_email: EmailStr | None = None
     hq_city: str | None = None
     hq_state: str | None = None
     hq_country: str | None = None 

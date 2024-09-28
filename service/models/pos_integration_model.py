@@ -23,7 +23,7 @@ from models.common_model import CommonDatabaseModel, CommonInboundSearchModel, C
 class PosIntegrationInboundCreateModel(BaseModel):   
     name: str = Field(..., max_length=255)
     description: Optional[str] = Field(default=None) 
-    pos_platform: Optional[PosPlatforms] = Field(...)  
+    pos_platform: PosPlatforms = Field(...)  
 
 # Pydantic causes these class variables to safely be instance variables.
 class PosIntegrationInboundUpdateModel(BaseModel): 

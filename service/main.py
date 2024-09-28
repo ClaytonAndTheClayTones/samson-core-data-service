@@ -8,6 +8,7 @@ from models.common_model import CommonOutboundResponseModel, OutboundItemListRes
 from routes.retailer_routes import set_routes as set_retailer_routes 
 from routes.retailer_location_routes import set_routes as set_retailer_location_routes 
 from routes.pos_integration_routes import set_routes as set_pos_integration_routes 
+from routes.vendor_routes import set_routes as set_vendor_routes 
 from util.environment import Environment
 
 enviroment: Environment = Environment()
@@ -22,6 +23,7 @@ app = FastAPI()
 set_retailer_routes(app)
 set_retailer_location_routes(app)
 set_pos_integration_routes(app) 
+set_vendor_routes(app) 
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)
