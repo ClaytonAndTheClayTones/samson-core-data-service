@@ -8,7 +8,7 @@
             "name": "Python Debugger: Run API",
             "type": "debugpy",
             "request": "launch",
-            "program": "./main.py",
+            "program": "./dics_core_data_service/main.py",
             "console": "integratedTerminal"
         }
     ]
