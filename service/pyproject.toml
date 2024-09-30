@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "dics-core-data-service"
+version = "0.1.0"
+description = "This service exists as the central DICS API"
+authors = ["Clayton <clayton.stetz@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+uvicorn = "^0.31.0"
+pytest = "^8.3.3" 
+psycopg2 = "^2.9.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
