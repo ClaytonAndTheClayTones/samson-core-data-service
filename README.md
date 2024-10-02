@@ -57,6 +57,8 @@ Note: all migrations are idempotent, meaning they can be run over and over.  If 
 4. Hit F5 on your keyboard.  You should see the console run some steps.
 5. Connect to your database and check that all the steps ran.
 
+For more information on the database, check out the ReadMe.md in the database folder!
+
 ## Run the service
 
 1. Open the service folder in Visual Studio Code
@@ -66,12 +68,16 @@ Note: all migrations are idempotent, meaning they can be run over and over.  If 
 5. Hit F5 on your keyboard.  You should see console output telling you that Uvicorn is running on 127.0.0.1:8001
 6. Your API is running!
 
+For more information on the service, check out the ReadMe.md in the service folder!
+
 ## Run the API Tests
 
 1. Open the tests folder in Visual Studio Code
 2. Copy the .env-example file to a new file called ".env"
 3. Open the terminal and run ```pip install -r requirements.txt```
 4. The Flask Tab on the left should detect tests and you can run them from there.  Otherwise, go into the validation/CRUD folder and select a test file, and you can right click in the code and run a case from there.
+
+For more information on the tests, check out the ReadMe.md in the tests folder!
 
 
 
