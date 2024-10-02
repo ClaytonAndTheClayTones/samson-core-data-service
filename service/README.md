@@ -10,7 +10,9 @@ The DICS Core Data Service is a Python FastApi implementation that provides a RE
 
 # Architecture
 
-The DICS Core Data Service follows a very strict architecture for all of its endpoints.
+The DICS Core Data Service follows a very strict architecture for all of its endpoints, outlined here:
+
+https://whimsical.com/architecture-diagram-Ljs3D7WduXVPRuWJZHL8Wq
 
 ## Run the service
 
