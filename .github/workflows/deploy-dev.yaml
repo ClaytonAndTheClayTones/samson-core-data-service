@@ -3,13 +3,18 @@ name: AWS Service CI/CD
 on:
   push:
     branches: [dev]
+env: MIGRATOR_POSTGRES_PASSWORD={{vars.MIGRATOR_POSTGRES_PASSWORD}}
+  MIGRATOR_POSTGRES_USER={{vars.MIGRATOR_POSTGRES_USER}}
+  MIGRATOR_POSTGRES_HOST={{vars.MIGRATOR_POSTGRES_HOST}}
+  MIGRATOR_POSTGRES_DB={{vars.MIGRATOR_POSTGRES_DB}}
+  MIGRATOR_POSTGRES_PORT={{vars.MIGRATOR_POSTGRES_PORT}}
 
 jobs:
   build:
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo " 🎉  The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo " 🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
