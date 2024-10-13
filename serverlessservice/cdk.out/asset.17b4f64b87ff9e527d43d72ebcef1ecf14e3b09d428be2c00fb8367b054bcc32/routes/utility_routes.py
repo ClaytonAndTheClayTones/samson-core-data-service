@@ -1,0 +1,17 @@
+# api-stack/src/api.py
+
+from mangum import Mangum
+from fastapi import FastAPI
+
+
+def set_routes(app: FastAPI):
+
+    @app.get("/v1/hello")
+    def list_items():
+        """
+        Return a hello hello 
+        """
+        return {
+            'message': 'Hello hello!'
+        }
+

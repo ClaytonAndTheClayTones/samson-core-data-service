@@ -1,0 +1,410 @@
+{
+ "Resources": {
+  "devdicscoreservicevpc6C048D17": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/24",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "dev-dics-core-service-vpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/Resource"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet1SubnetA0597F0D": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-west-2a",
+    "CidrBlock": "10.0.0.0/25",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devdicscoreservicevpc6C048D17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet1/Subnet"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet1RouteTableD042C9F5": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devdicscoreservicevpc6C048D17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet1/RouteTable"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet1RouteTableAssociationAD6CD3AE": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "devdicscoreservicevpcpublicSubnet1RouteTableD042C9F5"
+    },
+    "SubnetId": {
+     "Ref": "devdicscoreservicevpcpublicSubnet1SubnetA0597F0D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet1/RouteTableAssociation"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet1DefaultRouteE098D3DF": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "devdicscoreservicevpcIGW14D88471"
+    },
+    "RouteTableId": {
+     "Ref": "devdicscoreservicevpcpublicSubnet1RouteTableD042C9F5"
+    }
+   },
+   "DependsOn": [
+    "devdicscoreservicevpcVPCGWE0B6A9F4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet1/DefaultRoute"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet2SubnetD87E4F83": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-west-2b",
+    "CidrBlock": "10.0.0.128/25",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devdicscoreservicevpc6C048D17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet2/Subnet"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet2RouteTable17F7F829": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devdicscoreservicevpc6C048D17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet2/RouteTable"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet2RouteTableAssociation694451CC": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "devdicscoreservicevpcpublicSubnet2RouteTable17F7F829"
+    },
+    "SubnetId": {
+     "Ref": "devdicscoreservicevpcpublicSubnet2SubnetD87E4F83"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet2/RouteTableAssociation"
+   }
+  },
+  "devdicscoreservicevpcpublicSubnet2DefaultRoute6DDF2545": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "devdicscoreservicevpcIGW14D88471"
+    },
+    "RouteTableId": {
+     "Ref": "devdicscoreservicevpcpublicSubnet2RouteTable17F7F829"
+    }
+   },
+   "DependsOn": [
+    "devdicscoreservicevpcVPCGWE0B6A9F4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/publicSubnet2/DefaultRoute"
+   }
+  },
+  "devdicscoreservicevpcIGW14D88471": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "dev-dics-core-service-vpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/IGW"
+   }
+  },
+  "devdicscoreservicevpcVPCGWE0B6A9F4": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "devdicscoreservicevpcIGW14D88471"
+    },
+    "VpcId": {
+     "Ref": "devdicscoreservicevpc6C048D17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-vpc/VPCGW"
+   }
+  },
+  "devdicscoreservicesecuritygroup1F222E9B": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "DicsApiStack/dev-dics-core-service-security-group",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "allow inbound traffic from anywhere to the db on port 5432",
+      "FromPort": 5432,
+      "IpProtocol": "tcp",
+      "ToPort": 5432
+     }
+    ],
+    "VpcId": {
+     "Ref": "devdicscoreservicevpc6C048D17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-security-group/Resource"
+   }
+  },
+  "devdicscoreservicedbsecret76BEABEE": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"dics_admin\"}"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-db-secret/Resource"
+   }
+  },
+  "devdicscoreservicedbsecretAttachment0727BDB2": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "devdicscoreservicedbsecret76BEABEE"
+    },
+    "TargetId": {
+     "Ref": "devdicscoreservicedbcluster3FE0CFE7"
+    },
+    "TargetType": "AWS::RDS::DBCluster"
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-db-secret/Attachment/Resource"
+   }
+  },
+  "devdicscoreservicedbclusterSubnets2A647A12": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnets for dev-dics-core-service-db-cluster database",
+    "SubnetIds": [
+     {
+      "Ref": "devdicscoreservicevpcpublicSubnet1SubnetA0597F0D"
+     },
+     {
+      "Ref": "devdicscoreservicevpcpublicSubnet2SubnetD87E4F83"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-db-cluster/Subnets/Default"
+   }
+  },
+  "devdicscoreservicedbcluster3FE0CFE7": {
+   "Type": "AWS::RDS::DBCluster",
+   "Properties": {
+    "CopyTagsToSnapshot": true,
+    "DBClusterParameterGroupName": "default.aurora-postgresql16",
+    "DBSubnetGroupName": {
+     "Ref": "devdicscoreservicedbclusterSubnets2A647A12"
+    },
+    "Engine": "aurora-postgresql",
+    "EngineVersion": "16.4",
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "devdicscoreservicedbsecret76BEABEE"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "devdicscoreservicedbsecret76BEABEE"
+       },
+       ":SecretString:username::}}"
+      ]
+     ]
+    },
+    "Port": 5432,
+    "VpcSecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "devdicscoreservicesecuritygroup1F222E9B",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Snapshot",
+   "DeletionPolicy": "Snapshot",
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-db-cluster/Resource"
+   }
+  },
+  "devdicscoreservicedbclusterInstance1011099F7": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AutoMinorVersionUpgrade": true,
+    "DBClusterIdentifier": {
+     "Ref": "devdicscoreservicedbcluster3FE0CFE7"
+    },
+    "DBInstanceClass": "db.serverless",
+    "DBSubnetGroupName": {
+     "Ref": "devdicscoreservicedbclusterSubnets2A647A12"
+    },
+    "Engine": "aurora-postgresql",
+    "PubliclyAccessible": true
+   },
+   "DependsOn": [
+    "devdicscoreservicevpcpublicSubnet1DefaultRouteE098D3DF",
+    "devdicscoreservicevpcpublicSubnet1RouteTableAssociationAD6CD3AE",
+    "devdicscoreservicevpcpublicSubnet2DefaultRoute6DDF2545",
+    "devdicscoreservicevpcpublicSubnet2RouteTableAssociation694451CC"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/dev-dics-core-service-db-cluster/Instance1"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/2WPQYuDMBCFf0vvMYsWeu9aKL2Jll6XcTrbZqtJyUwQEf/7olYtu6d578tj3iTR8S7W8QYajvD6iCpT6q4QwIeChr86wkR3lyeq9NteslRloawMFqG0JANbVe6C0BnKila+sj2zQwNinF3CgzhZIW9JjiDUQPuqebm9COC9JiuqIAzeSHv0LjzHgnfQK39l3R1AoASmgtCTqNmmVWAhr6ablg2Hz39gTo7mZFnAIvWKx31cg4Ubed1N9UPFNM7gbyRv1y6Bvy99r3JiFzyOv591r7JW7s5+bHWc6N3mh42JfLBiatL5NH8B3abfFaoBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "DicsApiStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
