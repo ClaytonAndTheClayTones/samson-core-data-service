@@ -26,9 +26,13 @@ jobs:
           cd database
           python -m pip install --upgrade pip
       - name: Migrator - Install Python
-        run: pip install -r ./requirements.txt
+        run: |
+          cd database
+          pip install -r ./requirements.txt
       - name: Migrator - Migrate
-        run: python migrate_db.py
+        run: |
+          cd database
+          python migrate_db.py
 
       # - name: Install Python for Migrator
       #   uses: Gr1N/setup-poetry@v8
