@@ -1,4 +1,3 @@
-import json
 import os
 from typing import cast
 from dotenv import load_dotenv
@@ -21,14 +20,14 @@ class Configuration :
 
     def populate_configuration(self, config_path: str = ".env") -> None:
 
-
         if os.path.isfile(config_path):
             print(f"Loading configuration from file at {config_path}")
             load_dotenv(config_path)
         else:
             print("No configuration file found at {config_path}, using existing environment for config values.")
 
-
+            for name, value in os.environ.items():
+                print("{0}: {1}".format(name, value))
 
         # Validate
         issues : list[ConfigurationIssue] = []
@@ -53,6 +52,7 @@ class Configuration :
 
 
         if(len(issues) > 0):
+            
             print(f"Encountered issues loading the configuration")
             
             for i,issue in enumerate(issues):

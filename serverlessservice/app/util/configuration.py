@@ -1,7 +1,6 @@
 import os
 from typing import cast
 from dotenv import load_dotenv
-import json
 
 from util.db_connection import PGConnection
 
@@ -65,8 +64,7 @@ class Configuration:
             if value is None:
                 issue = ConfigurationIssue()
                 issue.property = property
-                issue.message = (
-                    issue.generate_missing_required_property_message(property))
+                issue.message = (issue.generate_missing_required_property_message(property))
                 issues.append(issue)
 
         if len(issues) > 0:
@@ -74,10 +72,11 @@ class Configuration:
             print(f'Encountered issues loading the configuration:')
             
             for i,issue in enumerate(issues):
-                print(f"Issue {i}: {json.dumps(issue.__dict__, indent=4)}")
                 
-            raise Exception('Terminated due to invalid configuration.')
-
+                print(f"{i} - Property: {issue.property}, Message: {issue.message}")
+                
+            raise Exception("Terminated due to invalid configuration.")
+        
         # Load
 
         self.DATABASE_HOST = os.getenv('DATABASE_HOST') or ''
