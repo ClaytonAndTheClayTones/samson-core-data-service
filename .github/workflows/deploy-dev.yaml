@@ -40,8 +40,14 @@ jobs:
         run: |
           cd database
           python ./db_migrate.py
-
-      # - name: Install Python for Migrator
-      #   uses: Gr1N/setup-poetry@v8
-      # - name: Verifying Poetry Install
-      #   run: poetry --version
+      - name: Service - Install Python and CDK
+        run: |
+          cd service
+          python -m pip install --upgrade pip         
+          npm install -g aws-cdk
+      - name: Service - Install Poetry
+        uses: Gr1N/setup-poetry@v8
+      - name: Service - Install Dependencies
+        run: |
+          cd service
+          poetry install
