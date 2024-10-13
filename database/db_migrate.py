@@ -1,8 +1,6 @@
-import os
-import json
-import builtins
+import os 
 
-from lib.migrator import Migrator
+from common.migrator import Migrator
 from environment import Environment
 
 enviroment: Environment = Environment()

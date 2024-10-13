@@ -1,9 +1,7 @@
-import json
 from pprint import pprint
-from lib.configuration import Configuration, set_global_configuration
-import builtins
+from common.configuration import Configuration 
 
-from lib.connection import PGConnection
+from common.connection import PGConnection
 
 class Environment:
 

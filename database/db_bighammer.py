@@ -1,11 +1,9 @@
-import os
-import json
+import os 
 from pprint import pprint
-from lib.bighammer import BigHammer
-from lib.configuration import Configuration, set_global_configuration
-import builtins
+from common.bighammer import BigHammer 
+ 
 
-from lib.connection import PGConnection
+from common.connection import PGConnection
 from environment import Environment
 
 environment: Environment = Environment()
