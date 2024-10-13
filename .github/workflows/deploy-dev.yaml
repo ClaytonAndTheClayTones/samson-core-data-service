@@ -29,4 +29,5 @@ jobs:
           npm install -g aws-cdk
       - name: Install Python for Migrator
         uses: Gr1N/setup-poetry@v8
+      - name: Verifying Poetry Install
         run: poetry --version
