@@ -32,7 +32,7 @@ jobs:
       - name: Migrator - Migrate
         run: |
           cd database
-          python migrate_db.py
+          python ./migrate_db.py
 
       # - name: Install Python for Migrator
       #   uses: Gr1N/setup-poetry@v8
