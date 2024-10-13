@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    environment: ${{ inputs.environment }}
+    environment: dev
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉  The job was automatically triggered by a ${{ github.event_name }} event."
