@@ -42,14 +42,14 @@ jobs:
           python ./db_migrate.py
       - name: Service - Install Python and CDK
         run: |
-          cd service
+          cd serverlessservice
           python -m pip install --upgrade pip         
           npm install -g aws-cdk
       - name: Service - Install Poetry
         uses: Gr1N/setup-poetry@v8
       - name: Service - Install Dependencies
         run: |
-          cd service
+          cd serverlessservice
           poetry install
       - name: Service - Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
@@ -59,5 +59,5 @@ jobs:
           aws-region: "us-west-2"
       - name: Service - CDK Deploy
         run: |
-          cd service
+          cd serverlessservice
           make cdk-deploy-dev
