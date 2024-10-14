@@ -51,7 +51,6 @@ jobs:
         run: |
           cd serverlessservice
           python -m venv env
-          source env/bin/activate
           poetry install
       - name: Service - Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
