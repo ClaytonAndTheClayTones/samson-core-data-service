@@ -530,7 +530,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-014854788852-us-west-2",
-     "S3Key": "b4de9076b1c7fd7c3ecddb9b6e8ec8c4308d65817b9d881bbde4aec6befeed67.zip"
+     "S3Key": "1601e15bfa637c1079aae7020cbd3f524da0408dd622060c3e69512c409b3034.zip"
     },
     "Handler": "main.handler",
     "MemorySize": 1024,
@@ -571,7 +571,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-lambda/Resource",
-    "aws:asset:path": "asset.b4de9076b1c7fd7c3ecddb9b6e8ec8c4308d65817b9d881bbde4aec6befeed67",
+    "aws:asset:path": "asset.1601e15bfa637c1079aae7020cbd3f524da0408dd622060c3e69512c409b3034",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
