@@ -1,0 +1,1373 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "dics-core-service-stack": {
+        "id": "dics-core-service-stack",
+        "path": "dics-core-service-stack",
+        "children": {
+          "dev-core-data-service-vpc": {
+            "id": "dev-core-data-service-vpc",
+            "path": "dics-core-service-stack/dev-core-data-service-vpc",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-vpc/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
+                  "aws:cdk:cloudformation:props": {
+                    "cidrBlock": "10.0.0.0/24",
+                    "enableDnsHostnames": true,
+                    "enableDnsSupport": true,
+                    "instanceTenancy": "default",
+                    "tags": [
+                      {
+                        "key": "Name",
+                        "value": "dev-core-data-service-vpc"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnVPC",
+                  "version": "2.161.1"
+                }
+              },
+              "publicSubnet1": {
+                "id": "publicSubnet1",
+                "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1",
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/Subnet",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "us-west-2a",
+                        "cidrBlock": "10.0.0.0/25",
+                        "mapPublicIpOnLaunch": true,
+                        "tags": [
+                          {
+                            "key": "aws-cdk:subnet-name",
+                            "value": "public"
+                          },
+                          {
+                            "key": "aws-cdk:subnet-type",
+                            "value": "Public"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1"
+                          }
+                        ],
+                        "vpcId": {
+                          "Ref": "devcoredataservicevpcEBB1DA54"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/Acl",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/RouteTable",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1"
+                          }
+                        ],
+                        "vpcId": {
+                          "Ref": "devcoredataservicevpcEBB1DA54"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/RouteTableAssociation",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "devcoredataservicevpcpublicSubnet1RouteTable0DB60D51"
+                        },
+                        "subnetId": {
+                          "Ref": "devcoredataservicevpcpublicSubnet1SubnetEA3432B8"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/DefaultRoute",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "gatewayId": {
+                          "Ref": "devcoredataservicevpcIGW149E5E86"
+                        },
+                        "routeTableId": {
+                          "Ref": "devcoredataservicevpcpublicSubnet1RouteTable0DB60D51"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                  "version": "2.161.1"
+                }
+              },
+              "publicSubnet2": {
+                "id": "publicSubnet2",
+                "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2",
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/Subnet",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "us-west-2b",
+                        "cidrBlock": "10.0.0.128/25",
+                        "mapPublicIpOnLaunch": true,
+                        "tags": [
+                          {
+                            "key": "aws-cdk:subnet-name",
+                            "value": "public"
+                          },
+                          {
+                            "key": "aws-cdk:subnet-type",
+                            "value": "Public"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2"
+                          }
+                        ],
+                        "vpcId": {
+                          "Ref": "devcoredataservicevpcEBB1DA54"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/Acl",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/RouteTable",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2"
+                          }
+                        ],
+                        "vpcId": {
+                          "Ref": "devcoredataservicevpcEBB1DA54"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/RouteTableAssociation",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "devcoredataservicevpcpublicSubnet2RouteTable138B0D3B"
+                        },
+                        "subnetId": {
+                          "Ref": "devcoredataservicevpcpublicSubnet2Subnet9A905344"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/DefaultRoute",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "gatewayId": {
+                          "Ref": "devcoredataservicevpcIGW149E5E86"
+                        },
+                        "routeTableId": {
+                          "Ref": "devcoredataservicevpcpublicSubnet2RouteTable138B0D3B"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                  "version": "2.161.1"
+                }
+              },
+              "IGW": {
+                "id": "IGW",
+                "path": "dics-core-service-stack/dev-core-data-service-vpc/IGW",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "Name",
+                        "value": "dev-core-data-service-vpc"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnInternetGateway",
+                  "version": "2.161.1"
+                }
+              },
+              "VPCGW": {
+                "id": "VPCGW",
+                "path": "dics-core-service-stack/dev-core-data-service-vpc/VPCGW",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
+                  "aws:cdk:cloudformation:props": {
+                    "internetGatewayId": {
+                      "Ref": "devcoredataservicevpcIGW149E5E86"
+                    },
+                    "vpcId": {
+                      "Ref": "devcoredataservicevpcEBB1DA54"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnVPCGatewayAttachment",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_ec2.Vpc",
+              "version": "2.161.1"
+            }
+          },
+          "dev-core-data-service-security-group": {
+            "id": "dev-core-data-service-security-group",
+            "path": "dics-core-service-stack/dev-core-data-service-security-group",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-security-group/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "groupDescription": "dics-core-service-stack/dev-core-data-service-security-group",
+                    "securityGroupEgress": [
+                      {
+                        "cidrIp": "0.0.0.0/0",
+                        "description": "Allow all outbound traffic by default",
+                        "ipProtocol": "-1"
+                      }
+                    ],
+                    "securityGroupIngress": [
+                      {
+                        "cidrIp": "0.0.0.0/0",
+                        "ipProtocol": "tcp",
+                        "fromPort": 5432,
+                        "toPort": 5432,
+                        "description": "allow inbound traffic from anywhere to the db on port 5432"
+                      }
+                    ],
+                    "vpcId": {
+                      "Ref": "devcoredataservicevpcEBB1DA54"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+              "version": "2.161.1"
+            }
+          },
+          "dev-core-data-service-db-credentials": {
+            "id": "dev-core-data-service-db-credentials",
+            "path": "dics-core-service-stack/dev-core-data-service-db-credentials",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-db-credentials/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
+                  "aws:cdk:cloudformation:props": {
+                    "description": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "Generated by the CDK for stack: ",
+                          {
+                            "Ref": "AWS::StackName"
+                          }
+                        ]
+                      ]
+                    },
+                    "generateSecretString": {
+                      "passwordLength": 30,
+                      "secretStringTemplate": "{\"username\":\"dics_admin\",\"dbname\":\"dics\"}",
+                      "generateStringKey": "password",
+                      "excludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\"
+                    },
+                    "name": "dev-core-data-service-db-credentials"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecret",
+                  "version": "2.161.1"
+                }
+              },
+              "Attachment": {
+                "id": "Attachment",
+                "path": "dics-core-service-stack/dev-core-data-service-db-credentials/Attachment",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dics-core-service-stack/dev-core-data-service-db-credentials/Attachment/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SecretsManager::SecretTargetAttachment",
+                      "aws:cdk:cloudformation:props": {
+                        "secretId": {
+                          "Ref": "devcoredataservicedbcredentialsD4E41ADE"
+                        },
+                        "targetId": {
+                          "Ref": "devcoredataservicedb3541FC1D"
+                        },
+                        "targetType": "AWS::RDS::DBInstance"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecretTargetAttachment",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_secretsmanager.SecretTargetAttachment",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_rds.DatabaseSecret",
+              "version": "2.161.1"
+            }
+          },
+          "dev-core-data-service-db-migrator-credentials": {
+            "id": "dev-core-data-service-db-migrator-credentials",
+            "path": "dics-core-service-stack/dev-core-data-service-db-migrator-credentials",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-db-migrator-credentials/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
+                  "aws:cdk:cloudformation:props": {
+                    "description": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "Generated by the CDK for stack: ",
+                          {
+                            "Ref": "AWS::StackName"
+                          }
+                        ]
+                      ]
+                    },
+                    "generateSecretString": {
+                      "passwordLength": 30,
+                      "secretStringTemplate": "{\"username\":\"dics_migrator\",\"dbname\":\"dics\"}",
+                      "generateStringKey": "password",
+                      "excludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\"
+                    },
+                    "name": "dev-core-data-service-db-migrator-credentials"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecret",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_rds.DatabaseSecret",
+              "version": "2.161.1"
+            }
+          },
+          "dev-core-data-service-db-service-credentials": {
+            "id": "dev-core-data-service-db-service-credentials",
+            "path": "dics-core-service-stack/dev-core-data-service-db-service-credentials",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-db-service-credentials/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
+                  "aws:cdk:cloudformation:props": {
+                    "description": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "Generated by the CDK for stack: ",
+                          {
+                            "Ref": "AWS::StackName"
+                          }
+                        ]
+                      ]
+                    },
+                    "generateSecretString": {
+                      "passwordLength": 30,
+                      "secretStringTemplate": "{\"username\":\"dics_service\",\"dbname\":\"dics\"}",
+                      "generateStringKey": "password",
+                      "excludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\"
+                    },
+                    "name": "dev-core-data-service-db-service-credentials"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecret",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_rds.DatabaseSecret",
+              "version": "2.161.1"
+            }
+          },
+          "dev-core-data-service-db": {
+            "id": "dev-core-data-service-db",
+            "path": "dics-core-service-stack/dev-core-data-service-db",
+            "children": {
+              "SubnetGroup": {
+                "id": "SubnetGroup",
+                "path": "dics-core-service-stack/dev-core-data-service-db/SubnetGroup",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "dics-core-service-stack/dev-core-data-service-db/SubnetGroup/Default",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::RDS::DBSubnetGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "dbSubnetGroupDescription": "Subnet group for dev-core-data-service-db database",
+                        "subnetIds": [
+                          {
+                            "Ref": "devcoredataservicevpcpublicSubnet1SubnetEA3432B8"
+                          },
+                          {
+                            "Ref": "devcoredataservicevpcpublicSubnet2Subnet9A905344"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_rds.CfnDBSubnetGroup",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_rds.SubnetGroup",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-db/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::RDS::DBInstance",
+                  "aws:cdk:cloudformation:props": {
+                    "allocatedStorage": "100",
+                    "autoMinorVersionUpgrade": true,
+                    "copyTagsToSnapshot": true,
+                    "dbInstanceClass": "db.t4g.micro",
+                    "dbName": "dics",
+                    "dbSubnetGroupName": {
+                      "Ref": "devcoredataservicedbSubnetGroup6E9A3A3D"
+                    },
+                    "enableIamDatabaseAuthentication": true,
+                    "engine": "postgres",
+                    "engineVersion": "16.4",
+                    "masterUsername": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "{{resolve:secretsmanager:",
+                          {
+                            "Ref": "devcoredataservicedbcredentialsD4E41ADE"
+                          },
+                          ":SecretString:username::}}"
+                        ]
+                      ]
+                    },
+                    "masterUserPassword": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "{{resolve:secretsmanager:",
+                          {
+                            "Ref": "devcoredataservicedbcredentialsD4E41ADE"
+                          },
+                          ":SecretString:password::}}"
+                        ]
+                      ]
+                    },
+                    "port": "5432",
+                    "publiclyAccessible": true,
+                    "storageType": "gp2",
+                    "vpcSecurityGroups": [
+                      {
+                        "Fn::GetAtt": [
+                          "devcoredataservicesecuritygroup59ED28F3",
+                          "GroupId"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_rds.CfnDBInstance",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_rds.DatabaseInstance",
+              "version": "2.161.1"
+            }
+          },
+          "dev-core-data-service-api-lambda": {
+            "id": "dev-core-data-service-api-lambda",
+            "path": "dics-core-service-stack/dev-core-data-service-api-lambda",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "dics-core-service-stack/dev-core-data-service-api-lambda/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-lambda/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-lambda/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-lambda/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dics-core-service-stack/dev-core-data-service-api-lambda/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "rds-db:connect",
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":rds-db:us-west-2:014854788852:dbuser:",
+                                        {
+                                          "Fn::GetAtt": [
+                                            "devcoredataservicedb3541FC1D",
+                                            "DbiResourceId"
+                                          ]
+                                        },
+                                        "/dics_service"
+                                      ]
+                                    ]
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "devcoredataserviceapilambdaServiceRoleDefaultPolicy0146D0D6",
+                            "roles": [
+                              {
+                                "Ref": "devcoredataserviceapilambdaServiceRole03D997F9"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.161.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.161.1"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "dics-core-service-stack/dev-core-data-service-api-lambda/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-lambda/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-lambda/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.161.1"
+                }
+              },
+              "SecurityGroup": {
+                "id": "SecurityGroup",
+                "path": "dics-core-service-stack/dev-core-data-service-api-lambda/SecurityGroup",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-lambda/SecurityGroup/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "groupDescription": "Automatic security group for Lambda Function dicscoreservicestackdevcoredataserviceapilambda39DC3307",
+                        "securityGroupEgress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "description": "Allow all outbound traffic by default",
+                            "ipProtocol": "-1"
+                          }
+                        ],
+                        "vpcId": {
+                          "Ref": "devcoredataservicevpcEBB1DA54"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                  "version": "2.161.1"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-api-lambda/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": "cdk-hnb659fds-assets-014854788852-us-west-2",
+                      "s3Key": "1601e15bfa637c1079aae7020cbd3f524da0408dd622060c3e69512c409b3034.zip"
+                    },
+                    "handler": "main.handler",
+                    "memorySize": 1024,
+                    "role": {
+                      "Fn::GetAtt": [
+                        "devcoredataserviceapilambdaServiceRole03D997F9",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "python3.12",
+                    "timeout": 300,
+                    "vpcConfig": {
+                      "subnetIds": [
+                        {
+                          "Ref": "devcoredataservicevpcpublicSubnet1SubnetEA3432B8"
+                        },
+                        {
+                          "Ref": "devcoredataservicevpcpublicSubnet2Subnet9A905344"
+                        }
+                      ],
+                      "securityGroupIds": [
+                        {
+                          "Fn::GetAtt": [
+                            "devcoredataserviceapilambdaSecurityGroup9F3F6895",
+                            "GroupId"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda-python-alpha.PythonFunction",
+              "version": "2.161.1-alpha.0"
+            }
+          },
+          "dev-core-data-service-api-gateway": {
+            "id": "dev-core-data-service-api-gateway",
+            "path": "dics-core-service-stack/dev-core-data-service-api-gateway",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
+                  "aws:cdk:cloudformation:props": {
+                    "name": "dev-core-data-service-api-gateway"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRestApi",
+                  "version": "2.161.1"
+                }
+              },
+              "CloudWatchRole": {
+                "id": "CloudWatchRole",
+                "path": "dics-core-service-stack/dev-core-data-service-api-gateway/CloudWatchRole",
+                "children": {
+                  "ImportCloudWatchRole": {
+                    "id": "ImportCloudWatchRole",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-gateway/CloudWatchRole/ImportCloudWatchRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-gateway/CloudWatchRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "apigateway.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.161.1"
+                }
+              },
+              "Account": {
+                "id": "Account",
+                "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Account",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Account",
+                  "aws:cdk:cloudformation:props": {
+                    "cloudWatchRoleArn": {
+                      "Fn::GetAtt": [
+                        "devcoredataserviceapigatewayCloudWatchRoleCDF72FC1",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnAccount",
+                  "version": "2.161.1"
+                }
+              },
+              "Deployment": {
+                "id": "Deployment",
+                "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Deployment",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Deployment/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
+                      "aws:cdk:cloudformation:props": {
+                        "description": "Automatically created by the RestApi construct",
+                        "restApiId": {
+                          "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnDeployment",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Deployment",
+                  "version": "2.161.1"
+                }
+              },
+              "DeploymentStage.prod": {
+                "id": "DeploymentStage.prod",
+                "path": "dics-core-service-stack/dev-core-data-service-api-gateway/DeploymentStage.prod",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-gateway/DeploymentStage.prod/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
+                      "aws:cdk:cloudformation:props": {
+                        "deploymentId": {
+                          "Ref": "devcoredataserviceapigatewayDeploymentEB01C106ed67d8d552c4a2c845e148cf63a985ed"
+                        },
+                        "restApiId": {
+                          "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                        },
+                        "stageName": "prod"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnStage",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Stage",
+                  "version": "2.161.1"
+                }
+              },
+              "Endpoint": {
+                "id": "Endpoint",
+                "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Endpoint",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.161.1"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default",
+                "children": {
+                  "{proxy+}": {
+                    "id": "{proxy+}",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                          "aws:cdk:cloudformation:props": {
+                            "parentId": {
+                              "Fn::GetAtt": [
+                                "devcoredataserviceapigatewayCDF7F90C",
+                                "RootResourceId"
+                              ]
+                            },
+                            "pathPart": "{proxy+}",
+                            "restApiId": {
+                              "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                          "version": "2.161.1"
+                        }
+                      },
+                      "ANY": {
+                        "id": "ANY",
+                        "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/ANY",
+                        "children": {
+                          "ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}": {
+                            "id": "ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}",
+                            "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/ANY/ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "devcoredataserviceapilambda027F4033",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:us-west-2:014854788852:",
+                                      {
+                                        "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                                      },
+                                      "/",
+                                      {
+                                        "Ref": "devcoredataserviceapigatewayDeploymentStageprod98868C2E"
+                                      },
+                                      "/*/*"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.161.1"
+                            }
+                          },
+                          "ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}": {
+                            "id": "ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}",
+                            "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/ANY/ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "devcoredataserviceapilambda027F4033",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:us-west-2:014854788852:",
+                                      {
+                                        "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                                      },
+                                      "/test-invoke-stage/*/*"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.161.1"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/ANY/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "authorizationType": "NONE",
+                                "httpMethod": "ANY",
+                                "integration": {
+                                  "type": "AWS_PROXY",
+                                  "uri": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:us-west-2:lambda:path/2015-03-31/functions/",
+                                        {
+                                          "Fn::GetAtt": [
+                                            "devcoredataserviceapilambda027F4033",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/invocations"
+                                      ]
+                                    ]
+                                  },
+                                  "integrationHttpMethod": "POST"
+                                },
+                                "resourceId": {
+                                  "Ref": "devcoredataserviceapigatewayproxy7154CAAB"
+                                },
+                                "restApiId": {
+                                  "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.161.1"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.161.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.ProxyResource",
+                      "version": "2.161.1"
+                    }
+                  },
+                  "ANY": {
+                    "id": "ANY",
+                    "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/ANY",
+                    "children": {
+                      "ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..": {
+                        "id": "ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..",
+                        "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/ANY/ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                          "aws:cdk:cloudformation:props": {
+                            "action": "lambda:InvokeFunction",
+                            "functionName": {
+                              "Fn::GetAtt": [
+                                "devcoredataserviceapilambda027F4033",
+                                "Arn"
+                              ]
+                            },
+                            "principal": "apigateway.amazonaws.com",
+                            "sourceArn": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "arn:",
+                                  {
+                                    "Ref": "AWS::Partition"
+                                  },
+                                  ":execute-api:us-west-2:014854788852:",
+                                  {
+                                    "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                                  },
+                                  "/",
+                                  {
+                                    "Ref": "devcoredataserviceapigatewayDeploymentStageprod98868C2E"
+                                  },
+                                  "/*/"
+                                ]
+                              ]
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                          "version": "2.161.1"
+                        }
+                      },
+                      "ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..": {
+                        "id": "ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..",
+                        "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/ANY/ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                          "aws:cdk:cloudformation:props": {
+                            "action": "lambda:InvokeFunction",
+                            "functionName": {
+                              "Fn::GetAtt": [
+                                "devcoredataserviceapilambda027F4033",
+                                "Arn"
+                              ]
+                            },
+                            "principal": "apigateway.amazonaws.com",
+                            "sourceArn": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "arn:",
+                                  {
+                                    "Ref": "AWS::Partition"
+                                  },
+                                  ":execute-api:us-west-2:014854788852:",
+                                  {
+                                    "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                                  },
+                                  "/test-invoke-stage/*/"
+                                ]
+                              ]
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                          "version": "2.161.1"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/ANY/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                          "aws:cdk:cloudformation:props": {
+                            "authorizationType": "NONE",
+                            "httpMethod": "ANY",
+                            "integration": {
+                              "type": "AWS_PROXY",
+                              "uri": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:",
+                                    {
+                                      "Ref": "AWS::Partition"
+                                    },
+                                    ":apigateway:us-west-2:lambda:path/2015-03-31/functions/",
+                                    {
+                                      "Fn::GetAtt": [
+                                        "devcoredataserviceapilambda027F4033",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "/invocations"
+                                  ]
+                                ]
+                              },
+                              "integrationHttpMethod": "POST"
+                            },
+                            "resourceId": {
+                              "Fn::GetAtt": [
+                                "devcoredataserviceapigatewayCDF7F90C",
+                                "RootResourceId"
+                              ]
+                            },
+                            "restApiId": {
+                              "Ref": "devcoredataserviceapigatewayCDF7F90C"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                          "version": "2.161.1"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                      "version": "2.161.1"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.ResourceBase",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.LambdaRestApi",
+              "version": "2.161.1"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "dics-core-service-stack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "dics-core-service-stack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.161.1"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "dics-core-service-stack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.161.1"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "dics-core-service-stack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.161.1"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.161.1"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.3.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.161.1"
+    }
+  }
+}

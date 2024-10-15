@@ -1,0 +1,981 @@
+{
+ "Resources": {
+  "devcoredataservicevpcEBB1DA54": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/24",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "dev-core-data-service-vpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/Resource"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet1SubnetEA3432B8": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-west-2a",
+    "CidrBlock": "10.0.0.0/25",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devcoredataservicevpcEBB1DA54"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/Subnet"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet1RouteTable0DB60D51": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devcoredataservicevpcEBB1DA54"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/RouteTable"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet1RouteTableAssociation0F619F04": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "devcoredataservicevpcpublicSubnet1RouteTable0DB60D51"
+    },
+    "SubnetId": {
+     "Ref": "devcoredataservicevpcpublicSubnet1SubnetEA3432B8"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/RouteTableAssociation"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet1DefaultRoute97E9024B": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "devcoredataservicevpcIGW149E5E86"
+    },
+    "RouteTableId": {
+     "Ref": "devcoredataservicevpcpublicSubnet1RouteTable0DB60D51"
+    }
+   },
+   "DependsOn": [
+    "devcoredataservicevpcVPCGWB3396068"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet1/DefaultRoute"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet2Subnet9A905344": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-west-2b",
+    "CidrBlock": "10.0.0.128/25",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devcoredataservicevpcEBB1DA54"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/Subnet"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet2RouteTable138B0D3B": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devcoredataservicevpcEBB1DA54"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/RouteTable"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet2RouteTableAssociationB2826690": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "devcoredataservicevpcpublicSubnet2RouteTable138B0D3B"
+    },
+    "SubnetId": {
+     "Ref": "devcoredataservicevpcpublicSubnet2Subnet9A905344"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/RouteTableAssociation"
+   }
+  },
+  "devcoredataservicevpcpublicSubnet2DefaultRoute1A52C863": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "devcoredataservicevpcIGW149E5E86"
+    },
+    "RouteTableId": {
+     "Ref": "devcoredataservicevpcpublicSubnet2RouteTable138B0D3B"
+    }
+   },
+   "DependsOn": [
+    "devcoredataservicevpcVPCGWB3396068"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/publicSubnet2/DefaultRoute"
+   }
+  },
+  "devcoredataservicevpcIGW149E5E86": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "dev-core-data-service-vpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/IGW"
+   }
+  },
+  "devcoredataservicevpcVPCGWB3396068": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "devcoredataservicevpcIGW149E5E86"
+    },
+    "VpcId": {
+     "Ref": "devcoredataservicevpcEBB1DA54"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-vpc/VPCGW"
+   }
+  },
+  "devcoredataservicesecuritygroup59ED28F3": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "dics-core-service-stack/dev-core-data-service-security-group",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "allow inbound traffic from anywhere to the db on port 5432",
+      "FromPort": 5432,
+      "IpProtocol": "tcp",
+      "ToPort": 5432
+     }
+    ],
+    "VpcId": {
+     "Ref": "devcoredataservicevpcEBB1DA54"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-security-group/Resource"
+   }
+  },
+  "devcoredataservicedbcredentialsD4E41ADE": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"dics_admin\",\"dbname\":\"dics\"}"
+    },
+    "Name": "dev-core-data-service-db-credentials"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-db-credentials/Resource"
+   }
+  },
+  "devcoredataservicedbcredentialsAttachment898C27A8": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "devcoredataservicedbcredentialsD4E41ADE"
+    },
+    "TargetId": {
+     "Ref": "devcoredataservicedb3541FC1D"
+    },
+    "TargetType": "AWS::RDS::DBInstance"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-db-credentials/Attachment/Resource"
+   }
+  },
+  "devcoredataservicedbmigratorcredentialsA5F74A37": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"dics_migrator\",\"dbname\":\"dics\"}"
+    },
+    "Name": "dev-core-data-service-db-migrator-credentials"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-db-migrator-credentials/Resource"
+   }
+  },
+  "devcoredataservicedbservicecredentials043E03C3": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Generated by the CDK for stack: ",
+       {
+        "Ref": "AWS::StackName"
+       }
+      ]
+     ]
+    },
+    "GenerateSecretString": {
+     "ExcludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\",
+     "GenerateStringKey": "password",
+     "PasswordLength": 30,
+     "SecretStringTemplate": "{\"username\":\"dics_service\",\"dbname\":\"dics\"}"
+    },
+    "Name": "dev-core-data-service-db-service-credentials"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-db-service-credentials/Resource"
+   }
+  },
+  "devcoredataservicedbSubnetGroup6E9A3A3D": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnet group for dev-core-data-service-db database",
+    "SubnetIds": [
+     {
+      "Ref": "devcoredataservicevpcpublicSubnet1SubnetEA3432B8"
+     },
+     {
+      "Ref": "devcoredataservicevpcpublicSubnet2Subnet9A905344"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-db/SubnetGroup/Default"
+   }
+  },
+  "devcoredataservicedb3541FC1D": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AllocatedStorage": "100",
+    "AutoMinorVersionUpgrade": true,
+    "CopyTagsToSnapshot": true,
+    "DBInstanceClass": "db.t4g.micro",
+    "DBName": "dics",
+    "DBSubnetGroupName": {
+     "Ref": "devcoredataservicedbSubnetGroup6E9A3A3D"
+    },
+    "EnableIAMDatabaseAuthentication": true,
+    "Engine": "postgres",
+    "EngineVersion": "16.4",
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "devcoredataservicedbcredentialsD4E41ADE"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "devcoredataservicedbcredentialsD4E41ADE"
+       },
+       ":SecretString:username::}}"
+      ]
+     ]
+    },
+    "Port": "5432",
+    "PubliclyAccessible": true,
+    "StorageType": "gp2",
+    "VPCSecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "devcoredataservicesecuritygroup59ED28F3",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Snapshot",
+   "DeletionPolicy": "Snapshot",
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-db/Resource"
+   }
+  },
+  "devcoredataserviceapilambdaServiceRole03D997F9": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "DependsOn": [
+    "devcoredataservicevpcpublicSubnet1DefaultRoute97E9024B",
+    "devcoredataservicevpcpublicSubnet1RouteTableAssociation0F619F04",
+    "devcoredataservicevpcpublicSubnet2DefaultRoute1A52C863",
+    "devcoredataservicevpcpublicSubnet2RouteTableAssociationB2826690"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-lambda/ServiceRole/Resource"
+   }
+  },
+  "devcoredataserviceapilambdaServiceRoleDefaultPolicy0146D0D6": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "rds-db:connect",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":rds-db:us-west-2:014854788852:dbuser:",
+          {
+           "Fn::GetAtt": [
+            "devcoredataservicedb3541FC1D",
+            "DbiResourceId"
+           ]
+          },
+          "/dics_service"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devcoredataserviceapilambdaServiceRoleDefaultPolicy0146D0D6",
+    "Roles": [
+     {
+      "Ref": "devcoredataserviceapilambdaServiceRole03D997F9"
+     }
+    ]
+   },
+   "DependsOn": [
+    "devcoredataservicevpcpublicSubnet1DefaultRoute97E9024B",
+    "devcoredataservicevpcpublicSubnet1RouteTableAssociation0F619F04",
+    "devcoredataservicevpcpublicSubnet2DefaultRoute1A52C863",
+    "devcoredataservicevpcpublicSubnet2RouteTableAssociationB2826690"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-lambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devcoredataserviceapilambdaSecurityGroup9F3F6895": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Automatic security group for Lambda Function dicscoreservicestackdevcoredataserviceapilambda39DC3307",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "devcoredataservicevpcEBB1DA54"
+    }
+   },
+   "DependsOn": [
+    "devcoredataservicevpcpublicSubnet1DefaultRoute97E9024B",
+    "devcoredataservicevpcpublicSubnet1RouteTableAssociation0F619F04",
+    "devcoredataservicevpcpublicSubnet2DefaultRoute1A52C863",
+    "devcoredataservicevpcpublicSubnet2RouteTableAssociationB2826690"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-lambda/SecurityGroup/Resource"
+   }
+  },
+  "devcoredataserviceapilambda027F4033": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-014854788852-us-west-2",
+     "S3Key": "1601e15bfa637c1079aae7020cbd3f524da0408dd622060c3e69512c409b3034.zip"
+    },
+    "Handler": "main.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapilambdaServiceRole03D997F9",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Timeout": 300,
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      {
+       "Fn::GetAtt": [
+        "devcoredataserviceapilambdaSecurityGroup9F3F6895",
+        "GroupId"
+       ]
+      }
+     ],
+     "SubnetIds": [
+      {
+       "Ref": "devcoredataservicevpcpublicSubnet1SubnetEA3432B8"
+      },
+      {
+       "Ref": "devcoredataservicevpcpublicSubnet2Subnet9A905344"
+      }
+     ]
+    }
+   },
+   "DependsOn": [
+    "devcoredataserviceapilambdaServiceRoleDefaultPolicy0146D0D6",
+    "devcoredataserviceapilambdaServiceRole03D997F9",
+    "devcoredataservicevpcpublicSubnet1DefaultRoute97E9024B",
+    "devcoredataservicevpcpublicSubnet1RouteTableAssociation0F619F04",
+    "devcoredataservicevpcpublicSubnet2DefaultRoute1A52C863",
+    "devcoredataservicevpcpublicSubnet2RouteTableAssociationB2826690"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-lambda/Resource",
+    "aws:asset:path": "asset.1601e15bfa637c1079aae7020cbd3f524da0408dd622060c3e69512c409b3034",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devcoredataserviceapigatewayCDF7F90C": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "dev-core-data-service-api-gateway"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Resource"
+   }
+  },
+  "devcoredataserviceapigatewayCloudWatchRoleCDF72FC1": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/CloudWatchRole/Resource"
+   }
+  },
+  "devcoredataserviceapigatewayAccount23457678": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapigatewayCloudWatchRoleCDF72FC1",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "devcoredataserviceapigatewayCDF7F90C"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Account"
+   }
+  },
+  "devcoredataserviceapigatewayDeploymentEB01C106ed67d8d552c4a2c845e148cf63a985ed": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Automatically created by the RestApi construct",
+    "RestApiId": {
+     "Ref": "devcoredataserviceapigatewayCDF7F90C"
+    }
+   },
+   "DependsOn": [
+    "devcoredataserviceapigatewayproxyANYD96069D8",
+    "devcoredataserviceapigatewayproxy7154CAAB",
+    "devcoredataserviceapigatewayANYBE58FA02"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Deployment/Resource"
+   }
+  },
+  "devcoredataserviceapigatewayDeploymentStageprod98868C2E": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "devcoredataserviceapigatewayDeploymentEB01C106ed67d8d552c4a2c845e148cf63a985ed"
+    },
+    "RestApiId": {
+     "Ref": "devcoredataserviceapigatewayCDF7F90C"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "devcoredataserviceapigatewayAccount23457678"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/DeploymentStage.prod/Resource"
+   }
+  },
+  "devcoredataserviceapigatewayproxy7154CAAB": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapigatewayCDF7F90C",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "{proxy+}",
+    "RestApiId": {
+     "Ref": "devcoredataserviceapigatewayCDF7F90C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/Resource"
+   }
+  },
+  "devcoredataserviceapigatewayproxyANYApiPermissiondicscoreservicestackdevcoredataserviceapigateway9B0E72A3ANYproxy6B44645A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapilambda027F4033",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-west-2:014854788852:",
+       {
+        "Ref": "devcoredataserviceapigatewayCDF7F90C"
+       },
+       "/",
+       {
+        "Ref": "devcoredataserviceapigatewayDeploymentStageprod98868C2E"
+       },
+       "/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/ANY/ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}"
+   }
+  },
+  "devcoredataserviceapigatewayproxyANYApiPermissionTestdicscoreservicestackdevcoredataserviceapigateway9B0E72A3ANYproxy8AD09F58": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapilambda027F4033",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-west-2:014854788852:",
+       {
+        "Ref": "devcoredataserviceapigatewayCDF7F90C"
+       },
+       "/test-invoke-stage/*/*"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/ANY/ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY..{proxy+}"
+   }
+  },
+  "devcoredataserviceapigatewayproxyANYD96069D8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devcoredataserviceapilambda027F4033",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devcoredataserviceapigatewayproxy7154CAAB"
+    },
+    "RestApiId": {
+     "Ref": "devcoredataserviceapigatewayCDF7F90C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/{proxy+}/ANY/Resource"
+   }
+  },
+  "devcoredataserviceapigatewayANYApiPermissiondicscoreservicestackdevcoredataserviceapigateway9B0E72A3ANY6DF25550": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapilambda027F4033",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-west-2:014854788852:",
+       {
+        "Ref": "devcoredataserviceapigatewayCDF7F90C"
+       },
+       "/",
+       {
+        "Ref": "devcoredataserviceapigatewayDeploymentStageprod98868C2E"
+       },
+       "/*/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/ANY/ApiPermission.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY.."
+   }
+  },
+  "devcoredataserviceapigatewayANYApiPermissionTestdicscoreservicestackdevcoredataserviceapigateway9B0E72A3ANYB9182DD7": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapilambda027F4033",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-west-2:014854788852:",
+       {
+        "Ref": "devcoredataserviceapigatewayCDF7F90C"
+       },
+       "/test-invoke-stage/*/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/ANY/ApiPermission.Test.dicscoreservicestackdevcoredataserviceapigateway9B0E72A3.ANY.."
+   }
+  },
+  "devcoredataserviceapigatewayANYBE58FA02": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "ANY",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-west-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devcoredataserviceapilambda027F4033",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "devcoredataserviceapigatewayCDF7F90C",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "devcoredataserviceapigatewayCDF7F90C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/dev-core-data-service-api-gateway/Default/ANY/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/2VSXWvjMBD8LXmX1XMCfa7TcKVwxxm79LWslT1HF1sy2hWpMfrvhyU7Ce3Tzo5Gsx/SVuaPuZzyDVwoU8dz1ulGTjWDOgu40MeEaiun90GJ57/mvXwWpW86rWrfGOSZu6HKesY3aDq88TeuILJKA2trruIZvBpGZ5BfgPEC41JmyQpmUKceDYsalXeaxxdn/RAL3BNBuCPJ6QAMDRDWqByyWNNXQwxGoUhNXS0O+2/EKg2Cogf1YKBFJ6dUcrZN4Q1ci3zX4VXw9SQIDb2cKps2E2NpO63itAkFQbsPIEImWcxB0E7uvToj74FQdNA3R4hd/PRGrWss0fWaSFsTBAy6TWuT068or5C4GHQseoOFUtYbFgccOjuurd9lNUOb3jCCCsl6pzD2UTr7Oa7MYpzwb+STPc5UQiFcb4o40eymTTsr/ngePN9fDyLPoBtOIH9snpa/+DDHNHg2jHyyZpGUMVn3EETKH3Yy38rHzT/SOnPesO5RVin+BwXCSkLnAgAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "dics-core-service-stack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "devcoredataserviceapigatewayEndpointC570E332": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "devcoredataserviceapigatewayCDF7F90C"
+      },
+      ".execute-api.us-west-2.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "devcoredataserviceapigatewayDeploymentStageprod98868C2E"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
