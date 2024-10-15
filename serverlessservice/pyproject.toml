@@ -14,9 +14,10 @@ python-dotenv = "^1.0.1"
 pydantic = {extras = ["email"], version = "^2.9.2"}
 phonenumbers = "^8.13.46"
 pydantic-extra-types = "^2.9.0"
-mangum = "^0.19.0"
 constructs = "^10.3.0"
 psycopg2-binary = "^2.9.9"
+aws-cdk-lib = "^2.162.1"
+mangum = "^0.19.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.3" 
