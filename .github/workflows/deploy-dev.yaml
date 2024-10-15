@@ -57,5 +57,6 @@ jobs:
         run: |
           cd serverlessservice
           python -m venv env
-          poetry install
+          poetry add aws-cdk-lib
+          poetry install 
           make cdk-deploy-dev
