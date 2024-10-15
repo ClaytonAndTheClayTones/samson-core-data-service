@@ -60,7 +60,11 @@ jobs:
           poetry add aws-cdk-lib aws-cdk-aws-lambda-python-alpha pytest
           poetry install
           make cdk-deploy-dev
-          # poetry export --without-hashes --format=requirements.txt > ./requirements.txt
-          # pip install -r requirements.txt
-          # poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
-          # cdk deploy --context stage="dev"
+
+          poetry export --without-hashes --format=requirements.txt > ./requirements.txt
+
+          pip install -r requirements.txt
+
+          poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
+
+          cdk deploy --context stage="dev"
