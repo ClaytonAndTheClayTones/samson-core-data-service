@@ -59,4 +59,5 @@ jobs:
           python -m venv env
           poetry add aws-cdk-lib
           poetry install 
+          pip install aws-cdk-lib
           make cdk-deploy-dev
