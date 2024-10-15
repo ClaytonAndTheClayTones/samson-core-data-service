@@ -56,8 +56,10 @@ jobs:
       - name: Service - Install Dependencies
         run: |
           cd serverlessservice
-          python -m venv env
+          python -m venv env 
           poetry add aws-cdk-lib
-          poetry install 
-          pip install aws-cdk-lib
-          make cdk-deploy-dev
+          poetry install  
+          poetry export --without-hashes --format=requirements.txt > ./requirements.txt
+          pip install -r requirements.txt
+          poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
+          cdk deploy --context stage="dev"
