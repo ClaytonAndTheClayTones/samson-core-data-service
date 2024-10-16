@@ -58,4 +58,6 @@ jobs:
           poetry export --without-hashes --format=requirements.txt > ./requirements.txt
           poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
 
+          pip install -r ./requirements.txt
+
           cdk deploy --context stage="dev"
