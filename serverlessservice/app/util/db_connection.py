@@ -225,11 +225,15 @@ class PGConnection:
 
         # Columns
         values = model.values()
+        valid_count = 0
+        for key in keys:
+            if model[key] is not None:
+                valid_count += 1
 
         for i, key in enumerate(keys):
             if model[key] is not None:
                 sqlstring += f'\t{key}'
-                if i < (len(keys) - 1):
+                if i < (valid_count - 1):
                     sqlstring += ','
                 sqlstring += '\n'
 
@@ -241,7 +245,7 @@ class PGConnection:
             if value is not None:
                 sqlstring += '\tNULL' if value is None else f"\t'{value}'"
 
-                if i < (len(values) - 1):
+                if i < (valid_count - 1):
                     sqlstring += ','
                 sqlstring += '\n'
 
