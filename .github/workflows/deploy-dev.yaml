@@ -55,4 +55,4 @@ jobs:
 
           poetry install
 
-          cdk deploy --context stage="dev"
+          make cdk-deploy-dev
