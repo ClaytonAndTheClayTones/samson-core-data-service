@@ -58,4 +58,5 @@ jobs:
           poetry export --without-hashes --format=requirements.txt > ./requirements.txt
           poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
 
+          echo "here we go"
           cdk deploy --context stage="dev"
