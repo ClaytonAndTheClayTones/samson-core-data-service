@@ -55,4 +55,7 @@ jobs:
 
           poetry install
 
-          make cdk-deploy-dev
+          poetry export --without-hashes --format=requirements.txt > ./requirements.txt
+          poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
+
+          cdk deploy --context stage="dev"
