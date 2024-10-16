@@ -14,8 +14,11 @@ define install-dependencies
 	@echo  
  
 	poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
-	
+
 	@echo ------------------------ 
+
+	@echo Manually Pipping requirements.txt because reasons
+	pip install -r requirements.txt
 endef
 
 define cdk-deploy-dev 
