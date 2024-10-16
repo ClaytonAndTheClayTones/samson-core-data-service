@@ -1,39 +1,41 @@
 define install-dependencies
 
-	@echo 
-	@echo ------------------------ 
-	@echo Exporting requirements.txt to root dir
-	@echo 
+    @echo 
+    @echo ------------------------ 
+    @echo Exporting requirements.txt to root dir
+    @echo 
 
-	poetry export --without-hashes --format=requirements.txt > ./requirements.txt
-	
-	@echo ------------------------ 
-	@echo ------------------------ 
-	@echo Exporting requirements.txt to ./app/
-	 
-	@echo  
+    poetry export --without-hashes --format=requirements.txt > ./requirements.txt
+
+    @echo ------------------------ 
+    @echo ------------------------ 
+    @echo Exporting requirements.txt to ./app/
+
+    @echo
  
-	poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
-	
-	@echo ------------------------ 
+    poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
+
+    @echo ------------------------ 
+
+    @echo Manually Pipping requirements.txt because reasons
+    pip install -r requirements.txt
 endef
 
 define cdk-deploy-dev 
-	$(call install-dependencies)
-	cdk deploy --context stage="dev"  
+    $(call install-dependencies)
+    cdk deploy --context stage="dev"
 endef
 
 define cdk-deploy-prod 
-	$(call install-dependencies)
-	cdk deploy --context stage="prod" 
+    $(call install-dependencies)
+    cdk deploy --context stage="prod" 
 endef 
 
 install-dependencies: 
-	$(call install-dependencies)
+    $(call install-dependencies)
 
 cdk-deploy-dev: 
-	$(call cdk-deploy-dev)
+    $(call cdk-deploy-dev)
 
 cdk-deploy-prod: 
-	$(call cdk-deploy-prod)
- 
+    $(call cdk-deploy-prod)
