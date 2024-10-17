@@ -24,6 +24,8 @@ app = FastAPI(
     description="Describe API documentation to be served; types come from "
     "pydantic, routes from the decorators, and docs from the fastapi internal",
     version="0.0.1",
+    docs_url='/docs',
+    openapi_url='/openapi.json'
 )
  
 set_utility_routes(app)
