@@ -17,11 +17,11 @@ pydantic-extra-types = "^2.9.0"
 mangum = "^0.19.0"
 constructs = "^10.3.0"
 psycopg2-binary = "^2.9.9"
-aws-cdk-lib = "^2.161.1"
-aws-cdk-aws-lambda-python-alpha = "^2.161.1a0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^8.3.3" 
+pytest = "^8.3.3"
+aws-cdk-lib = "^2.161.1"
+aws-cdk-aws-lambda-python-alpha = "^2.161.1a0"
 
 [build-system]
 requires = ["poetry-core"]

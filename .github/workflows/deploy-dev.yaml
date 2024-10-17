@@ -53,14 +53,11 @@ jobs:
         run: |
           cd serverlessservice  
 
-
           poetry install
 
           poetry export --without-hashes --format=requirements.txt > ./requirements.txt
           poetry export --without-hashes --format=requirements.txt > ./app/requirements.txt
 
-          pip install -r ./requirements.txt
-
           echo "here we go"
 
-          cdk deploy --context stage="dev"
+          poetry run cdk deploy --context stage="dev"
