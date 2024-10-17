@@ -25,8 +25,11 @@ app = FastAPI(
     "pydantic, routes from the decorators, and docs from the fastapi internal",
     version="0.0.1",
     docs_url='/docs',
-    openapi_url='/openapi.json'
+    openapi_url='/openapi.json', 
 )
+
+if(enviroment.configuration.STAGE != 'local'):
+    app.root_path = "/prod"
  
 set_utility_routes(app)
 set_retailer_routes(app)
