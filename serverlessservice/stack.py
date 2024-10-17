@@ -4,7 +4,7 @@ from os import path
 import aws_cdk as cdk
 import aws_cdk.aws_lambda as lambda_
 import aws_cdk.aws_apigateway as apigateway
-import aws_cdk.aws_lambda_python_alpha as python
+import aws_cdk.aws_lambda_python_alpha as python_lambda
 import aws_cdk.aws_ec2 as ec2 
 
 
@@ -95,8 +95,8 @@ class DicsCoreServiceStack(cdk.Stack):
                 ).subnets
             )
         ) 
-        
-        lambda_function = python.PythonFunction(
+         
+        lambda_function = python_lambda.PythonFunction(
             self,
             f'{cds_prefix}-api-lambda',
             entry=path.join(path.dirname(__file__), "app"),
@@ -105,8 +105,16 @@ class DicsCoreServiceStack(cdk.Stack):
             memory_size=1024,
             timeout=cdk.Duration.seconds(300),
             vpc=core_vpc,
-            allow_public_subnet=True
+            allow_public_subnet=True,
+            bundling= python_lambda.BundlingOptions(
+                asset_excludes=[
+                    "*cdk*"
+                ],
+                
+            )
         )
+        
+        
         
         database.grant_connect(lambda_function, db_user='dics_service')
 
