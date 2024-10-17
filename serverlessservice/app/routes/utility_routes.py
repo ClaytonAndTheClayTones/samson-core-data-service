@@ -12,6 +12,6 @@ def set_utility_routes(app: FastAPI):
         Return a hello hello 
         """
         return {
-            'message': 'Hello hello!'
+            'message': 'Hello HELLO hello!'
         }
 
