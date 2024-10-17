@@ -20,9 +20,8 @@ env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../.env')
 enviroment.setup_environment(env_path)
 
 app = FastAPI(
-    title="Example Test API",
-    description="Describe API documentation to be served; types come from "
-    "pydantic, routes from the decorators, and docs from the fastapi internal",
+    title="DICS Core Api",
+    description="Core Data Service for the DICS system.",
     version="0.0.1",
     docs_url='/docs',
     openapi_url='/openapi.json', 
