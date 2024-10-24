@@ -61,9 +61,11 @@ For more information on the database, check out the ReadMe.md in the database fo
 
 ## Run the service
 
-1. Open the service folder in Visual Studio Code
+1. Open the serverlessservice folder in Visual Studio Code
 2. Copy the .env-example file to another file called ".env"
-3. Open the terminal and run ```pip install -r requirements.txt```
+3. Open the terminal and run ```pip install poetry```
+4. Run ```poetry install```
+5. Run make install-dependencies
 4. Go to the Debug Tab on the left and, near the top, select "Python Debugger: Run API"
 5. Hit F5 on your keyboard.  You should see console output telling you that Uvicorn is running on 127.0.0.1:8001
 6. Your API is running!
