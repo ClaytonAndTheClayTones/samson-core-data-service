@@ -68,7 +68,8 @@ For more information on the database, check out the ReadMe.md in the database fo
 5. Run make install-dependencies
 4. Go to the Debug Tab on the left and, near the top, select "Python Debugger: Run API"
 5. Hit F5 on your keyboard.  You should see console output telling you that Uvicorn is running on 127.0.0.1:8001
-6. Your API is running!
+6. If you have installed everything but the runtime can't find dependencies, try running ```rm -rf `poetry env list --full-path```` and then ```poetry install```
+7. Your API is running!
 
 For more information on the service, check out the ReadMe.md in the service folder!
 
