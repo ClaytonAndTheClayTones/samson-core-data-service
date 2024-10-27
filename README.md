@@ -44,6 +44,8 @@ GRANT
 ON ALL TABLES IN SCHEMA public TO service;
 
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public to service;
+
+ALTER DEFAULT PRIVILEGES FOR ROLE migrator IN SCHEMA public GRANT SELECT, UPDATE, INSERT, DELETE ON TABLES TO service;
 ```
 This is important for setting up the roles that would already exist in a deployed database.
 
