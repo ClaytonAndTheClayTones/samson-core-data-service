@@ -1,5 +1,6 @@
 from uuid import UUID
 from data_accessors.pos_integration_accessor import PosIntegrationDataAccessor
+from data_accessors.retailer_location_accessor import RetailerLocationDataAccessor
 from models.pos_integration_model import (
     PosIntegrationCreateModel,
     PosIntegrationModel,
@@ -10,13 +11,21 @@ from models.common_model import ItemList
 from util.database import PagingModel
 
 accessor: PosIntegrationDataAccessor = PosIntegrationDataAccessor()
+retailer_location_accessor: RetailerLocationDataAccessor = RetailerLocationDataAccessor()
 
 
 class PosIntegrationManager:
 
     def create(
-            self, inboundModel: PosIntegrationCreateModel
+            self, 
+            inboundModel: PosIntegrationCreateModel
     ) -> PosIntegrationModel | None:
+
+        # Denormalize retailer_id
+        
+        referenced_retailer_location = retailer_location_accessor.select_by_id(inboundModel.retailer_location_id)
+        
+        inboundModel.retailer_id = referenced_retailer_location.retailer_id
 
         result = accessor.insert(inboundModel)
 

@@ -40,13 +40,13 @@ def test_posts_invalid_retailer_location_bad_inputs() -> None:
 
     result = qa_post(context.api_url + "/retailer_locations", {
         'name' : generate_random_string(256),
-        'retailer_id' : "not an id",
-        'pos_integration_id' : "also not an id",
+        'retailer_id' : "not an id",  
         'contact_email' : "not an email", 
         'contact_phone' : "not a phone", 
         'location_city' : generate_random_string(256),
         'location_state' : generate_random_string(256),
-        'location_country' : generate_random_string(3)
+        'location_country' : generate_random_string(3),
+        'account_status' : "invalid statoos"
     })
  
     assert result.status_code == 422
@@ -64,11 +64,6 @@ def test_posts_invalid_retailer_location_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'uuid_parsing'
     assert error[0]['msg'] == 'Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `n` at 1'
-    
-    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'pos_integration_id' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'uuid_parsing'
-    assert error[0]['msg'] == 'Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `l` at 2'
  
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'contact_email' in error['loc']]
     assert len(error) == 1
@@ -94,6 +89,11 @@ def test_posts_invalid_retailer_location_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'string_too_long'
     assert error[0]['msg'] == 'String should have at most 2 characters' 
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'account_status' in error['loc']]
+    assert len(error) == 1    
+    assert error[0]['type'] == 'enum'
+    assert error[0]['msg'] == "Input should be 'Unregistered', 'RegisteredInactive', 'RegisteredActive', 'PausedByRequest', 'PausedByBilling' or 'Deactivated'"
  
     
 def test_posts_valid_retailer_location() -> None:

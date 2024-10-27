@@ -28,8 +28,7 @@ def test_gets_retailer_locations_invalid_inputs() -> None:
      
     result = qa_get(f"{context.api_url}/retailer_locations", query_params={
         'ids': 'not an id,also not an id',
-        'retailer_ids': 'not valid,at all,cmon man',
-        'pos_integration_ids': 'also not valid,also at all,also cmon man',
+        'retailer_ids': 'not valid,at all,cmon man', 
         'page' : 'not a page num',
         'page_length' : 'not a length num',
         'is_sort_descending' : 'not a bool'
@@ -39,40 +38,29 @@ def test_gets_retailer_locations_invalid_inputs() -> None:
 
     errors = result.json()
 
-    assert len(errors['detail']) == 6
+    assert len(errors['detail']) == 5
     
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'ids' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'invalid_id_list'
     assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: not an id,\n\t1: also not an id\n].'
 
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'retailer_ids' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'invalid_id_list'
     assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: not valid,\n\t1: at all,\n\t2: cmon man\n].'
-    
-    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'pos_integration_ids' in error['loc']]
-
-    assert len(error) == 1
-    assert error[0]['type'] == 'invalid_id_list'
-    assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: also not valid,\n\t1: also at all,\n\t2: also cmon man\n].'
-
+     
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'page' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'int_parsing'
     assert error[0]['msg'] == 'Input should be a valid integer, unable to parse string as an integer'
  
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'page_length' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'int_parsing'
     assert error[0]['msg'] == 'Input should be a valid integer, unable to parse string as an integer'
 
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'is_sort_descending' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'bool_parsing'
     assert error[0]['msg'] == 'Input should be a valid boolean, unable to interpret input'
@@ -285,42 +273,7 @@ def test_gets_retailer_locations_with_retailer_ids_filter() -> None:
 
     posted_item_4: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4)
-    
-
-def test_gets_retailer_locations_with_pos_integration_ids_filter() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel(create_pos_integration_if_null=True))
-    posted_object_2: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel(create_pos_integration_if_null=True))
-    posted_object_3: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel(pos_integration_id = posted_object_1.pos_integration_id))
-    posted_object_4: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel(create_pos_integration_if_null=True))
-
-    filters: RetailerLocationSearchModel = RetailerLocationSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        pos_integration_ids = f"{posted_object_1.pos_integration_id},{posted_object_4.pos_integration_id}"
-    )
-    
-    result: PagedResponseItemList[RetailerLocationModel] = get_retailer_locations(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 3
-    
-    posted_item_1: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_1.id]
-    assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
-  
-    posted_item_3: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-
-    posted_item_4: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4)
+    assert_objects_are_equal(posted_item_4[0], posted_object_4) 
 
 def test_gets_retailers_with_location_city_filter() -> None:
     populate_configuration_if_not_exists() 

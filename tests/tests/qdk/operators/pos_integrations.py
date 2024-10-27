@@ -1,30 +1,44 @@
 import datetime
 
 from requests import Response 
+from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, create_retailer_location
+from tests.qdk.operators.retailers import RetailerModel
 from tests.qdk.qa_requests import qa_get, qa_patch, qa_post
 from tests.qdk.types import PagedResponseItemList, PagingResponseModel, PagingRequestModel, RequestOperators, TestContext
 from tests.qdk.utils import assert_object_was_updated, assert_objects_are_equal, copy_object_when_appropriate, generate_random_string
  
 class PosIntegrationCreateModel():  
 
-    def __init__(self,
+    def __init__(self, 
+                retailer_location_id: str | None = None,
+                retailer_location: RetailerLocationCreateModel | None = None,
                 name: str | None = None,
+                url: str | None = None,
+                key: str | None = None,
                 description: str | None = None,
                 pos_platform: str | None = None) -> None:
-        
+         
+        self.retailer_location_id = retailer_location_id
+        self.retailer_location = retailer_location
         self.name = name
+        self.url = url
+        self.key = key
         self.description = description
         self.pos_platform = pos_platform
          
         
 class PosIntegrationUpdateModel():  
 
-    def __init__(self,
+    def __init__(self, 
             name: str | None = None,
+            url: str | None = None,
+            key: str | None = None,
             description: str | None = None,
             pos_platform: str | None = None) -> None:
         
         self.name = name
+        self.url = url
+        self.key = key
         self.description = description
         self.pos_platform = pos_platform
 
@@ -32,23 +46,35 @@ class PosIntegrationModel():
 
     def __init__(self, 
                 id: str, 
+                retailer_id: str, 
+                retailer_location_id: str, 
                 name: str,
+                url: str,
+                key: str,
                 pos_platform: str,
                 created_at: datetime.datetime,
+                retailer_location: RetailerLocationModel | None = None, 
+                retailer: RetailerModel | None = None, 
                 description: str | None = None,  
                 updated_at: datetime.datetime | None = None) -> None:
         
         self.id = id
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.retailer_id = retailer_id
+        self.retailer_location_id = retailer_location_id
         self.name = name
+        self.url = url
+        self.key = key
         self.pos_platform = pos_platform
         self.description = description 
+        self.created_at = created_at
+        self.updated_at = updated_at
         
 class PosIntegrationSearchModel(PagingRequestModel):  
 
     def __init__(self, 
                 ids: str | None = None,  
+                retailer_ids: str | None = None,  
+                retailer_location_ids: str | None = None,  
                 name: str | None = None,
                 name_like: str | None = None,
                 pos_platform: str | None = None, 
@@ -64,6 +90,8 @@ class PosIntegrationSearchModel(PagingRequestModel):
         )
         
         self.ids = ids 
+        self.retailer_ids = retailer_ids 
+        self.retailer_location_ids = retailer_location_ids 
         self.name = name
         self.name_like = name_like
         self.pos_platform = pos_platform 
@@ -77,10 +105,19 @@ def mint_default_pos_integration(
 
     overrides = overrides or PosIntegrationCreateModel()
     
+    if(overrides.retailer_location_id is None):
+
+        new_retailer_location = create_retailer_location(context, overrides.retailer_location, request_operators = request_operators)
+        overrides.retailer_location_id = new_retailer_location.id
+
+        del overrides.retailer_location
+        
     default_pos_integration: PosIntegrationCreateModel = PosIntegrationCreateModel(
         name = random_string + '_name',
+        url = 'www.example.com/justanexample',
+        key = 'abcdefghijk1234567890',
         description = 'describe it!!!!!', 
-        pos_platform = 'Unknown'
+        pos_platform = 'Unknown',
     )
 
     copy_object_when_appropriate(default_pos_integration, overrides)
@@ -103,7 +140,7 @@ def create_pos_integration(
  
         result_dict = result.json()
 
-        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at"])
+        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "retailer_id", "retailer", "retailer_location_id", "retailer_location"])
 
         assert result_dict['id'] is not None
         assert result_dict['created_at'] is not None

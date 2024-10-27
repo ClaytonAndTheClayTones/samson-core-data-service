@@ -44,7 +44,7 @@ class CommonUtilities:
             return None
 
     def generate_invalid_comma_delimited_ids_message(self, errors):
-        message = f'Property must be a valid list of v4 uuids.  Invalid values received: ['
+        message = f'Property must be a valid list of v4 uuids. Invalid values received: ['
 
         for i, key in enumerate(errors.keys()):
 

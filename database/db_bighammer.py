@@ -2,8 +2,6 @@ import os
 from pprint import pprint
 from common.bighammer import BigHammer 
  
-
-from common.connection import PGConnection
 from environment import Environment
 
 environment: Environment = Environment()

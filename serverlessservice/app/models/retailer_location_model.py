@@ -15,48 +15,42 @@ from models.common_model import (
     validate_ids,
 )
 
+class RetailerLocationAccountStatuses(Enum):
+    Unregistered = 'Unregistered'
+    RegisteredInactive = 'RegisteredInactive' 
+    RegisteredActive = 'RegisteredActive' 
+    PausedByRequest = 'PausedByRequest' 
+    PausedByBilling = 'PausedByBilling' 
+    Deactivated = 'Deactivated'
 
 # Pydantic causes these class variables to safely be instance variables.
 class RetailerLocationInboundCreateModel(BaseModel):
     name: str = Field(..., max_length=255)
-    retailer_id: Annotated[UUID4, Strict(False)]
-    pos_integration_id: Optional[Annotated[UUID4, Strict(False)]] = Field(
-        default=None)
+    retailer_id: Annotated[UUID4, Strict(False)] = Field(...)
     contact_email: Optional[EmailStr] = Field(default=None, max_length=320)
-    contact_phone: Optional[DicsPhoneNumber] = Field(default=None,
-                                                     max_length=32)
+    contact_phone: Optional[DicsPhoneNumber] = Field(default=None, max_length=32)
     location_city: Optional[str] = Field(default=None, max_length=255)
     location_state: Optional[str] = Field(default=None, max_length=255)
-    location_country: Optional[str] = Field(default=None,
-                                            max_length=2,
-                                            min_length=2)
+    location_country: Optional[str] = Field(default=None, max_length=2, min_length=2)
+    account_status: Optional[RetailerLocationAccountStatuses] = Field(default = None)
 
 
 # Pydantic causes these class variables to safely be instance variables.
 class RetailerLocationInboundUpdateModel(BaseModel):
-    name: Optional[str] = Field(default=None, max_length=255)
-    pos_integration_id: Optional[Annotated[UUID4, Strict(False)]] = Field(
-        default=None)
+    name: Optional[str] = Field(default=None, max_length=255) 
     contact_email: Optional[EmailStr] = Field(default=None, max_length=320)
-    contact_phone: Optional[DicsPhoneNumber] = Field(default=None,
-                                                     max_length=32)
+    contact_phone: Optional[DicsPhoneNumber] = Field(default=None, max_length=32)
     location_city: Optional[str] = Field(default=None, max_length=255)
     location_state: Optional[str] = Field(default=None, max_length=255)
-    location_country: Optional[str] = Field(default=None,
-                                            max_length=2,
-                                            min_length=2)
+    location_country: Optional[str] = Field(default=None, max_length=2, min_length=2)
+    account_status: Optional[RetailerLocationAccountStatuses] = Field(default = None)
 
 
 # Pydantic causes these class variables to safely be instance variables.
 class RetailerLocationInboundSearchModel(CommonInboundSearchModel):
     name: Optional[str] = Query(default=None)
     name_like: Optional[str] = Query(default=None)
-    retailer_ids: Annotated[Optional[str],
-                            BeforeValidator(validate_ids)] = Query(
-                                default=None)
-    pos_integration_ids: Annotated[Optional[str],
-                                   BeforeValidator(validate_ids)] = Query(
-                                       default=None)
+    retailer_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     location_city: Optional[str] = Query(default=None)
     location_state: Optional[str] = Query(default=None)
     location_country: Optional[str] = Query(default=None)
@@ -69,43 +63,43 @@ class RetailerLocationCreateModel:
         name: str,
         retailer_id: UUID,
         contact_email: EmailStr | None = None,
-        contact_phone: DicsPhoneNumber | None = None,
-        pos_integration_id: str | None = None,
+        contact_phone: DicsPhoneNumber | None = None, 
         location_city: str | None = None,
         location_state: str | None = None,
         location_country: str | None = None,
+        account_status: RetailerLocationAccountStatuses | None = None,
     ) -> None:
 
         self.name = name
-        self.retailer_id = retailer_id
-        self.pos_integration_id = pos_integration_id
+        self.retailer_id = retailer_id 
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.location_city = location_city
         self.location_state = location_state
         self.location_country = location_country
+        self.account_status = account_status
 
 
 class RetailerLocationUpdateModel:
 
     def __init__(
         self,
-        name: str | None = None,
-        pos_integration_id: UUID | None = None,
+        name: str | None = None, 
         contact_email: EmailStr | None = None,
         contact_phone: DicsPhoneNumber | None = None,
         location_city: str | None = None,
         location_state: str | None = None,
         location_country: str | None = None,
+        account_status: RetailerLocationAccountStatuses | None = None,
     ) -> None:
 
-        self.name = name
-        self.pos_integration_id = pos_integration_id
+        self.name = name 
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.location_city = location_city
         self.location_state = location_state
         self.location_country = location_country
+        self.account_status = account_status
 
 
 class RetailerLocationSearchModel(CommonSearchModel):
@@ -113,8 +107,7 @@ class RetailerLocationSearchModel(CommonSearchModel):
     def __init__(
         self,
         ids: list[UUID] | None = None,
-        retailer_ids: list[UUID] | None = None,
-        pos_integration_ids: list[UUID] | None = None,
+        retailer_ids: list[UUID] | None = None, 
         name: str | None = None,
         name_like: str | None = None,
         location_city: str | None = None,
@@ -126,8 +119,7 @@ class RetailerLocationSearchModel(CommonSearchModel):
 
         self.name = name
         self.name_like = name_like
-        self.retailer_ids = retailer_ids
-        self.pos_integration_ids = pos_integration_ids
+        self.retailer_ids = retailer_ids 
         self.location_city = location_city
         self.location_state = location_state
         self.location_country = location_country
@@ -140,8 +132,8 @@ class RetailerLocationDatabaseModel(CommonDatabaseModel):
         id: UUID,
         retailer_id: UUID,
         name: str,
-        created_at: datetime,
-        pos_integration_id: UUID | None = None,
+        account_status: RetailerLocationAccountStatuses,
+        created_at: datetime, 
         location_city: str | None = None,
         location_state: str | None = None,
         location_country: str | None = None,
@@ -153,13 +145,13 @@ class RetailerLocationDatabaseModel(CommonDatabaseModel):
         super().__init__(id, created_at, updated_at)
 
         self.name = name
-        self.retailer_id = retailer_id
-        self.pos_integration_id = pos_integration_id
+        self.retailer_id = retailer_id 
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.location_city = location_city
         self.location_state = location_state
         self.location_country = location_country
+        self.account_status = account_status
 
 
 class RetailerLocationModel(CommonModel):
@@ -169,13 +161,13 @@ class RetailerLocationModel(CommonModel):
         id: UUID,
         retailer_id: UUID,
         name: str,
-        created_at: datetime,
-        pos_integration_id: UUID | None = None,
+        account_status: RetailerLocationAccountStatuses,
+        created_at: datetime, 
         location_city: str | None = None,
         location_state: str | None = None,
         location_country: str | None = None,
         contact_email: EmailStr | None = None,
-        contact_phone: DicsPhoneNumber | None = None,
+        contact_phone: DicsPhoneNumber | None = None, 
         updated_at: datetime | None = None,
     ):
 
@@ -183,21 +175,22 @@ class RetailerLocationModel(CommonModel):
 
         self.name = name
         self.retailer_id = retailer_id
-        self.pos_integration_id = pos_integration_id
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.location_city = location_city
         self.location_state = location_state
         self.location_country = location_country
+        self.account_status = account_status
 
 
 # Pydantic causes these class variables to safely be instance variables.
 class RetailerLocationOutboundModel(CommonOutboundResponseModel):
     name: str
     retailer_id: UUID
-    pos_integration_id: UUID | None = None
+    account_status: RetailerLocationAccountStatuses 
     location_city: str | None = None
     location_state: str | None = None
     location_country: str | None = None
-    contact_email: str | EmailStr = None
-    contact_phone: str | DicsPhoneNumber = None
+    contact_email: EmailStr | None = None
+    contact_phone: DicsPhoneNumber | None = None
+    account_status: RetailerLocationAccountStatuses | None = None

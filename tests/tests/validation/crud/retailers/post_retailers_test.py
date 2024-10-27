@@ -37,14 +37,15 @@ def test_posts_invalid_retailer_bad_inputs() -> None:
         'hq_city' : generate_random_string(256),
         'hq_state' : generate_random_string(256),
         'hq_country' : generate_random_string(3),
-        'contact_email' : 'this is obviously not an email man'
+        'contact_email' : 'this is obviously not an email man',
+        'account_status' : 'a very invalid status'
     })
  
     assert result.status_code == 422
 
     errors = result.json()
 
-    assert len(errors['detail']) == 5
+    assert len(errors['detail']) == 6
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'name' in error['loc']]
     assert len(error) == 1
@@ -70,6 +71,11 @@ def test_posts_invalid_retailer_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'value_error'
     assert error[0]['msg'] == 'value is not a valid email address: An email address must have an @-sign.'
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'account_status' in error['loc']]
+    assert len(error) == 1    
+    assert error[0]['type'] == 'enum'
+    assert error[0]['msg'] == "Input should be 'Unregistered', 'RegisteredInactive', 'RegisteredActive', 'PausedByRequest', 'PausedByBilling' or 'Deactivated'"
 
 def test_posts_valid_retailer() -> None:
      

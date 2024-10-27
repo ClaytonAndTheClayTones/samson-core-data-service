@@ -10,12 +10,14 @@ class RetailerCreateModel():
     def __init__(self,
                 name: str | None = None,
                 contact_email: str | None = None,
+                account_status: str | None = None,
                 hq_city: str | None = None,
                 hq_state: str | None = None,
                 hq_country: str | None = None) -> None:
         
         self.name = name
         self.contact_email = contact_email
+        self.account_status = account_status
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country 
@@ -25,12 +27,14 @@ class RetailerUpdateModel():
     def __init__(self,
                 name: str | None = None,
                 contact_email: str | None = None,
+                account_status: str | None = None,
                 hq_city: str | None = None,
                 hq_state: str | None = None,
                 hq_country: str | None = None) -> None:
         
         self.name = name
         self.contact_email = contact_email
+        self.account_status = account_status
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country 
@@ -42,6 +46,7 @@ class RetailerModel():
                 name: str,
                 created_at: datetime.datetime,
                 contact_email: str | None = None, 
+                account_status: str | None = None,
                 hq_city: str | None = None,
                 hq_state: str | None = None,
                 hq_country: str | None = None,
@@ -52,6 +57,7 @@ class RetailerModel():
         self.updated_at = updated_at
         self.name = name
         self.contact_email = contact_email
+        self.account_status = account_status
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country
@@ -97,7 +103,8 @@ def mint_default_retailer(
         hq_city = 'cityville',
         hq_state = 'north new stateplace',
         hq_country = 'CK',
-        contact_email = 'madeupemailaddress@example.com'
+        contact_email = 'madeupemailaddress@example.com',
+        account_status= 'PausedByRequest'
     )
 
     copy_object_when_appropriate(default_retailer, overrides)

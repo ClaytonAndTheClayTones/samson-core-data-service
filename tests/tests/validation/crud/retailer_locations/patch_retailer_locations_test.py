@@ -17,13 +17,13 @@ def test_posts_invalid_retailer_location_bad_inputs() -> None:
 
     result = qa_patch(f"{context.api_url}/retailer_locations/{posted_object.id}", {
         'name' : generate_random_string(256),
-        'retailer_id' : "patching not an id",
-        'pos_integration_id' : "also patching not an id",
+        'retailer_id' : "patching not an id", 
         'contact_email' : "patching not an email", 
         'contact_phone' : "patching not a phone", 
         'location_city' : generate_random_string(256),
         'location_state' : generate_random_string(256),
-        'location_country' : generate_random_string(3)
+        'location_country' : generate_random_string(3),
+        'account_status' : 'patch it up with invalid garbage'
     })
  
     assert result.status_code == 422
@@ -36,11 +36,6 @@ def test_posts_invalid_retailer_location_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'string_too_long'
     assert error[0]['msg'] == 'String should have at most 255 characters'   
-    
-    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'pos_integration_id' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'uuid_parsing'
-    assert error[0]['msg'] == 'Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `l` at 2'
  
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'contact_email' in error['loc']]
     assert len(error) == 1
@@ -66,6 +61,11 @@ def test_posts_invalid_retailer_location_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'string_too_long'
     assert error[0]['msg'] == 'String should have at most 2 characters' 
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'account_status' in error['loc']]
+    assert len(error) == 1    
+    assert error[0]['type'] == 'enum'
+    assert error[0]['msg'] == "Input should be 'Unregistered', 'RegisteredInactive', 'RegisteredActive', 'PausedByRequest', 'PausedByBilling' or 'Deactivated'"
  
 def test_patches_valid_retailer_location() -> None:
      
@@ -76,17 +76,15 @@ def test_patches_valid_retailer_location() -> None:
     random_string = generate_random_string(14)
 
     posted_object: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel(create_pos_integration_if_null = True))
-    
-    second_posted_pos_integration = create_pos_integration(context)
- 
-    update_object: RetailerLocationUpdateModel = RetailerLocationUpdateModel(
-        pos_integration_id = second_posted_pos_integration.id,
+       
+    update_object: RetailerLocationUpdateModel = RetailerLocationUpdateModel( 
         name = random_string + '_name', 
         location_city = 'patchville',
         location_state = 'north new patchplace',
         location_country = 'PP',
         contact_email = 'madeupemailaddrepatchyss@example.com', 
-        contact_phone = '+12345612345'
+        contact_phone = '+12345612345',
+        account_status = 'Deactivated'
     )
 
     update_retailer_location(context, posted_object.id or "", update_object)

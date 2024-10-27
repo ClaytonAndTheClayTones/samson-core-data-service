@@ -1,7 +1,6 @@
 import datetime
 
 from requests import Response  
-from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, PosIntegrationModel, create_pos_integration
 from tests.qdk.operators.retailers import RetailerCreateModel, RetailerModel, create_retailer
 from tests.qdk.qa_requests import qa_get, qa_patch, qa_post
 from tests.qdk.types import PagedResponseItemList, PagingRequestModel, PagingResponseModel, RequestOperators, TestContext
@@ -11,21 +10,19 @@ class RetailerLocationCreateModel():
 
     def __init__(self,
                 retailer_id: str | None = None,
-                retailer: RetailerCreateModel | None = None, 
-                pos_integration_id: str | None = None,
-                pos_integration: PosIntegrationCreateModel | None = None,
+                retailer: RetailerCreateModel | None = None,   
                 create_pos_integration_if_null: bool | None = False,
                 contact_email: str | None = None,
                 contact_phone: str | None = None,
+                account_status: str | None = None,
                 location_city: str | None = None,
                 location_state: str | None = None,
                 location_country: str | None = None,
                 name: str | None = None) -> None:
         
         self.retailer_id = retailer_id
-        self.retailer = retailer
-        self.pos_integration_id = pos_integration_id
-        self.pos_integration = pos_integration
+        self.retailer = retailer  
+        self.account_status = account_status
         self.create_pos_integration_if_null = create_pos_integration_if_null
         
         self.contact_email = contact_email
@@ -43,10 +40,9 @@ class RetailerLocationModel():
                 created_at: datetime.datetime | None = None, 
                 updated_at: datetime.datetime | None = None, 
                 retailer_id: str | None = None,
-                retailer: RetailerModel | None = None,
-                pos_integration_id: str | None = None,
-                pos_integration: PosIntegrationModel | None = None,
+                retailer: RetailerModel | None = None, 
                 name: str | None = None,
+                account_status: str | None = None,
                 contact_email: str | None = None,
                 contact_phone: str | None = None,
                 location_city: str | None = None,
@@ -58,8 +54,7 @@ class RetailerLocationModel():
         self.updated_at = updated_at
         self.retailer_id = retailer_id
         self.retailer = retailer
-        self.pos_integration_id = pos_integration_id
-        self.pos_integration = pos_integration
+        self.account_status = account_status 
         
         self.name = name
                 
@@ -74,8 +69,7 @@ class RetailerLocationSearchModel(PagingRequestModel):
 
     def __init__(self, 
                 ids: str | None = None,  
-                retailer_ids: str | None = None,  
-                pos_integration_ids: str | None = None,  
+                retailer_ids: str | None = None,   
                 name: str | None = None,
                 name_like: str | None = None,  
                 location_city: str | None = None,
@@ -93,8 +87,7 @@ class RetailerLocationSearchModel(PagingRequestModel):
         )
         
         self.ids = ids 
-        self.retailer_ids = retailer_ids 
-        self.pos_integration_ids = pos_integration_ids 
+        self.retailer_ids = retailer_ids  
         self.name = name
         self.name_like = name_like 
         self.location_city = location_city 
@@ -103,16 +96,16 @@ class RetailerLocationSearchModel(PagingRequestModel):
         
 class RetailerLocationUpdateModel():  
 
-    def __init__(self, 
-                pos_integration_id: str | None = None, 
+    def __init__(self,  
                 name: str | None = None,
                 contact_email: str | None = None,
                 contact_phone: str | None = None,
+                account_status: str | None = None,
                 location_city: str | None = None,
                 location_state: str | None = None,
                 location_country: str | None = None,) -> None: 
-        
-        self.pos_integration = pos_integration_id
+         
+        self.account_status = account_status
         self.name = name
         self.contact_email = contact_email
         self.contact_phone = contact_phone
@@ -134,15 +127,7 @@ def mint_default_retailer_location(
         overrides.retailer_id = new_retailer.id
 
         del overrides.retailer
-    
-    
-    if(overrides.pos_integration_id is None and overrides.create_pos_integration_if_null):
-
-        new_pos_integration = create_pos_integration(context, overrides.pos_integration, request_operators = request_operators)
-        overrides.pos_integration_id = new_pos_integration.id
-
-        del overrides.pos_integration
-
+     
     random_string = generate_random_string()
     
     default_retailer_location: RetailerLocationCreateModel = RetailerLocationCreateModel(
@@ -151,7 +136,8 @@ def mint_default_retailer_location(
         location_state = 'north new stateplace',
         location_country = 'CK',
         contact_email = 'madeupemailaddress@example.com', 
-        contact_phone = '+12345678901'
+        contact_phone = '+12345678901', 
+        account_status= 'PausedByRequest'
     )
 
     copy_object_when_appropriate(default_retailer_location, overrides)

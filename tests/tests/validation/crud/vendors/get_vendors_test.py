@@ -272,44 +272,7 @@ def test_gets_vendor_locations_with_unregistered_vendor_retailer_ids_filter() ->
 
     posted_item_4: list[VendorModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4)
-    
-    
-def test_gets_vendor_locations_with_pos_integration_ids_filter() -> None:
-        
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: VendorModel = create_vendor(context, VendorCreateModel(create_registered_replacement_vendor_if_null=True))
-    posted_object_2: VendorModel = create_vendor(context, VendorCreateModel(create_registered_replacement_vendor_if_null=True))
-    posted_object_3: VendorModel = create_vendor(context, VendorCreateModel(registered_replacement_vendor_id = posted_object_1.registered_replacement_vendor_id))
-    posted_object_4: VendorModel = create_vendor(context, VendorCreateModel(create_registered_replacement_vendor_if_null=True))
-
-    filters: VendorSearchModel = VendorSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        registered_replacement_vendor_ids = f"{posted_object_1.registered_replacement_vendor_id},{posted_object_4.registered_replacement_vendor_id}"
-    )
-    
-    result: PagedResponseItemList[VendorModel] = get_vendors(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 3
-    
-    posted_item_1: list[VendorModel] = [item for item in result.items if item.id == posted_object_1.id]
-    assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
-  
-    posted_item_3: list[VendorModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-
-    posted_item_4: list[VendorModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4)
-    
+    assert_objects_are_equal(posted_item_4[0], posted_object_4) 
     
 def test_gets_vendors_with_hq_city_filter() -> None:
     populate_configuration_if_not_exists() 

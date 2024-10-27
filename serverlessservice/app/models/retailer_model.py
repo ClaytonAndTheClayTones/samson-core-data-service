@@ -14,7 +14,14 @@ from models.common_model import (
     CommonSearchModel,
 )
 
-
+class RetailerAccountStatuses(Enum):
+    Unregistered = 'Unregistered'
+    RegisteredInactive = 'RegisteredInactive' 
+    RegisteredActive = 'RegisteredActive' 
+    PausedByRequest = 'PausedByRequest' 
+    PausedByBilling = 'PausedByBilling' 
+    Deactivated = 'Deactivated'
+    
 # Pydantic causes these class variables to safely be instance variables.
 class RetailerInboundCreateModel(BaseModel):
     name: str = Field(..., max_length=255)
@@ -22,6 +29,7 @@ class RetailerInboundCreateModel(BaseModel):
     hq_city: Optional[str] = Field(default=None, max_length=255)
     hq_state: Optional[str] = Field(default=None, max_length=255)
     hq_country: Optional[str] = Field(default=None, max_length=2, min_length=2)
+    account_status: Optional[RetailerAccountStatuses] = Field(default = None)
 
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -31,6 +39,7 @@ class RetailerInboundUpdateModel(BaseModel):
     hq_city: Optional[str] = Field(default=None, max_length=255)
     hq_state: Optional[str] = Field(default=None, max_length=255)
     hq_country: Optional[str] = Field(default=None, max_length=2, min_length=2)
+    account_status: Optional[RetailerAccountStatuses] = Field(default = None)
 
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -40,8 +49,7 @@ class RetailerInboundSearchModel(CommonInboundSearchModel):
     hq_city: Optional[str] = Query(default=None)
     hq_state: Optional[str] = Query(default=None)
     hq_country: Optional[str] = Query(default=None)
-
-
+ 
 class RetailerCreateModel:
 
     def __init__(
@@ -51,6 +59,7 @@ class RetailerCreateModel:
         hq_city: str | None = None,
         hq_state: str | None = None,
         hq_country: str | None = None,
+        account_status: RetailerAccountStatuses | None = None
     ) -> None:
 
         self.name = name
@@ -58,6 +67,7 @@ class RetailerCreateModel:
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country
+        self.account_status = account_status
 
 
 class RetailerUpdateModel:
@@ -69,6 +79,7 @@ class RetailerUpdateModel:
         hq_city: str | None = None,
         hq_state: str | None = None,
         hq_country: str | None = None,
+        account_status: RetailerAccountStatuses | None = None,
     ) -> None:
 
         self.name = name
@@ -76,6 +87,7 @@ class RetailerUpdateModel:
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country
+        self.account_status = account_status
 
 
 class RetailerSearchModel(CommonSearchModel):
@@ -133,6 +145,7 @@ class RetailerModel(CommonModel):
         hq_state: str | None = None,
         hq_country: str | None = None,
         contact_email: EmailStr | None = None,
+        account_status: RetailerAccountStatuses | None = None,
         updated_at: datetime | None = None,
     ):
 
@@ -143,6 +156,7 @@ class RetailerModel(CommonModel):
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country
+        self.account_status = account_status
 
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -152,3 +166,4 @@ class RetailerOutboundModel(CommonOutboundResponseModel):
     hq_city: str | None = None
     hq_state: str | None = None
     hq_country: str | None = None
+    account_status: RetailerAccountStatuses | None = None

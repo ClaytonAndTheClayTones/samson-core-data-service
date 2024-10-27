@@ -1,7 +1,6 @@
 from typing import Any
 from models.retailer_model import (
     RetailerCreateModel,
-    RetailerDatabaseModel,
     RetailerInboundCreateModel,
     RetailerInboundSearchModel,
     RetailerInboundUpdateModel,
@@ -24,39 +23,49 @@ class RetailerDataAdapter:
     common_utilities: CommonUtilities = CommonUtilities()
 
     def convert_from_inbound_create_model_to_create_model(
-        self, inbound_create_model: RetailerInboundCreateModel
+        self, 
+        inbound_create_model: RetailerInboundCreateModel
     ) -> RetailerCreateModel:
+       
         model = RetailerCreateModel(
             name=inbound_create_model.name,
             hq_state=inbound_create_model.hq_state,
             hq_city=inbound_create_model.hq_city,
             hq_country=inbound_create_model.hq_country,
             contact_email=inbound_create_model.contact_email,
+            account_status=inbound_create_model.account_status,
         )
 
         return model
 
     def convert_from_inbound_update_model_to_create_model(
-        self, inbound_update_model: RetailerInboundUpdateModel
+        self, 
+        inbound_update_model: RetailerInboundUpdateModel
     ) -> RetailerUpdateModel:
+        
         model = RetailerUpdateModel(
             name=inbound_update_model.name,
             hq_state=inbound_update_model.hq_state,
             hq_city=inbound_update_model.hq_city,
             hq_country=inbound_update_model.hq_country,
             contact_email=inbound_update_model.contact_email,
+            account_status=inbound_update_model.account_status,
         )
 
         return model
 
     def convert_from_inbound_search_model_to_search_model(
-        self, inbound_search_model: RetailerInboundSearchModel
+        self, 
+        inbound_search_model: RetailerInboundSearchModel
     ) -> RetailerSearchModel:
+        
         model = RetailerSearchModel(
             ids=(
-                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(
-                    inbound_search_model.ids)
-                if inbound_search_model.ids is not None else None),
+                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(inbound_search_model.ids)
+                if inbound_search_model.ids is not None
+                else 
+                    None
+            ),
             name=inbound_search_model.name,
             name_like=inbound_search_model.name_like,
             hq_state=inbound_search_model.hq_state,
@@ -67,55 +76,68 @@ class RetailerDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, model: RetailerSearchModel) -> list[SearchTerm]:
+            self, 
+            model: RetailerSearchModel
+        ) -> list[SearchTerm]:
+        
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
             search_terms.append(InListSearchTerm('id', model.ids))
+            
         if model.name is not None:
             search_terms.append(ExactMatchSearchTerm('name', model.name, True))
+            
         if model.name_like is not None:
-            search_terms.append(
-                LikeSearchTerm('name', model.name_like,
-                               LikeComparatorModes.Like, True))
+            search_terms.append(LikeSearchTerm('name', model.name_like, LikeComparatorModes.Like, True))
+            
         if model.hq_state is not None:
-            search_terms.append(
-                ExactMatchSearchTerm('hq_state', model.hq_state, True))
+            search_terms.append(ExactMatchSearchTerm('hq_state', model.hq_state, True))
+            
         if model.hq_city is not None:
-            search_terms.append(
-                ExactMatchSearchTerm('hq_city', model.hq_city, True))
+            search_terms.append(ExactMatchSearchTerm('hq_city', model.hq_city, True))
+            
         if model.hq_country is not None:
-            search_terms.append(
-                ExactMatchSearchTerm('hq_country', model.hq_country, True))
+            search_terms.append(ExactMatchSearchTerm('hq_country', model.hq_country, True))
 
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, model: RetailerCreateModel) -> dict[str, Any]:
+            self, 
+            model: RetailerCreateModel
+        ) -> dict[str, Any]:
+        
         database_model: dict[str, Any] = {
             'name': model.name,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
             'contact_email': model.contact_email,
+            'account_status': model.account_status.value,
         }
 
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, model: RetailerUpdateModel) -> dict[str, Any]:
+            self, 
+            model: RetailerUpdateModel
+        ) -> dict[str, Any]:
         database_model: dict[str, Any] = {
             'name': model.name,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
             'contact_email': model.contact_email,
+            'account_status': model.account_status.value,
         }
 
         return database_model
 
     def convert_from_database_model_to_model(
-            self, database_model: dict[str, Any]) -> RetailerModel:
+            self,
+            database_model: dict[str, Any]
+        ) -> RetailerModel:
+        
         model = RetailerModel(
             id=database_model['id'],
             name=database_model['name'],
@@ -123,6 +145,7 @@ class RetailerDataAdapter:
             hq_city=database_model['hq_city'],
             hq_country=database_model['hq_country'],
             contact_email=database_model['contact_email'],
+            account_status=database_model['account_status'],
             created_at=database_model['created_at'],
             updated_at=database_model['updated_at'],
         )
@@ -130,7 +153,10 @@ class RetailerDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, model: RetailerModel) -> RetailerOutboundModel:
+            self, 
+            model: RetailerModel
+        ) -> RetailerOutboundModel:
+        
         outbound_model = RetailerOutboundModel(
             id=model.id,
             name=model.name,
@@ -138,6 +164,7 @@ class RetailerDataAdapter:
             hq_city=model.hq_city,
             hq_country=model.hq_country,
             contact_email=model.contact_email,
+            account_status=model.account_status,
             created_at=model.created_at,
             updated_at=model.updated_at,
         )

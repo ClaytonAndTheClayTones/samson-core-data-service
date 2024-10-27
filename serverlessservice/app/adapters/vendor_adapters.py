@@ -1,7 +1,6 @@
 from typing import Any
 from models.vendor_model import (
     VendorCreateModel,
-    VendorDatabaseModel,
     VendorInboundCreateModel,
     VendorInboundSearchModel,
     VendorInboundUpdateModel,
@@ -18,8 +17,7 @@ from util.database import (
     LikeSearchTerm,
     SearchTerm,
 )
-
-
+ 
 class VendorDataAdapter:
     common_utilities: CommonUtilities = CommonUtilities()
 
@@ -27,13 +25,12 @@ class VendorDataAdapter:
         self,
         inbound_create_model: VendorInboundCreateModel,
     ) -> VendorCreateModel:
+        
         model = VendorCreateModel(
             name=inbound_create_model.name,
+            unregistered_vendor_retailer_id=inbound_create_model.unregistered_vendor_retailer_id, 
             is_registered=inbound_create_model.is_registered,
-            unregistered_vendor_retailer_id=inbound_create_model.
-            unregistered_vendor_retailer_id,
-            registered_replacement_vendor_id=inbound_create_model.
-            registered_replacement_vendor_id,
+            account_status=inbound_create_model.account_status,
             hq_state=inbound_create_model.hq_state,
             hq_city=inbound_create_model.hq_city,
             hq_country=inbound_create_model.hq_country,
@@ -47,9 +44,11 @@ class VendorDataAdapter:
         self,
         inbound_update_model: VendorInboundUpdateModel,
     ) -> VendorUpdateModel:
+        
         model = VendorUpdateModel(
             name=inbound_update_model.name,
             is_registered=inbound_update_model.is_registered,
+            account_status=inbound_update_model.account_status,
             hq_state=inbound_update_model.hq_state,
             hq_city=inbound_update_model.hq_city,
             hq_country=inbound_update_model.hq_country,
@@ -60,23 +59,24 @@ class VendorDataAdapter:
         return model
 
     def convert_from_inbound_search_model_to_search_model(
-            self, inbound_search_model: VendorInboundSearchModel
+            self, 
+            inbound_search_model: VendorInboundSearchModel
     ) -> VendorSearchModel:
+        
         model = VendorSearchModel(
             ids=(
-                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(
-                    inbound_search_model.ids)
-                if inbound_search_model.ids is not None else None),
+                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(inbound_search_model.ids)
+                if inbound_search_model.ids is not None
+                else 
+                    None
+            ),
             unregistered_vendor_retailer_ids=(
-                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(
-                    inbound_search_model.unregistered_vendor_retailer_ids)
+                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(inbound_search_model.unregistered_vendor_retailer_ids)
                 if inbound_search_model.unregistered_vendor_retailer_ids
-                is not None else None),
-            registered_replacement_vendor_ids=(
-                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(
-                    inbound_search_model.registered_replacement_vendor_ids)
-                if inbound_search_model.registered_replacement_vendor_ids
-                is not None else None),
+                is not None 
+                else 
+                    None
+            ), 
             is_registered=inbound_search_model.is_registered,
             name=inbound_search_model.name,
             name_like=inbound_search_model.name_like,
@@ -88,25 +88,22 @@ class VendorDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, model: VendorSearchModel) -> list[SearchTerm]:
+            self, 
+            model: VendorSearchModel
+        ) -> list[SearchTerm]:
+        
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
             search_terms.append(InListSearchTerm('id', model.ids))
-
-        if model.registered_replacement_vendor_ids is not None:
-            search_terms.append(
-                InListSearchTerm(
-                    'registered_replacement_vendor_id',
-                    model.registered_replacement_vendor_ids,
-                ))
-
+  
         if model.unregistered_vendor_retailer_ids is not None:
             search_terms.append(
                 InListSearchTerm(
                     'unregistered_vendor_retailer_id',
                     model.unregistered_vendor_retailer_ids,
-                ))
+                )
+            )
 
         if model.name is not None:
             search_terms.append(ExactMatchSearchTerm('name', model.name, True))
@@ -131,14 +128,15 @@ class VendorDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, model: VendorCreateModel) -> dict[str, Any]:
+            self, 
+            model: VendorCreateModel
+        ) -> dict[str, Any]:
+        
         database_model: dict[str, Any] = {
             'name': model.name,
-            'registered_replacement_vendor_id':
-            model.registered_replacement_vendor_id,
-            'unregistered_vendor_retailer_id':
-            model.unregistered_vendor_retailer_id,
+            'unregistered_vendor_retailer_id': model.unregistered_vendor_retailer_id,
             'is_registered': model.is_registered,
+            'account_status': model.account_status,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
@@ -149,10 +147,14 @@ class VendorDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, model: VendorUpdateModel) -> dict[str, Any]:
+            self, 
+            model: VendorUpdateModel
+        ) -> dict[str, Any]:
+        
         database_model: dict[str, Any] = {
             'name': model.name,
             'is_registered': model.is_registered,
+            'account_status': model.account_status,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
@@ -163,15 +165,16 @@ class VendorDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, database_model: dict[str, Any]) -> VendorModel:
+            self, 
+            database_model: dict[str, Any]
+        ) -> VendorModel:
+        
         model = VendorModel(
             id=database_model['id'],
-            name=database_model['name'],
-            registered_replacement_vendor_id=database_model[
-                'registered_replacement_vendor_id'],
-            unregistered_vendor_retailer_id=database_model[
-                'unregistered_vendor_retailer_id'],
+            name=database_model['name'], 
+            unregistered_vendor_retailer_id=database_model['unregistered_vendor_retailer_id'],
             is_registered=database_model['is_registered'],
+            account_status=database_model['account_status'],
             hq_state=database_model['hq_state'],
             hq_city=database_model['hq_city'],
             hq_country=database_model['hq_country'],
@@ -184,15 +187,16 @@ class VendorDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, model: VendorModel) -> VendorOutboundModel:
+            self, 
+            model: VendorModel
+        ) -> VendorOutboundModel:
+        
         outbound_model = VendorOutboundModel(
             id=model.id,
-            name=model.name,
-            registered_replacement_vendor_id=model.
-            registered_replacement_vendor_id,
-            unregistered_vendor_retailer_id=model.
-            unregistered_vendor_retailer_id,
+            name=model.name, 
+            unregistered_vendor_retailer_id=model. unregistered_vendor_retailer_id,
             is_registered=model.is_registered,
+            account_status=model.account_status,
             hq_state=model.hq_state,
             hq_city=model.hq_city,
             hq_country=model.hq_country,

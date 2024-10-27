@@ -12,25 +12,40 @@ def test_posts_invalid_pos_integration_missing_fields() -> None:
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    result = qa_post(context.api_url + "/pos_integrations", {})
+    result = qa_post(context.api_url + "/pos_integrations", {
+        'retailer_location_id': None
+    })
 
     assert result.status_code == 422
 
     errors = result.json()
 
-    assert len(errors['detail']) == 2
+    assert len(errors['detail']) == 5
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'name' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'missing'
     assert error[0]['msg'] == 'Field required'
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'pos_platform' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'missing'
     assert error[0]['msg'] == 'Field required'
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'url' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'missing'
+    assert error[0]['msg'] == 'Field required'
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'key' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'missing'
+    assert error[0]['msg'] == 'Field required'
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'retailer_location_id' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'uuid_type'
+    assert error[0]['msg'] == 'UUID input should be a string, bytes or UUID object'
 
 def test_posts_invalid_pos_integration_bad_inputs() -> None:
      
@@ -40,16 +55,23 @@ def test_posts_invalid_pos_integration_bad_inputs() -> None:
 
     result = qa_post(context.api_url + "/pos_integrations", {
         'name' : generate_random_string(256), 
-        'pos_platform' : 'not a valid pos platform'
+        'pos_platform' : 'not a valid pos platform',
+        'key' : generate_random_string(256),
+        'retailer_location_id' : 'not an id' 
     })
  
     assert result.status_code == 422
 
     errors = result.json()
 
-    assert len(errors['detail']) == 2
+    assert len(errors['detail']) == 5
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'name' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'string_too_long'
+    assert error[0]['msg'] == 'String should have at most 255 characters' 
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'key' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'string_too_long'
     assert error[0]['msg'] == 'String should have at most 255 characters' 
@@ -58,6 +80,11 @@ def test_posts_invalid_pos_integration_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'enum'
     assert error[0]['msg'] == "Input should be 'Posabit', 'Flowhub', 'Dutchie', 'KlickTrack', 'Cova', 'Meadow', 'GrowFlow' or 'Unknown'"
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'retailer_location_id' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'uuid_type'
+    assert error[0]['msg'] == 'UUID input should be a string, bytes or UUID object'
 
 def test_posts_valid_pos_integration() -> None:
      
