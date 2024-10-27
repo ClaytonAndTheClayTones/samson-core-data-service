@@ -44,6 +44,8 @@ GRANT
 ON ALL TABLES IN SCHEMA public TO service;
 
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public to service;
+
+ALTER DEFAULT PRIVILEGES FOR ROLE migrator IN SCHEMA public GRANT SELECT, UPDATE, INSERT, DELETE ON TABLES TO service;
 ```
 This is important for setting up the roles that would already exist in a deployed database.
 
@@ -61,12 +63,15 @@ For more information on the database, check out the ReadMe.md in the database fo
 
 ## Run the service
 
-1. Open the service folder in Visual Studio Code
+1. Open the serverlessservice folder in Visual Studio Code
 2. Copy the .env-example file to another file called ".env"
-3. Open the terminal and run ```pip install -r requirements.txt```
+3. Open the terminal and run ```pip install poetry```
+4. Run ```poetry install```
+5. Run make install-dependencies
 4. Go to the Debug Tab on the left and, near the top, select "Python Debugger: Run API"
 5. Hit F5 on your keyboard.  You should see console output telling you that Uvicorn is running on 127.0.0.1:8001
-6. Your API is running!
+6. If you have installed everything but the runtime can't find dependencies, try running ```rm -rf `poetry env list --full-path` ``` and then ```poetry install```
+7. Your API is running!
 
 For more information on the service, check out the ReadMe.md in the service folder!
 
