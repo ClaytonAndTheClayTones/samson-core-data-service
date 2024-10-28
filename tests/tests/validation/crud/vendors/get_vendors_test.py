@@ -240,19 +240,19 @@ def test_gets_vendors_with_name_like_filter() -> None:
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
  
 
-def test_gets_vendor_locations_with_unregistered_vendor_retailer_ids_filter() -> None:
+def test_gets_vendor_locations_with_unregistered_vendor_referring_retailer_location_ids_filter() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: VendorModel = create_vendor(context, VendorCreateModel(create_unregistered_vendor_retailer_if_null=True))
-    posted_object_2: VendorModel = create_vendor(context, VendorCreateModel(create_unregistered_vendor_retailer_if_null=True))
-    posted_object_3: VendorModel = create_vendor(context, VendorCreateModel(unregistered_vendor_retailer_id = posted_object_1.unregistered_vendor_retailer_id))
-    posted_object_4: VendorModel = create_vendor(context, VendorCreateModel(create_unregistered_vendor_retailer_if_null=True))
+    posted_object_1: VendorModel = create_vendor(context, VendorCreateModel(create_unregistered_vendor_referring_retailer_location_if_null=True))
+    posted_object_2: VendorModel = create_vendor(context, VendorCreateModel(create_unregistered_vendor_referring_retailer_location_if_null=True))
+    posted_object_3: VendorModel = create_vendor(context, VendorCreateModel(unregistered_vendor_referring_retailer_location_id = posted_object_1.unregistered_vendor_referring_retailer_location_id))
+    posted_object_4: VendorModel = create_vendor(context, VendorCreateModel(create_unregistered_vendor_referring_retailer_location_if_null=True))
 
     filters: VendorSearchModel = VendorSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        unregistered_vendor_retailer_ids = f"{posted_object_1.unregistered_vendor_retailer_id},{posted_object_4.unregistered_vendor_retailer_id}"
+        unregistered_vendor_referring_retailer_location_ids = f"{posted_object_1.unregistered_vendor_referring_retailer_location_id},{posted_object_4.unregistered_vendor_referring_retailer_location_id}"
     )
     
     result: PagedResponseItemList[VendorModel] = get_vendors(context, filters)

@@ -26,7 +26,7 @@ class VendorAccountStatuses(Enum):
 # Pydantic causes these class variables to safely be instance variables.
 class VendorInboundCreateModel(BaseModel):
 
-    unregistered_vendor_retailer_id: Optional[Annotated[UUID4, Strict(False)]] = Field(default=None) 
+    unregistered_vendor_referring_retailer_location_id: Optional[Annotated[UUID4, Strict(False)]] = Field(default=None) 
     name: str = Field(..., max_length=255)
     is_registered: Optional[bool] = Field(default=None)
     account_status: Optional[VendorAccountStatuses] = Field(default=None)
@@ -40,7 +40,7 @@ class VendorInboundCreateModel(BaseModel):
 # Pydantic causes these class variables to safely be instance variables.
 class VendorInboundUpdateModel(BaseModel):
     name: Optional[str] = Field(default=None, max_length=255)
-    unregistered_vendor_retailer_id: Optional[Annotated[UUID4, Strict(False)]] = Field(default=None) 
+    unregistered_vendor_referring_retailer_location_id: Optional[Annotated[UUID4, Strict(False)]] = Field(default=None) 
     account_status: Optional[VendorAccountStatuses] = Field(default=None)
     is_registered: Optional[bool] = Field(default=None)
     contact_email: Optional[EmailStr] = Field(default=None, max_length=320)
@@ -55,7 +55,7 @@ class VendorInboundSearchModel(CommonInboundSearchModel):
     name: Optional[str] = Query(default=None)
     name_like: Optional[str] = Query(default=None)
     is_registered: Optional[bool] = Query(default=None)
-    unregistered_vendor_retailer_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
+    unregistered_vendor_referring_retailer_location_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     hq_city: Optional[str] = Query(default=None)
     hq_state: Optional[str] = Query(default=None)
     hq_country: Optional[str] = Query(default=None)
@@ -68,7 +68,7 @@ class VendorCreateModel:
         name: str,
         is_registered: bool | None = None,
         account_status: VendorAccountStatuses | None = None,
-        unregistered_vendor_retailer_id: UUID | None = None, 
+        unregistered_vendor_referring_retailer_location_id: UUID | None = None, 
         contact_email: EmailStr | None = None,
         contact_phone: DicsPhoneNumber | None = None,
         hq_city: str | None = None,
@@ -77,7 +77,7 @@ class VendorCreateModel:
     ) -> None:
 
         self.is_registered = is_registered
-        self.unregistered_vendor_retailer_id = unregistered_vendor_retailer_id 
+        self.unregistered_vendor_referring_retailer_location_id = unregistered_vendor_referring_retailer_location_id 
         self.name = name
         self.account_status = account_status
         self.contact_email = contact_email
@@ -94,7 +94,7 @@ class VendorUpdateModel:
         name: str | None = None,
         is_registered: bool | None = None,
         account_status: VendorAccountStatuses | None = None,
-        unregistered_vendor_retailer_id: UUID | None = None,
+        unregistered_vendor_referring_retailer_location_id: UUID | None = None,
         registered_replacement_vendor_id: UUID | None = None,
         contact_email: EmailStr | None = None,
         contact_phone: DicsPhoneNumber | None = None,
@@ -104,7 +104,7 @@ class VendorUpdateModel:
     ) -> None:
 
         self.is_registered = is_registered
-        self.unregistered_vendor_retailer_id = unregistered_vendor_retailer_id
+        self.unregistered_vendor_referring_retailer_location_id = unregistered_vendor_referring_retailer_location_id
         self.registered_replacement_vendor_id = (
             registered_replacement_vendor_id)
         self.name = name
@@ -121,7 +121,7 @@ class VendorSearchModel(CommonSearchModel):
     def __init__(
         self,
         ids: list[UUID] | None = None,
-        unregistered_vendor_retailer_ids: list[UUID] | None = None, 
+        unregistered_vendor_referring_retailer_location_ids: list[UUID] | None = None, 
         is_registered: bool | None = None,
         account_status: bool | None = None,
         name: str | None = None,
@@ -133,7 +133,7 @@ class VendorSearchModel(CommonSearchModel):
 
         super().__init__(ids)
 
-        self.unregistered_vendor_retailer_ids = (unregistered_vendor_retailer_ids) 
+        self.unregistered_vendor_referring_retailer_location_ids = (unregistered_vendor_referring_retailer_location_ids) 
         self.is_registered = is_registered
         self.account_status = account_status
         self.name = name
@@ -152,7 +152,7 @@ class VendorDatabaseModel(CommonDatabaseModel):
         created_at: datetime,
         is_registered: bool,
         account_status: VendorAccountStatuses, 
-        unregistered_vendor_retailer_id: UUID | None = None,
+        unregistered_vendor_referring_retailer_location_id: UUID | None = None,
         hq_city: str | None = None,
         hq_state: str | None = None,
         hq_country: str | None = None,
@@ -164,7 +164,7 @@ class VendorDatabaseModel(CommonDatabaseModel):
         super().__init__(id, created_at, updated_at)
 
         self.name = name 
-        self.unregistered_vendor_retailer_id = unregistered_vendor_retailer_id
+        self.unregistered_vendor_referring_retailer_location_id = unregistered_vendor_referring_retailer_location_id
         self.account_status = account_status
         self.is_registered = is_registered
         self.contact_email = contact_email
@@ -183,7 +183,7 @@ class VendorModel(CommonModel):
         is_registered: bool,
         account_status: VendorAccountStatuses,
         created_at: datetime,
-        unregistered_vendor_retailer_id: UUID | None = None, 
+        unregistered_vendor_referring_retailer_location_id: UUID | None = None, 
         hq_city: str | None = None,
         hq_state: str | None = None,
         hq_country: str | None = None,
@@ -195,7 +195,7 @@ class VendorModel(CommonModel):
         super().__init__(id, created_at, updated_at)
 
         self.name = name 
-        self.unregistered_vendor_retailer_id = unregistered_vendor_retailer_id
+        self.unregistered_vendor_referring_retailer_location_id = unregistered_vendor_referring_retailer_location_id
         self.is_registered = is_registered
         self.account_status = account_status
         self.contact_email = contact_email
@@ -208,7 +208,7 @@ class VendorModel(CommonModel):
 # Pydantic causes these class variables to safely be instance variables.
 class VendorOutboundModel(CommonOutboundResponseModel):
     
-    unregistered_vendor_retailer_id: UUID | None = None 
+    unregistered_vendor_referring_retailer_location_id: UUID | None = None 
     name: str
     is_registered: bool
     account_status: VendorAccountStatuses

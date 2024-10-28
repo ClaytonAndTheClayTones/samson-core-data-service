@@ -27,7 +27,9 @@ def test_gets_pos_integrations_invalid_inputs() -> None:
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
      
     result = qa_get(f"{context.api_url}/pos_integrations", query_params={
-        'ids': 'not an id,also not an id',
+        'ids': 'not an id,also not an id', 
+        'retailer_ids': 'not valid,at all,cmon man',  
+        'retailer_location_ids': 'invalid,id,jamboree', 
         'page' : 'not a page num',
         'page_length' : 'not a length num',
         'is_sort_descending' : 'not a bool'
@@ -37,28 +39,34 @@ def test_gets_pos_integrations_invalid_inputs() -> None:
 
     errors = result.json()
 
-    assert len(errors['detail']) == 4
+    assert len(errors['detail']) == 6
     
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'ids' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'invalid_id_list'
     assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: not an id,\n\t1: also not an id\n].'
-
+    
+    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'retailer_ids' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'invalid_id_list'
+    assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: not valid,\n\t1: at all,\n\t2: cmon man\n].'
+        
+    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'retailer_location_ids' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'invalid_id_list'
+    assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: invalid,\n\t1: id,\n\t2: jamboree\n].'
+    
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'page' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'int_parsing'
     assert error[0]['msg'] == 'Input should be a valid integer, unable to parse string as an integer'
  
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'page_length' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'int_parsing'
     assert error[0]['msg'] == 'Input should be a valid integer, unable to parse string as an integer'
 
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'is_sort_descending' in error['loc']]
-
     assert len(error) == 1
     assert error[0]['type'] == 'bool_parsing'
     assert error[0]['msg'] == 'Input should be a valid boolean, unable to interpret input'
@@ -105,6 +113,74 @@ def test_gets_pos_integrations_with_ids_filter() -> None:
     posted_item_4: list[PosIntegrationModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
+    
+def test_gets_retailer_locations_with_retailer_ids_filter() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object_1: PosIntegrationModel = create_pos_integration(context)
+    posted_object_2: PosIntegrationModel = create_pos_integration(context)
+    posted_object_3: PosIntegrationModel = create_pos_integration(context, PosIntegrationCreateModel(retailer_location_id = posted_object_1.retailer_location_id))
+    posted_object_4: PosIntegrationModel = create_pos_integration(context)
+
+    filters: PosIntegrationSearchModel = PosIntegrationSearchModel(
+        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
+        retailer_ids = f"{posted_object_1.retailer_id},{posted_object_4.retailer_id}"
+    )
+    
+    result: PagedResponseItemList[PosIntegrationModel] = get_pos_integrations(context, filters)
+
+    assert result is not None
+    assert result.items is not None 
+
+    assert len(result.items) == 3
+    
+    posted_item_1: list[PosIntegrationModel] = [item for item in result.items if item.id == posted_object_1.id]
+    assert len(posted_item_1) == 1  
+    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
+  
+    posted_item_3: list[PosIntegrationModel] = [item for item in result.items if item.id == posted_object_3.id]
+    assert len(posted_item_3) == 1 
+    assert_objects_are_equal(posted_item_3[0], posted_object_3)
+
+    posted_item_4: list[PosIntegrationModel] = [item for item in result.items if item.id == posted_object_4.id]
+    assert len(posted_item_4) == 1 
+    assert_objects_are_equal(posted_item_4[0], posted_object_4) 
+    
+def test_gets_retailer_locations_with_retailer_location_ids_filter() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object_1: PosIntegrationModel = create_pos_integration(context)
+    posted_object_2: PosIntegrationModel = create_pos_integration(context)
+    posted_object_3: PosIntegrationModel = create_pos_integration(context, PosIntegrationCreateModel(retailer_location_id = posted_object_1.retailer_location_id))
+    posted_object_4: PosIntegrationModel = create_pos_integration(context)
+
+    filters: PosIntegrationSearchModel = PosIntegrationSearchModel(
+        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
+        retailer_location_ids = f"{posted_object_1.retailer_location_id},{posted_object_4.retailer_location_id}"
+    )
+    
+    result: PagedResponseItemList[PosIntegrationModel] = get_pos_integrations(context, filters)
+
+    assert result is not None
+    assert result.items is not None 
+
+    assert len(result.items) == 3
+    
+    posted_item_1: list[PosIntegrationModel] = [item for item in result.items if item.id == posted_object_1.id]
+    assert len(posted_item_1) == 1  
+    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
+  
+    posted_item_3: list[PosIntegrationModel] = [item for item in result.items if item.id == posted_object_3.id]
+    assert len(posted_item_3) == 1 
+    assert_objects_are_equal(posted_item_3[0], posted_object_3)
+
+    posted_item_4: list[PosIntegrationModel] = [item for item in result.items if item.id == posted_object_4.id]
+    assert len(posted_item_4) == 1 
+    assert_objects_are_equal(posted_item_4[0], posted_object_4) 
 
 def test_gets_pos_integrations_with_paging() -> None:
     populate_configuration_if_not_exists() 

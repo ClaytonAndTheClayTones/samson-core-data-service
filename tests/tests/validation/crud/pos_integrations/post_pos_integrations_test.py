@@ -83,8 +83,8 @@ def test_posts_invalid_pos_integration_bad_inputs() -> None:
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'retailer_location_id' in error['loc']]
     assert len(error) == 1
-    assert error[0]['type'] == 'uuid_type'
-    assert error[0]['msg'] == 'UUID input should be a string, bytes or UUID object'
+    assert error[0]['type'] == 'uuid_parsing'
+    assert error[0]['msg'] == 'Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `n` at 1'
 
 def test_posts_valid_pos_integration() -> None:
      

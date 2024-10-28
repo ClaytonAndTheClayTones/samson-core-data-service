@@ -35,11 +35,11 @@ def test_posts_invalid_vendor_bad_inputs() -> None:
     result = qa_post(context.api_url + "/vendors", {
         'name' : generate_random_string(256),
         'is_registered': 'not a bool',
-        'unregistered_vendor_retailer_id': 'not a valid id',
-        'registered_replacement_vendor_id': 'not even trying to be an id tbh',
+        'unregistered_vendor_referring_retailer_location_id': 'not a valid id', 
         'hq_city' : generate_random_string(256),
         'hq_state' : generate_random_string(256),
         'hq_country' : generate_random_string(3),
+        'account_status' : 'not an account status value',
         'contact_email' : 'this is obviously not an email man',
         'contact_phone' : 'ET phone home'
     })
@@ -80,20 +80,21 @@ def test_posts_invalid_vendor_bad_inputs() -> None:
     assert error[0]['type'] == 'value_error'
     assert error[0]['msg'] == 'value is not a valid phone number'
     
-    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'unregistered_vendor_retailer_id' in error['loc']]
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'unregistered_vendor_referring_retailer_location_id' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'uuid_parsing'
     assert error[0]['msg'] == 'Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `n` at 1'
-    
-    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'registered_replacement_vendor_id' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'uuid_parsing'
-    assert error[0]['msg'] == 'Input should be a valid UUID, invalid character: expected an optional prefix of `urn:uuid:` followed by [0-9a-fA-F-], found `n` at 1'
+ 
      
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'is_registered' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'bool_parsing'
     assert error[0]['msg'] == 'Input should be a valid boolean, unable to interpret input'
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'account_status' in error['loc']]
+    assert len(error) == 1    
+    assert error[0]['type'] == 'enum'
+    assert error[0]['msg'] == "Input should be 'Unregistered', 'RegisteredInactive', 'RegisteredActive', 'PausedByRequest', 'PausedByBilling' or 'Deactivated'"
 
 def test_posts_valid_vendor() -> None:
      
@@ -101,9 +102,8 @@ def test_posts_valid_vendor() -> None:
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    create_vendor(context, VendorCreateModel(
-        create_registered_replacement_vendor_if_null = True,
-        create_unregistered_vendor_retailer_if_null= True
+    create_vendor(context, VendorCreateModel( 
+        create_unregistered_vendor_referring_retailer_location_if_null= True
     ))  
  
  

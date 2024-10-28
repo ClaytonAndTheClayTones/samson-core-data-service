@@ -2,6 +2,7 @@ import datetime
 from typing import Any, Self
 
 from requests import Response 
+from tests.qdk.operators.retailer_locations import create_retailer_location
 from tests.qdk.operators.retailers import RetailerCreateModel, create_retailer
 from tests.qdk.qa_requests import qa_get, qa_patch, qa_post
 from tests.qdk.types import PagedResponseItemList, PagingResponseModel, PagingRequestModel, RequestOperators, TestContext
@@ -10,14 +11,12 @@ from tests.qdk.utils import assert_object_was_updated, assert_objects_are_equal,
 class VendorCreateModel():  
 
     def __init__(self,
-                unregistered_vendor_retailer_id: str | None = None,
-                unregistered_vendor_retailer: RetailerCreateModel | None = None,
-                create_unregistered_vendor_retailer_if_null: bool | None = False,
-                registered_replacement_vendor_id: str | None = None,
-                registered_replacement_vendor : Self | None = None,
-                create_registered_replacement_vendor_if_null: bool | None = False,
+                unregistered_vendor_referring_retailer_location_id: str | None = None,
+                unregistered_vendor_referring_retailer_location: RetailerCreateModel | None = None,
+                create_unregistered_vendor_referring_retailer_location_if_null: bool | None = False, 
                 name: str | None = None,
                 is_registered: bool | None = None,
+                account_status: str | None = None,
                 contact_email: str | None = None,
                 contact_phone: str | None = None,
                 hq_city: str | None = None,
@@ -25,13 +24,11 @@ class VendorCreateModel():
                 hq_country: str | None = None) -> None: 
         
         self.name = name 
-        self.unregistered_vendor_retailer_id = unregistered_vendor_retailer_id 
-        self.unregistered_vendor_retailer = unregistered_vendor_retailer 
-        self.create_unregistered_vendor_retailer_if_null = create_unregistered_vendor_retailer_if_null
-        self.registered_replacement_vendor_id = registered_replacement_vendor_id 
-        self.registered_replacement_vendor = registered_replacement_vendor 
-        self.create_registered_replacement_vendor_if_null = create_registered_replacement_vendor_if_null 
+        self.unregistered_vendor_referring_retailer_location_id = unregistered_vendor_referring_retailer_location_id 
+        self.unregistered_vendor_referring_retailer_location = unregistered_vendor_referring_retailer_location 
+        self.create_unregistered_vendor_referring_retailer_location_if_null = create_unregistered_vendor_referring_retailer_location_if_null 
         self.is_registered = is_registered 
+        self.account_status = account_status
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.hq_city = hq_city
@@ -43,6 +40,7 @@ class VendorUpdateModel():
     def __init__(self,
                 name: str | None = None,
                 is_registered: bool | None = None,
+                account_status: str | None = None,
                 contact_email: str | None = None,
                 contact_phone: str | None = None,
                 hq_city: str | None = None,
@@ -51,6 +49,7 @@ class VendorUpdateModel():
         
         self.name = name
         self.is_registered = is_registered
+        self.account_status = account_status
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.hq_city = hq_city
@@ -61,11 +60,11 @@ class VendorModel():
 
     def __init__(self, 
                 id: str, 
-                name: str,
-                registered_replacement_vendor_id: str,
-                unregistered_vendor_retailer_id: str,
+                name: str, 
+                unregistered_vendor_referring_retailer_location_id: str,
                 is_registered: str,
                 created_at: datetime.datetime,
+                account_status: str | None = None, 
                 contact_email: str | None = None, 
                 contact_phone: str | None = None, 
                 hq_city: str | None = None,
@@ -73,13 +72,13 @@ class VendorModel():
                 hq_country: str | None = None,
                 updated_at: datetime.datetime | None = None) -> None:
         
-        self.id = id
-        self.registered_replacement_vendor_id = registered_replacement_vendor_id
-        self.unregistered_vendor_retailer_id = unregistered_vendor_retailer_id
+        self.id = id 
+        self.unregistered_vendor_referring_retailer_location_id = unregistered_vendor_referring_retailer_location_id
         self.is_registered = is_registered
         self.created_at = created_at
         self.updated_at = updated_at
         self.name = name
+        self.account_status = account_status
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.hq_city = hq_city
@@ -89,9 +88,8 @@ class VendorModel():
 class VendorSearchModel(PagingRequestModel):  
 
     def __init__(self, 
-                ids: str | None = None, 
-                registered_replacement_vendor_ids: str | None = None, 
-                unregistered_vendor_retailer_ids: str | None = None,  
+                ids: str | None = None,  
+                unregistered_vendor_referring_retailer_location_ids: str | None = None,  
                 is_registered: bool | None = None,  
                 name: str | None = None,
                 name_like: str | None = None,
@@ -109,9 +107,8 @@ class VendorSearchModel(PagingRequestModel):
             sort_by = sort_by
         )
         
-        self.ids = ids 
-        self.registered_replacement_vendor_ids = registered_replacement_vendor_ids 
-        self.unregistered_vendor_retailer_ids = unregistered_vendor_retailer_ids 
+        self.ids = ids  
+        self.unregistered_vendor_referring_retailer_location_ids = unregistered_vendor_referring_retailer_location_ids 
         self.name = name
         self.name_like = name_like
         self.is_registered = is_registered
@@ -128,27 +125,21 @@ def mint_default_vendor(
 
     overrides = overrides or VendorCreateModel()
      
-    if(overrides.unregistered_vendor_retailer_id is None and overrides.create_unregistered_vendor_retailer_if_null):
+    if(overrides.unregistered_vendor_referring_retailer_location_id is None and overrides.create_unregistered_vendor_referring_retailer_location_if_null):
 
-        new_retailer = create_retailer(context, overrides.unregistered_vendor_retailer, request_operators = request_operators)
-        overrides.unregistered_vendor_retailer_id = new_retailer.id
+        new_retailer = create_retailer_location(context, overrides.unregistered_vendor_referring_retailer_location, request_operators = request_operators)
+        overrides.unregistered_vendor_referring_retailer_location_id = new_retailer.id
 
-        del overrides.unregistered_vendor_retailer
-        del overrides.create_unregistered_vendor_retailer_if_null
-        
-    if(overrides.registered_replacement_vendor_id is None and overrides.create_registered_replacement_vendor_if_null):
-
-        new_vendor = create_vendor(context, overrides.registered_replacement_vendor, request_operators = request_operators)
-        overrides.registered_replacement_vendor_id = new_vendor.id
-
-        del overrides.registered_replacement_vendor
-        del overrides.create_registered_replacement_vendor_if_null
-    
+        del overrides.unregistered_vendor_referring_retailer_location
+        del overrides.create_unregistered_vendor_referring_retailer_location_if_null
+  
     default_vendor: VendorCreateModel = VendorCreateModel(
         name = random_string + '_name',
         hq_city = 'cityville',
         hq_state = 'north new stateplace',
         hq_country = 'CK',
+        is_registered= False,
+        account_status = 'PausedByRequest',
         contact_email = 'madeupemailaddress@example.com',
         contact_phone = '+12345678901'
     )
@@ -173,7 +164,7 @@ def create_vendor(
  
         result_dict = result.json()
 
-        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "is_registered"])
+        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "is_registered", "unregistered_vendor_referring_retailer_location_id", "unregistered_vendor_referring_retailer_location"])
 
         assert result_dict['id'] is not None
         assert result_dict['created_at'] is not None

@@ -221,34 +221,33 @@ class PGConnection:
     def build_insert_query(self, table_name: str, model: dict[str, Any]):
         sqlstring: str = f'INSERT INTO {table_name}\n' f'(\n'
 
-        keys = model.keys()
+        keys = [key for key in model.keys() if model[key] is not None]
 
         # Columns
-        values = model.values()
-        valid_count = 0
-        for key in keys:
-            if model[key] is not None:
-                valid_count += 1
-
-        for i, key in enumerate(keys):
-            if model[key] is not None:
-                sqlstring += f'\t{key}'
-                if i < (valid_count - 1):
-                    sqlstring += ','
-                sqlstring += '\n'
-
-        sqlstring += f')\n' f'VALUES\n' f'(\n'
+ 
+        for i, key in enumerate(keys): 
+            
+            sqlstring += f"\t{key}"
+            
+            if(i < len(keys) - 1):
+                sqlstring += "," 
+            
+            sqlstring += f"\n"
+ 
+        sqlstring += f')\n'
+        sqlstring += f'VALUES\n' 
+        sqlstring += f'(\n'
 
         # Values
-
-        for i, value in enumerate(values):
-            if value is not None:
-                sqlstring += '\tNULL' if value is None else f"\t'{value}'"
-
-                if i < (valid_count - 1):
-                    sqlstring += ','
-                sqlstring += '\n'
-
+        for i, key in enumerate(keys): 
+            
+            sqlstring += f"\t'{model[key]}'"
+            
+            if(i < len(keys) - 1):
+                sqlstring += "," 
+            
+            sqlstring += f'\n'
+        
         sqlstring += f')\n' f'RETURNING *;'
 
         return sqlstring

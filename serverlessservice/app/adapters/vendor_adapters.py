@@ -28,7 +28,7 @@ class VendorDataAdapter:
         
         model = VendorCreateModel(
             name=inbound_create_model.name,
-            unregistered_vendor_retailer_id=inbound_create_model.unregistered_vendor_retailer_id, 
+            unregistered_vendor_referring_retailer_location_id=inbound_create_model.unregistered_vendor_referring_retailer_location_id, 
             is_registered=inbound_create_model.is_registered,
             account_status=inbound_create_model.account_status,
             hq_state=inbound_create_model.hq_state,
@@ -70,9 +70,9 @@ class VendorDataAdapter:
                 else 
                     None
             ),
-            unregistered_vendor_retailer_ids=(
-                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(inbound_search_model.unregistered_vendor_retailer_ids)
-                if inbound_search_model.unregistered_vendor_retailer_ids
+            unregistered_vendor_referring_retailer_location_ids=(
+                self.common_utilities.convert_comma_delimited_ids_to_uuid_list(inbound_search_model.unregistered_vendor_referring_retailer_location_ids)
+                if inbound_search_model.unregistered_vendor_referring_retailer_location_ids
                 is not None 
                 else 
                     None
@@ -97,11 +97,11 @@ class VendorDataAdapter:
         if model.ids is not None:
             search_terms.append(InListSearchTerm('id', model.ids))
   
-        if model.unregistered_vendor_retailer_ids is not None:
+        if model.unregistered_vendor_referring_retailer_location_ids is not None:
             search_terms.append(
                 InListSearchTerm(
-                    'unregistered_vendor_retailer_id',
-                    model.unregistered_vendor_retailer_ids,
+                    'unregistered_vendor_referring_retailer_location_id',
+                    model.unregistered_vendor_referring_retailer_location_ids,
                 )
             )
 
@@ -134,9 +134,9 @@ class VendorDataAdapter:
         
         database_model: dict[str, Any] = {
             'name': model.name,
-            'unregistered_vendor_retailer_id': model.unregistered_vendor_retailer_id,
+            'unregistered_vendor_referring_retailer_location_id': model.unregistered_vendor_referring_retailer_location_id,
             'is_registered': model.is_registered,
-            'account_status': model.account_status,
+            'account_status': model.account_status.value,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
@@ -154,7 +154,7 @@ class VendorDataAdapter:
         database_model: dict[str, Any] = {
             'name': model.name,
             'is_registered': model.is_registered,
-            'account_status': model.account_status,
+            'account_status': model.account_status.value,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
@@ -172,7 +172,7 @@ class VendorDataAdapter:
         model = VendorModel(
             id=database_model['id'],
             name=database_model['name'], 
-            unregistered_vendor_retailer_id=database_model['unregistered_vendor_retailer_id'],
+            unregistered_vendor_referring_retailer_location_id=database_model['unregistered_vendor_referring_retailer_location_id'],
             is_registered=database_model['is_registered'],
             account_status=database_model['account_status'],
             hq_state=database_model['hq_state'],
@@ -194,7 +194,7 @@ class VendorDataAdapter:
         outbound_model = VendorOutboundModel(
             id=model.id,
             name=model.name, 
-            unregistered_vendor_retailer_id=model. unregistered_vendor_retailer_id,
+            unregistered_vendor_referring_retailer_location_id=model. unregistered_vendor_referring_retailer_location_id,
             is_registered=model.is_registered,
             account_status=model.account_status,
             hq_state=model.hq_state,

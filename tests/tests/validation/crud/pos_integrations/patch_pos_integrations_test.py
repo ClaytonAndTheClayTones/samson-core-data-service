@@ -16,14 +16,15 @@ def test_patches_invalid_pos_integration_bad_inputs() -> None:
 
     result = qa_patch(f"{context.api_url}/pos_integrations/{posted_object.id}", {
         'name' : generate_random_string(256),
-        'pos_platform' : "another invalid pos platform" 
+        'pos_platform' : "another invalid pos platform",
+        'key' : generate_random_string(256), 
     })
  
     assert result.status_code == 422
 
     errors = result.json()
 
-    assert len(errors['detail']) == 2
+    assert len(errors['detail']) == 3
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'name' in error['loc']]
     assert len(error) == 1
@@ -34,6 +35,11 @@ def test_patches_invalid_pos_integration_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'enum'
     assert error[0]['msg'] == "Input should be 'Posabit', 'Flowhub', 'Dutchie', 'KlickTrack', 'Cova', 'Meadow', 'GrowFlow' or 'Unknown'"
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'key' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'string_too_long'
+    assert error[0]['msg'] == 'String should have at most 255 characters'  
   
 def test_patches_valid_pos_integration() -> None:
      
@@ -48,7 +54,9 @@ def test_patches_valid_pos_integration() -> None:
     update_object: PosIntegrationUpdateModel = PosIntegrationUpdateModel(
         name = random_string + "_name",
         description = "describe away my main man",
-        pos_platform = "Posabit"
+        pos_platform = "Posabit",
+        key = "09876543212qwertyuiop",
+        url = "nowhere.example.net"
     )
 
     update_pos_integration(context, posted_object.id or "", update_object)

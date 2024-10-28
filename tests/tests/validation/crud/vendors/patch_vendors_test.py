@@ -22,13 +22,14 @@ def test_patches_invalid_vendor_bad_inputs() -> None:
         'hq_city' : generate_random_string(256),
         'hq_state' : generate_random_string(256),
         'hq_country' : generate_random_string(3), 
-    })
+        'account_status' : 'random_invalid_value'
+    }) 
  
     assert result.status_code == 422
 
     errors = result.json()
 
-    assert len(errors['detail']) == 7
+    assert len(errors['detail']) == 8
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'name' in error['loc']]
     assert len(error) == 1
@@ -64,6 +65,11 @@ def test_patches_invalid_vendor_bad_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'bool_parsing'
     assert error[0]['msg'] == 'Input should be a valid boolean, unable to interpret input'
+      
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'account_status' in error['loc']]
+    assert len(error) == 1    
+    assert error[0]['type'] == 'enum'
+    assert error[0]['msg'] == "Input should be 'Unregistered', 'RegisteredInactive', 'RegisteredActive', 'PausedByRequest', 'PausedByBilling' or 'Deactivated'"
   
 def test_patches_valid_vendor() -> None:
      
@@ -82,7 +88,8 @@ def test_patches_valid_vendor() -> None:
         hq_state = "new state",
         hq_country = "NC",
         contact_email = "anotheraddress@example.com",
-        contact_phone = '+12312312312'
+        contact_phone = '+12312312312',
+        account_status='Deactivated'
     )
 
     update_vendor(context, posted_object.id or "", update_object)
