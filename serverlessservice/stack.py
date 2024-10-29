@@ -118,6 +118,6 @@ class DicsCoreServiceStack(cdk.Stack):
         
         database.grant_connect(lambda_function, db_user='dics_service')
 
-        api = apigateway.LambdaRestApi(self, f"{cds_prefix}-api-gateway", handler=lambda_function)
+        api = apigateway.LambdaRestApi(self, f"{cds_prefix}-api-gateway", handler=lambda_function,)
         
  

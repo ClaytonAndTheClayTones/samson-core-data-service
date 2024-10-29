@@ -124,7 +124,7 @@ class RetailerLocationDataAdapter:
             'location_country': model.location_country,
             'contact_email': model.contact_email,
             'contact_phone': model.contact_phone,
-            'account_status': model.account_status.value,
+            'account_status': model.account_status.value  if model.account_status is not None else None,
         }
 
         return database_model
@@ -138,7 +138,7 @@ class RetailerLocationDataAdapter:
             'location_country': model.location_country,
             'contact_email': model.contact_email,
             'contact_phone': model.contact_phone,
-            'account_status': model.account_status.value,
+            'account_status': model.account_status.value  if model.account_status is not None else None,
         }
 
         return database_model

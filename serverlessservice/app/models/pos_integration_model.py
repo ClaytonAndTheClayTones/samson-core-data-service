@@ -65,12 +65,10 @@ class PosIntegrationCreateModel:
         name: str,
         url: str,
         key: str,
-        pos_platform: PosPlatforms,
-        retailer_id: UUID | None = None,
+        pos_platform: PosPlatforms, 
         description: str | None = None,
     ) -> None:
-
-        self.retailer_id = retailer_id
+ 
         self.retailer_location_id = retailer_location_id
         self.name = name
         self.url = url

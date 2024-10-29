@@ -113,7 +113,7 @@ class RetailerDataAdapter:
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
             'contact_email': model.contact_email,
-            'account_status': model.account_status.value,
+            'account_status': model.account_status.value  if model.account_status is not None else None,
         }
 
         return database_model
@@ -128,7 +128,7 @@ class RetailerDataAdapter:
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
             'contact_email': model.contact_email,
-            'account_status': model.account_status.value,
+            'account_status': model.account_status.value if model.account_status is not None else None,
         }
 
         return database_model

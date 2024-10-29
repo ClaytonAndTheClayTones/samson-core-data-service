@@ -123,7 +123,7 @@ class PosIntegrationDataAdapter:
             'url': model.url,
             'key': model.key,
             'description': model.description,
-            'pos_platform': model.pos_platform.value,
+            'pos_platform': model.pos_platform.value if model.pos_platform is not None else None,
         }
 
         return database_model
@@ -135,7 +135,7 @@ class PosIntegrationDataAdapter:
             'url': model.url,
             'key': model.key,
             'description': model.description,
-            'pos_platform': model.pos_platform.value,
+            'pos_platform': model.pos_platform.value  if model.pos_platform is not None else None,
             
         }
 

@@ -10,9 +10,10 @@ create table if not exists pos_integration_calls (
 	updated_at timestamptz(3) 
 );
 
-CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_name ON public.pos_integration_calls(pos_integration_id);  
-CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_pos_platform ON public.pos_integration_calls(retailer_location_id);   
-CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_pos_platform ON public.pos_integration_calls(retailer_id);   
+CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_pos_integration_id ON public.pos_integration_calls(pos_integration_id);  
+CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_retailer_location_id ON public.pos_integration_calls(retailer_location_id);   
+CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_retailer_id ON public.pos_integration_calls(retailer_id);   
+CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_response_status_code ON public.pos_integration_calls(response_status_code);   
 CREATE INDEX IF NOT EXISTS idx_pos_integration_calls_created_at ON public.pos_integration_calls(created_at); 
 
 -- FKs
