@@ -18,8 +18,8 @@ from models.common_model import (
 # Pydantic causes these class variables to safely be instance variables.
 class PosIntegrationCallInboundCreateModel(BaseModel): 
     pos_integration_id: Annotated[UUID4, Strict(False)] = Field(...)
-    request: Json[Any] = Field(...)
-    response: Json[Any] = Field(...)
+    request: dict[str, Any] = Field(...)
+    response: dict[str, Any]= Field(...)
     response_status_code: int = Field(...)  
     
 # Pydantic causes these class variables to safely be instance variables.

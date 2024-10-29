@@ -5,11 +5,25 @@ import psycopg2
 
 from util.database import PagingModel, ResultantPagingModel, SearchTerm
 
+class SqlStringAndParameters:
+    def __init__(
+        self,
+        sql_string: str,
+        parameters:  dict[str, Any] 
+    ) -> None:
 
+        self.sql_string = sql_string
+        self.parameters = parameters or {}
+ 
 class BuildSelectQueryResults:
 
-    def __init__(self, sqlstring: str, paging: ResultantPagingModel) -> None:
-        self.sqlstring = sqlstring
+    def __init__(
+        self, 
+        sql_string_and_parameters: SqlStringAndParameters, 
+        paging: ResultantPagingModel
+    ) -> None:
+        
+        self.sql_string_and_parameters = sql_string_and_parameters
         self.paging = paging
 
 
@@ -68,10 +82,10 @@ class PGConnection:
         return records
 
     def insert(self, table_name: str, model: dict[str, Any]):
-        sqlstring = self.build_insert_query(table_name, model)
+        sql_string_and_parameters = self.build_insert_query(table_name, model)
 
         try:
-            self.cursor.execute(sqlstring)
+            self.cursor.execute(sql_string_and_parameters.sql_string, sql_string_and_parameters.parameters)
         except Exception as e:
             self.connection.rollback()
             raise e
@@ -126,7 +140,7 @@ class PGConnection:
                                                     paging_model)
 
         try:
-            self.cursor.execute(buildqueryresults.sqlstring)
+            self.cursor.execute(buildqueryresults.sql_string_and_parameters.sql_string, buildqueryresults.sql_string_and_parameters.parameters)
         except Exception as e:
             self.connection.rollback()
             raise e
@@ -218,7 +232,13 @@ class PGConnection:
 
         return returndict
 
-    def build_insert_query(self, table_name: str, model: dict[str, Any]):
+    def build_insert_query(
+        self, 
+        table_name: str, 
+        model: dict[str, Any]
+    ) -> SqlStringAndParameters: 
+        
+        
         sqlstring: str = f'INSERT INTO {table_name}\n' f'(\n'
 
         keys = [key for key in model.keys() if model[key] is not None]
@@ -239,9 +259,10 @@ class PGConnection:
         sqlstring += f'(\n'
 
         # Values
+        
         for i, key in enumerate(keys): 
             
-            sqlstring += f"\t'{model[key]}'"
+            sqlstring += f"\t%({key})s"
             
             if(i < len(keys) - 1):
                 sqlstring += "," 
@@ -250,7 +271,18 @@ class PGConnection:
         
         sqlstring += f')\n' f'RETURNING *;'
 
-        return sqlstring
+        # Parameters
+        parameters : dict[str,any] = {}
+        
+        for i, key in enumerate(keys): 
+            parameters[key] = model[key]
+        
+        result = SqlStringAndParameters(
+            sql_string=sqlstring,
+            parameters=parameters
+        )
+
+        return result
 
     def build_select_query(
         self,
@@ -258,8 +290,10 @@ class PGConnection:
         search_terms: list[SearchTerm],
         paging_model: PagingModel | None = None,
         skip_paging: bool = False,
-    ):
+    ) -> BuildSelectQueryResults:
 
+        parameters: dict[str,Any] = {}
+        
         if paging_model is None:
             paging_model = PagingModel(
                 is_sort_descending=False,
@@ -300,7 +334,7 @@ class PGConnection:
             sqlstring += f'WHERE\n' f'(\n'
 
             for i, search_term in enumerate(search_terms):
-                sqlstring += f'\t({search_term.generate_sql()})\n'
+                sqlstring += f'\t({search_term.generate_sql(parameters)})\n'
                 sqlstring += '\tAND\n' if (i < len(search_terms) - 1) else ''
 
             sqlstring += f')\n'
@@ -316,8 +350,13 @@ class PGConnection:
 
         sqlstring += ';'
 
-        return_object = BuildSelectQueryResults(sqlstring=sqlstring,
-                                                paging=resultant_paging_model)
+        return_object = BuildSelectQueryResults(
+            SqlStringAndParameters(
+                sql_string = sqlstring,
+                parameters = parameters
+            ),
+            paging = resultant_paging_model
+        )
 
         return return_object
 

@@ -56,3 +56,7 @@ class CommonUtilities:
         message += '\n].'
 
         return message
+
+    def convert_uuid_list_to_string_list(self, uuids: list[UUID]):
+        resultlist = [str(x) for x in uuids]
+        return resultlist

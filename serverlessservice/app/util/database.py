@@ -52,7 +52,10 @@ class LikeComparatorModes(Enum):
 class SearchTerm:
 
     @abstractmethod
-    def generate_sql():
+    def generate_sql(
+        self, 
+        parameters: dict[str,Any]
+    ):
         raise NotImplementedError()
 
     def __init__(self, column_name) -> None:
@@ -67,14 +70,19 @@ class ExactMatchSearchTerm(SearchTerm, Generic[T]):
         self.value = value
         self.ignore_case = ignore_case
 
-    def generate_sql(self):
+    def generate_sql(
+        self, 
+        parameters: dict[str,Any]
+    ) -> str:
         sqlstring: str = ''
 
         if self.ignore_case:
-            sqlstring = f"LOWER({self.column_name}) = LOWER('{self.value}')"
+            sqlstring = f"LOWER({self.column_name}) = LOWER(%({self.column_name})s)"
         else:
-            sqlstring = f"{self.column_name} = '{self.value}'"
+            sqlstring = f"{self.column_name} = %({self.column_name})s"
 
+        parameters[self.column_name] = self.value
+        
         return sqlstring
 
 
@@ -93,7 +101,11 @@ class LikeSearchTerm(SearchTerm):
         self.ignore_case = ignore_case
         self.comparator_mode = comparator_mode
 
-    def generate_sql(self):
+    def generate_sql(
+        self,
+        parameters: dict[str,Any]
+    ) -> str:
+        
         sqlstring: str = ''
         sql_value_string = ''
         sql_command_string = ''
@@ -101,17 +113,21 @@ class LikeSearchTerm(SearchTerm):
         # value
         if self.comparator_mode == LikeComparatorModes.Like:
             sql_value_string = f'%{self.value}%'
-        if self.comparator_mode == LikeComparatorModes.StartsWith:
+            
+        elif self.comparator_mode == LikeComparatorModes.StartsWith:
             sql_value_string = f'{self.value}%'
-        if self.comparator_mode == LikeComparatorModes.EndsWith:
+        
+        elif self.comparator_mode == LikeComparatorModes.EndsWith:
             sql_value_string = f'%{self.value}'
 
         # command
         sql_command_string = 'ILIKE' if self.ignore_case else 'LIKE'
 
         sqlstring = (
-            f"{self.column_name} {sql_command_string} '{sql_value_string}'")
+            f"{self.column_name} {sql_command_string} %({self.column_name})s")
 
+        parameters[self.column_name] = sql_value_string
+        
         return sqlstring
 
 
@@ -128,18 +144,26 @@ class InListSearchTerm(SearchTerm, Generic[TListSearchable]):
         self.value_list = value_list
         self.ignore_case = ignore_case
 
-    def generate_sql(self):
+    def generate_sql(
+        self,
+        parameters: dict[str,Any]
+    ):
+    
         sqlstring = (f'LOWER({self.column_name}) IN (\n'
                      if self.ignore_case else f'{self.column_name} IN (\n')
 
         for i, value in enumerate(self.value_list):
-            sqlstring += (f"\tLOWER('{value}')"
-                          if self.ignore_case else f"\t'{value}'")
+            column_string = self.column_name + "__" + str(i)
+            sqlstring += (f"\tLOWER(%({column_string})s)" if self.ignore_case else f"\t%({column_string})s")
             sqlstring += ',' if i < len(self.value_list) - 1 else ''
             sqlstring += '\n'
 
         sqlstring += ')'
 
+        # Parameters
+        for i, value in enumerate(self.value_list):
+            parameters[self.column_name + "__" + str(i)] = self.value_list[i]
+        
         return sqlstring
 
 
@@ -158,15 +182,19 @@ class RangeSearchTerm(SearchTerm, Generic[TRangeSearchable]):
         self.value_max: TRangeSearchable | None = value_max
         self.ignore_case: bool = ignore_case
 
-    def generate_sql(self):
+    def generate_sql(
+        self,
+        parameters: dict[str,Any]
+    ):
+        
         column_sql: str = (f'LOWER({self.column_name})'
                            if self.ignore_case else f'{self.column_name}')
         value_min_sql: str | None = (
-            (f"LOWER('{self.value_min}')" if self.ignore_case else
-             f"'{self.value_min}'") if self.value_min is not None else None)
+            (f"LOWER(%({self.column_name}__min)s)" if self.ignore_case else
+             f"%({self.column_name}__min)s") if self.value_min is not None else None)
         value_max_sql: str | None = (
-            (f"LOWER('{self.value_max}')" if self.ignore_case else
-             f"'{self.value_max}'") if self.value_max is not None else None)
+            (f"LOWER(%({self.column_name}__max)s)" if self.ignore_case else
+             f"%({self.column_name}__max)s") if self.value_max is not None else None)
 
         sqlstring: str = ''
 
@@ -179,4 +207,10 @@ class RangeSearchTerm(SearchTerm, Generic[TRangeSearchable]):
         elif value_max_sql is not None:
             sqlstring += f'{column_sql} <= {value_max_sql}'
 
+        # parameters
+        if(value_min_sql is not None):
+            parameters[self.column_name + "__min"] = self.value_min
+        if(value_max_sql is not None):
+            parameters[self.column_name + "__max"] = self.value_max
+            
         return sqlstring

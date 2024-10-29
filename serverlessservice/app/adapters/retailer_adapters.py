@@ -83,7 +83,7 @@ class RetailerDataAdapter:
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
-            search_terms.append(InListSearchTerm('id', model.ids))
+            search_terms.append(InListSearchTerm('id', self.common_utilities.convert_uuid_list_to_string_list(model.ids)))
             
         if model.name is not None:
             search_terms.append(ExactMatchSearchTerm('name', model.name, True))
@@ -113,7 +113,7 @@ class RetailerDataAdapter:
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
             'contact_email': model.contact_email,
-            'account_status': model.account_status.value  if model.account_status is not None else None,
+            'account_status': model.account_status.value if model.account_status is not None else None,
         }
 
         return database_model
