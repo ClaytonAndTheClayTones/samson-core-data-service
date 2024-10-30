@@ -23,8 +23,7 @@ from models.common_model import (
     OutboundResultantPagingModel,
 )
 from util.database import PagingModel
-
-dblist: list[RetailerLocationDatabaseModel] = []
+ 
 
 adapter: RetailerLocationDataAdapter = RetailerLocationDataAdapter()
 common_adapter: CommonAdapters = CommonAdapters()

@@ -77,6 +77,7 @@ class RetailerLocationDataAdapter:
             ), 
             name=inbound_search_model.name,
             name_like=inbound_search_model.name_like,
+            account_status=inbound_search_model.account_status,
             location_state=inbound_search_model.location_state,
             location_city=inbound_search_model.location_city,
             location_country=inbound_search_model.location_country,
@@ -103,6 +104,9 @@ class RetailerLocationDataAdapter:
         if model.name_like is not None:
             search_terms.append(LikeSearchTerm('name', model.name_like, LikeComparatorModes.Like, True))
             
+        if model.account_status is not None:
+            search_terms.append(ExactMatchSearchTerm('account_status', model.account_status, True))
+                         
         if model.location_state is not None:
             search_terms.append(ExactMatchSearchTerm('location_state', model.location_state, True))
             

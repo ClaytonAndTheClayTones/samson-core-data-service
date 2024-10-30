@@ -11,6 +11,7 @@ create table if not exists retailers (
 );   
 
 CREATE INDEX IF NOT EXISTS idx_retailers_name ON public.retailers(name);  
+CREATE INDEX IF NOT EXISTS idx_retailers_account_status ON public.retailers(account_status);  
 CREATE INDEX IF NOT EXISTS idx_retailers_hq_city ON public.retailers(hq_city); 
 CREATE INDEX IF NOT EXISTS idx_retailers_hq_state ON public.retailers(hq_state); 
 CREATE INDEX IF NOT EXISTS idx_retailers_hq_country ON public.retailers(hq_country); 

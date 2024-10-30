@@ -97,6 +97,7 @@ class RetailerSearchModel(CommonSearchModel):
         ids: list[UUID] | None = None,
         name: str | None = None,
         name_like: str | None = None,
+        account_status: str | None = None,
         hq_city: str | None = None,
         hq_state: str | None = None,
         hq_country: str | None = None,
@@ -106,6 +107,7 @@ class RetailerSearchModel(CommonSearchModel):
 
         self.name = name
         self.name_like = name_like
+        self.account_status = account_status
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country
@@ -118,6 +120,7 @@ class RetailerDatabaseModel(CommonDatabaseModel):
         id: UUID,
         name: str,
         created_at: datetime,
+        account_status: RetailerAccountStatuses | None = None,
         hq_city: str | None = None,
         hq_state: str | None = None,
         hq_country: str | None = None,
@@ -128,6 +131,7 @@ class RetailerDatabaseModel(CommonDatabaseModel):
         super().__init__(id, created_at, updated_at)
 
         self.name = name
+        self.account_status = account_status
         self.contact_email = contact_email
         self.hq_city = hq_city
         self.hq_state = hq_state

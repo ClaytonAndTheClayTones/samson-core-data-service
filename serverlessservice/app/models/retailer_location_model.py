@@ -51,6 +51,7 @@ class RetailerLocationInboundSearchModel(CommonInboundSearchModel):
     name: Optional[str] = Query(default=None)
     name_like: Optional[str] = Query(default=None)
     retailer_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
+    account_status: Optional[RetailerLocationAccountStatuses] = Query(default=None)
     location_city: Optional[str] = Query(default=None)
     location_state: Optional[str] = Query(default=None)
     location_country: Optional[str] = Query(default=None)
@@ -110,6 +111,7 @@ class RetailerLocationSearchModel(CommonSearchModel):
         retailer_ids: list[UUID] | None = None, 
         name: str | None = None,
         name_like: str | None = None,
+        account_status: RetailerLocationAccountStatuses | None = None,
         location_city: str | None = None,
         location_state: str | None = None,
         location_country: str | None = None,
@@ -120,6 +122,7 @@ class RetailerLocationSearchModel(CommonSearchModel):
         self.name = name
         self.name_like = name_like
         self.retailer_ids = retailer_ids 
+        self.account_status = account_status
         self.location_city = location_city
         self.location_state = location_state
         self.location_country = location_country

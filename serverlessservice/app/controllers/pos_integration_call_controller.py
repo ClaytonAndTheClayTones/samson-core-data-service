@@ -20,9 +20,7 @@ from models.common_model import (
     OutboundItemListResponse,
     OutboundResultantPagingModel,
 )
-from util.database import PagingModel
-
-dblist: list[PosIntegrationCallDatabaseModel] = []
+from util.database import PagingModel 
 
 adapter: PosIntegrationCallDataAdapter = PosIntegrationCallDataAdapter()
 common_adapter: CommonAdapters = CommonAdapters()

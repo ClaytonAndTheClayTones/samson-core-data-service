@@ -3,6 +3,7 @@ create table if not exists users (
 	vendor_id uuid NULL, 
 	retailer_location_id uuid NULL, 
     retailer_id uuid NULL,  
+    username varchar(320) NOT NULL,
 	first_name varchar(64) NOT NULL, 
 	last_name varchar(64) NOT NULL,  
     full_name varchar(255) GENERATED ALWAYS AS (first_name || ' ' || last_name) STORED,  
@@ -11,6 +12,7 @@ create table if not exists users (
 	updated_at timestamptz(3) 
 );   
  
+CREATE INDEX IF NOT EXISTS idx_users_username ON public.users(username);
 CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
 CREATE INDEX IF NOT EXISTS idx_users_full_name ON public.users(full_name);
 CREATE INDEX IF NOT EXISTS idx_users_retailer_id ON public.users(retailer_id);

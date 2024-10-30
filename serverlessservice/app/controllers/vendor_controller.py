@@ -20,9 +20,7 @@ from models.common_model import (
     OutboundResultantPagingModel,
 )
 from util.database import PagingModel
-
-dblist: list[VendorDatabaseModel] = []
-
+ 
 adapter: VendorDataAdapter = VendorDataAdapter()
 common_adapter: CommonAdapters = CommonAdapters()
 manager: VendorManager = VendorManager()

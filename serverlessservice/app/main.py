@@ -6,6 +6,7 @@ from fastapi import FastAPI
 import uvicorn
 
 from routes.pos_integration_call_routes import set_pos_integration_call_routes
+from routes.user_routes import set_user_routes
 from routes.utility_routes import set_utility_routes
 from routes.pos_integration_routes import set_pos_integration_routes
 from routes.vendor_routes import set_vendor_routes
@@ -34,6 +35,7 @@ if(enviroment.configuration.STAGE != 'local'):
 set_utility_routes(app)
 set_retailer_routes(app)
 set_retailer_location_routes(app)
+set_user_routes(app)
 set_vendor_routes(app)
 set_pos_integration_routes(app)
 set_pos_integration_call_routes(app)

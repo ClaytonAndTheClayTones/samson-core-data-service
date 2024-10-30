@@ -23,9 +23,7 @@ from models.common_model import (
     OutboundResultantPagingModel,
 )
 from util.database import PagingModel
-
-dblist: list[PosIntegrationDatabaseModel] = []
-
+ 
 adapter: PosIntegrationDataAdapter = PosIntegrationDataAdapter()
 common_adapter: CommonAdapters = CommonAdapters()
 manager: PosIntegrationManager = PosIntegrationManager()

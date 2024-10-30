@@ -54,6 +54,7 @@ class VendorInboundUpdateModel(BaseModel):
 class VendorInboundSearchModel(CommonInboundSearchModel):
     name: Optional[str] = Query(default=None)
     name_like: Optional[str] = Query(default=None)
+    account_status: Optional[str] = Query(default=None)
     is_registered: Optional[bool] = Query(default=None)
     unregistered_vendor_referring_retailer_location_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     hq_city: Optional[str] = Query(default=None)
@@ -123,7 +124,7 @@ class VendorSearchModel(CommonSearchModel):
         ids: list[UUID] | None = None,
         unregistered_vendor_referring_retailer_location_ids: list[UUID] | None = None, 
         is_registered: bool | None = None,
-        account_status: bool | None = None,
+        account_status: VendorAccountStatuses | None = None,
         name: str | None = None,
         name_like: str | None = None,
         hq_city: str | None = None,

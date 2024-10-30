@@ -68,6 +68,7 @@ class RetailerDataAdapter:
             ),
             name=inbound_search_model.name,
             name_like=inbound_search_model.name_like,
+            account_status = inbound_search_model.account_status,
             hq_state=inbound_search_model.hq_state,
             hq_city=inbound_search_model.hq_city,
             hq_country=inbound_search_model.hq_country,
@@ -90,6 +91,9 @@ class RetailerDataAdapter:
             
         if model.name_like is not None:
             search_terms.append(LikeSearchTerm('name', model.name_like, LikeComparatorModes.Like, True))
+            
+        if model.account_status is not None:
+            search_terms.append(ExactMatchSearchTerm('account_status', model.account_status, True))
             
         if model.hq_state is not None:
             search_terms.append(ExactMatchSearchTerm('hq_state', model.hq_state, True))

@@ -14,6 +14,7 @@ create table if not exists vendors (
 );   
 
 CREATE INDEX IF NOT EXISTS idx_vendors_name ON public.vendors(name);  
+CREATE INDEX IF NOT EXISTS idx_vendors_account_status ON public.vendors(account_status);  
 CREATE INDEX IF NOT EXISTS idx_vendors_is_registered ON public.vendors(is_registered);
 CREATE INDEX IF NOT EXISTS idx_vendors_unregistered_vendor_referring_retailer_location_id ON public.vendors(unregistered_vendor_referring_retailer_location_id); 
 CREATE INDEX IF NOT EXISTS idx_vendors_hq_city ON public.vendors(hq_city); 

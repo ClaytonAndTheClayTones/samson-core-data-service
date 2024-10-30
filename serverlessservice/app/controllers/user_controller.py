@@ -1,38 +1,37 @@
 from uuid import UUID
 from fastapi import HTTPException
-from adapters.retailer_adapters import RetailerDataAdapter
+from adapters.user_adapters import UserDataAdapter
 from adapters.common_adapters import CommonAdapters
-from managers.retailer_manager import RetailerManager
-from models.retailer_model import (
-    RetailerCreateModel,
-    RetailerDatabaseModel,
-    RetailerInboundCreateModel,
-    RetailerInboundSearchModel,
-    RetailerInboundUpdateModel,
-    RetailerModel,
-    RetailerOutboundModel,
-    RetailerSearchModel,
-    RetailerUpdateModel,
+from managers.user_manager import UserManager
+from models.user_model import (
+    UserCreateModel,
+    UserDatabaseModel,
+    UserInboundCreateModel,
+    UserInboundSearchModel,
+    UserInboundUpdateModel,
+    UserModel,
+    UserOutboundModel,
+    UserSearchModel,
+    UserUpdateModel,
 )
 from models.common_model import (
     ItemList,
     OutboundItemListResponse,
     OutboundResultantPagingModel,
 )
-from util.database import PagingModel
- 
+from util.database import PagingModel 
 
-adapter: RetailerDataAdapter = RetailerDataAdapter()
+adapter: UserDataAdapter = UserDataAdapter()
 common_adapter: CommonAdapters = CommonAdapters()
-manager: RetailerManager = RetailerManager()
+manager: UserManager = UserManager()
 
 
-class RetailerController:
+class UserController:
 
     def create(
-        self, inbound_model: RetailerInboundCreateModel
-    ) -> RetailerOutboundModel | None:
-        model: RetailerCreateModel = (
+            self, inbound_model: UserInboundCreateModel
+    ) -> UserOutboundModel | None:
+        model: UserCreateModel = (
             adapter.convert_from_inbound_create_model_to_create_model(
                 inbound_model))
 
@@ -41,37 +40,37 @@ class RetailerController:
         if result is None:
             raise Exception('Received no model from create operation.')
 
-        response_model: RetailerOutboundModel = (
+        response_model: UserOutboundModel = (
             adapter.convert_from_model_to_outbound_model(result))
 
         return response_model
 
-    def get_by_id(self, id: UUID) -> RetailerOutboundModel | None:
+    def get_by_id(self, id: UUID) -> UserOutboundModel | None:
 
         result = manager.get_by_id(id)
 
         if result is None:
             raise HTTPException(status_code=404,
-                                detail=f'Retailer with id {id} not found.')
+                                detail=f'User with id {id} not found.')
 
-        response_model: RetailerOutboundModel = (
+        response_model: UserOutboundModel = (
             adapter.convert_from_model_to_outbound_model(result))
 
         return response_model
 
     def search(
-        self, inbound_model: RetailerInboundSearchModel
-    ) -> OutboundItemListResponse[RetailerOutboundModel]:
+        self, inbound_model: UserInboundSearchModel
+    ) -> OutboundItemListResponse[UserOutboundModel]:
 
         paging_model: PagingModel = (
             common_adapter.convert_from_paged_inbound_model_to_paging_model(
                 inbound_model))
 
-        search_model: RetailerSearchModel = (
+        search_model: UserSearchModel = (
             adapter.convert_from_inbound_search_model_to_search_model(
                 inbound_model))
 
-        results: ItemList[RetailerModel] = manager.search(
+        results: ItemList[UserModel] = manager.search(
             search_model, paging_model)
 
         return_result_list = list(
@@ -92,23 +91,23 @@ class RetailerController:
     def update(
         self,
         id: UUID,
-        inbound_model: RetailerInboundUpdateModel,
+        inbound_model: UserInboundUpdateModel,
         explicitNullSet: list[str] | None = None,
     ):
 
         explicitNullSet = explicitNullSet or []
 
-        model: RetailerUpdateModel = (
+        model: UserUpdateModel = (
             adapter.convert_from_inbound_update_model_to_create_model(
                 inbound_model))
 
-        result: None | RetailerModel = manager.update(id, model)
+        result: None | UserModel = manager.update(id, model)
 
         if result is None:
             raise HTTPException(status_code=404,
-                                detail=f'Retailer with id {id} not found.')
+                                detail=f'User with id {id} not found.')
 
-        response_model: RetailerOutboundModel = (
+        response_model: UserOutboundModel = (
             adapter.convert_from_model_to_outbound_model(result))
 
         return response_model
@@ -119,9 +118,9 @@ class RetailerController:
 
         if result is None:
             raise HTTPException(status_code=404,
-                                detail=f'Retailer with id {id} not found.')
+                                detail=f'User with id {id} not found.')
 
-        response_model: RetailerOutboundModel = (
+        response_model: UserOutboundModel = (
             adapter.convert_from_model_to_outbound_model(result))
 
         return response_model

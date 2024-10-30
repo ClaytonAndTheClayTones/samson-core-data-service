@@ -12,10 +12,7 @@ from models.common_model import ItemList
 from util.configuration import get_global_configuration
 from util.database import PagingModel, SearchTerm
 from util.db_connection import SelectQueryResults
-
-dblist: list[VendorDatabaseModel] = []
-
-
+ 
 class VendorDataAccessor:
     adapter: VendorDataAdapter = VendorDataAdapter()
 

@@ -76,8 +76,8 @@ class VendorDataAdapter:
                 is not None 
                 else 
                     None
-            ), 
-            is_registered=inbound_search_model.is_registered,
+            ),  
+            account_status=inbound_search_model.account_status,
             name=inbound_search_model.name,
             name_like=inbound_search_model.name_like,
             hq_state=inbound_search_model.hq_state,
@@ -112,6 +112,9 @@ class VendorDataAdapter:
             search_terms.append(
                 LikeSearchTerm('name', model.name_like,
                                LikeComparatorModes.Like, True))
+             
+        if model.account_status is not None:
+            search_terms.append(ExactMatchSearchTerm('account_status', model.account_status))
 
         if model.hq_state is not None:
             search_terms.append(
@@ -136,7 +139,7 @@ class VendorDataAdapter:
             'name': model.name,
             'unregistered_vendor_referring_retailer_location_id': str(model.unregistered_vendor_referring_retailer_location_id) if model.unregistered_vendor_referring_retailer_location_id is not None else None,
             'is_registered': model.is_registered,
-            'account_status': model.account_status.value,
+            'account_status': model.account_status.value if model.account_status is not None else None,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
@@ -154,7 +157,7 @@ class VendorDataAdapter:
         database_model: dict[str, Any] = {
             'name': model.name,
             'is_registered': model.is_registered,
-            'account_status': model.account_status.value,
+            'account_status': model.account_status.value if model.account_status is not None else None,
             'hq_state': model.hq_state,
             'hq_city': model.hq_city,
             'hq_country': model.hq_country,
