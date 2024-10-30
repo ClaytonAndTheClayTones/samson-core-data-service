@@ -76,7 +76,7 @@ class ExactMatchSearchTerm(SearchTerm, Generic[T]):
     ) -> str:
         sqlstring: str = ''
 
-        if self.ignore_case:
+        if self.ignore_case and isinstance(self.value, str):
             sqlstring = f"LOWER({self.column_name}) = LOWER(%({self.column_name})s)"
         else:
             sqlstring = f"{self.column_name} = %({self.column_name})s"

@@ -179,10 +179,10 @@ class PGConnection:
         else:
             refined_model['updated_at'] = datetime.utcnow()
 
-        sqlstring = self.build_update_query(table_name, id, refined_model)
+        results = self.build_update_query(table_name, id, refined_model)
 
         try:
-            self.cursor.execute(sqlstring)
+            self.cursor.execute(results.sql_string, results.parameters)
         except Exception as e:
             self.connection.rollback()
             raise e
@@ -365,20 +365,36 @@ class PGConnection:
 
         return sqlstring
 
-    def build_update_query(self, table_name: str, id: UUID, model: dict[str,
-                                                                        Any]):
+    def build_update_query(
+        self, 
+        table_name: str, 
+        id: UUID, 
+        model: dict[str, Any]
+    ) -> SqlStringAndParameters:
+        
         sqlstring: str = f'UPDATE {table_name}\n' f'SET\n'
         keys = model.keys()
 
         for i, key in enumerate(keys):
-            sqlstring += f"\t{key} = '{model[key]}'"
+            sqlstring += f"\t{key} = %({key})s"
             if i < len(keys) - 1:
                 sqlstring += ','
             sqlstring += '\n'
 
         sqlstring += f"WHERE id = '{id}'\n" f'RETURNING *;'
 
-        return sqlstring
+        # Parameters
+        parameters : dict[str,Any] = {}
+        
+        for i, key in enumerate(keys):
+            parameters[key] = model[key]
+        
+        results = SqlStringAndParameters(
+            sql_string= sqlstring,
+            parameters=parameters
+        )
+        
+        return results
 
     def build_delete_query(self, table_name: str, id: UUID):
         sqlstring: str = (f'DELETE FROM {table_name}\n'

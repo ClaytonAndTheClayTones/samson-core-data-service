@@ -118,6 +118,6 @@ class PosIntegrationCallOutboundModel(CommonOutboundResponseModel):
     retailer_id: str
     retailer_location_id: str
     pos_integration_id: str
-    request: str
-    response: str
-    response_status_code: str 
+    request: dict[str,Any]
+    response: dict[str,Any]
+    response_status_code: int 

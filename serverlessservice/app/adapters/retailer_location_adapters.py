@@ -92,10 +92,10 @@ class RetailerLocationDataAdapter:
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
-            search_terms.append(InListSearchTerm('id', model.ids))
+            search_terms.append(InListSearchTerm('id', self.common_utilities.convert_uuid_list_to_string_list(model.ids)))
             
         if model.retailer_ids is not None:
-            search_terms.append(InListSearchTerm('retailer_id', model.retailer_ids))
+            search_terms.append(InListSearchTerm('retailer_id', self.common_utilities.convert_uuid_list_to_string_list(model.retailer_ids)))
   
         if model.name is not None:
             search_terms.append(ExactMatchSearchTerm('name', model.name, True))
@@ -118,7 +118,7 @@ class RetailerLocationDataAdapter:
         
         database_model: dict[str, Any] = {
             'name': model.name,
-            'retailer_id': model.retailer_id, 
+            'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None, 
             'location_state': model.location_state,
             'location_city': model.location_city,
             'location_country': model.location_country,

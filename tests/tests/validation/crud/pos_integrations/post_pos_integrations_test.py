@@ -13,7 +13,7 @@ def test_posts_invalid_pos_integration_missing_fields() -> None:
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
     result = qa_post(context.api_url + "/pos_integrations", {
-        'retailer_location_id': None
+ 
     })
 
     assert result.status_code == 422

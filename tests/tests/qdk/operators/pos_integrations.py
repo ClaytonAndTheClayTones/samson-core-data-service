@@ -64,6 +64,8 @@ class PosIntegrationModel():
         self.name = name
         self.url = url
         self.key = key
+        self.retailer = retailer
+        self.retailer_location = retailer_location
         self.pos_platform = pos_platform
         self.description = description 
         self.created_at = created_at

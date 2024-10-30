@@ -92,13 +92,13 @@ class PosIntegrationDataAdapter:
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
-            search_terms.append(InListSearchTerm('id', model.ids))
+            search_terms.append(InListSearchTerm('id', self.common_utilities.convert_uuid_list_to_string_list(model.ids)))
                     
         if model.retailer_ids is not None:
-            search_terms.append(InListSearchTerm('retailer_id', model.retailer_ids))
+            search_terms.append(InListSearchTerm('retailer_id', self.common_utilities.convert_uuid_list_to_string_list(model.retailer_ids)))
                     
         if model.retailer_location_ids is not None:
-            search_terms.append(InListSearchTerm('retailer_location_id', model.retailer_location_ids))
+            search_terms.append(InListSearchTerm('retailer_location_id', self.common_utilities.convert_uuid_list_to_string_list(model.retailer_location_ids)))
             
         if model.name is not None:
             search_terms.append(ExactMatchSearchTerm('name', model.name, True))
@@ -117,8 +117,8 @@ class PosIntegrationDataAdapter:
         ) -> dict[str, Any]:
        
         database_model: dict[str, Any] = {
-            'retailer_id': model.retailer_id,
-            'retailer_location_id': model.retailer_location_id,
+            'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
+            'retailer_location_id': str(model.retailer_location_id) if model.retailer_location_id is not None else None ,
             'name': model.name,
             'url': model.url,
             'key': model.key,
@@ -129,7 +129,10 @@ class PosIntegrationDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, model: PosIntegrationUpdateModel) -> dict[str, Any]:
+            self, 
+            model: PosIntegrationUpdateModel
+        ) -> dict[str, Any]:
+        
         database_model: dict[str, Any] = {
             'name': model.name,
             'url': model.url,
@@ -142,7 +145,10 @@ class PosIntegrationDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, database_model: dict[str, Any]) -> PosIntegrationModel:
+            self, 
+            database_model: dict[str, Any]
+        ) -> PosIntegrationModel:
+        
         model = PosIntegrationModel(
             id=database_model['id'],
             retailer_id=database_model['retailer_id'],

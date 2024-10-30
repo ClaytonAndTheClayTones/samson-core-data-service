@@ -1,3 +1,4 @@
+import json
 from typing import Any
 from models.pos_integration_call_model import (
     PosIntegrationCallCreateModel,
@@ -77,16 +78,16 @@ class PosIntegrationCallDataAdapter:
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
-            search_terms.append(InListSearchTerm('id', model.ids))
+            search_terms.append(InListSearchTerm('id', self.common_utilities.convert_uuid_list_to_string_list(model.ids)))
                     
         if model.retailer_ids is not None:
-            search_terms.append(InListSearchTerm('retailer_id', model.retailer_ids))
+            search_terms.append(InListSearchTerm('retailer_id', self.common_utilities.convert_uuid_list_to_string_list(model.retailer_ids)))
                     
         if model.retailer_location_ids is not None:
-            search_terms.append(InListSearchTerm('retailer_location_id', model.retailer_location_ids))
+            search_terms.append(InListSearchTerm('retailer_location_id', self.common_utilities.convert_uuid_list_to_string_list(model.retailer_location_ids)))
             
         if model.pos_integration_ids is not None:
-            search_terms.append(InListSearchTerm('pos_integration_id', model.pos_integration_ids))
+            search_terms.append(InListSearchTerm('pos_integration_id', self.common_utilities.convert_uuid_list_to_string_list(model.pos_integration_ids)))
             
         if model.response_status_code is not None:
             search_terms.append(ExactMatchSearchTerm('response_status_code', model.response_status_code, True))
@@ -99,9 +100,11 @@ class PosIntegrationCallDataAdapter:
         ) -> dict[str, Any]:
        
         database_model: dict[str, Any] = { 
-            'pos_integration_id': model.pos_integration_id,
-            'request': model.request,
-            'response': model.response,
+            'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None,
+            'retailer_location_id': str(model.retailer_location_id) if model.retailer_location_id is not None else None,
+            'pos_integration_id': str(model.pos_integration_id) if model.pos_integration_id is not None else None,
+            'request': json.dumps(model.request) if model.request is not None else None,
+            'response': json.dumps(model.response) if model.response is not None else None,
             'response_status_code': model.response_status_code, 
         }
 
@@ -119,7 +122,9 @@ class PosIntegrationCallDataAdapter:
             pos_integration_id=database_model['pos_integration_id'],
             request=database_model['request'],
             response=database_model['response'],
-            response_status_code=database_model['response_status_code']
+            response_status_code=database_model['response_status_code'],
+            created_at=database_model['created_at'],
+            updated_at=database_model['updated_at'],
         )
 
         return model

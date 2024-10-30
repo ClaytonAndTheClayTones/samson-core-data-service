@@ -95,13 +95,13 @@ class VendorDataAdapter:
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
-            search_terms.append(InListSearchTerm('id', model.ids))
+            search_terms.append(InListSearchTerm('id', self.common_utilities.convert_uuid_list_to_string_list(model.ids)))
   
         if model.unregistered_vendor_referring_retailer_location_ids is not None:
             search_terms.append(
                 InListSearchTerm(
                     'unregistered_vendor_referring_retailer_location_id',
-                    model.unregistered_vendor_referring_retailer_location_ids,
+                    self.common_utilities.convert_uuid_list_to_string_list(model.unregistered_vendor_referring_retailer_location_ids),
                 )
             )
 
@@ -134,7 +134,7 @@ class VendorDataAdapter:
         
         database_model: dict[str, Any] = {
             'name': model.name,
-            'unregistered_vendor_referring_retailer_location_id': model.unregistered_vendor_referring_retailer_location_id,
+            'unregistered_vendor_referring_retailer_location_id': str(model.unregistered_vendor_referring_retailer_location_id) if model.unregistered_vendor_referring_retailer_location_id is not None else None,
             'is_registered': model.is_registered,
             'account_status': model.account_status.value,
             'hq_state': model.hq_state,
