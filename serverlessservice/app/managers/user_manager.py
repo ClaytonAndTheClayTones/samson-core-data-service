@@ -18,9 +18,10 @@ class UserManager:
 
     def create(self, inboundModel: UserCreateModel) -> UserModel | None:
 
-        referenced_retailer_location = retailer_location_accessor.select_by_id(inboundModel.retailer_location_id)
-        
-        inboundModel.retailer_id = referenced_retailer_location.retailer_id
+        # Denormalize retailer_id
+        if(inboundModel.retailer_location_id): 
+            referenced_retailer_location = retailer_location_accessor.select_by_id(inboundModel.retailer_location_id) 
+            inboundModel.retailer_id = referenced_retailer_location.retailer_id
         
         result = accessor.insert(inboundModel)
 

@@ -18,10 +18,10 @@ class UserRoles(Enum):
     SamsonAdmin = 'SamsonAdmin'
     SamsonUser = 'SamsonUser' 
     RetailerAdmin = 'RetailerAdmin' 
-    RetailerStoreUser = 'RetailerStoreUser' 
+    RetailerUser = 'RetailerUser' 
     RetailerManager = 'RetailerManager' 
-    UserAdmin = 'UserAdmin'
-    UserUser = 'UserUser' 
+    VendorAdmin = 'VendorAdmin'
+    VendorUser = 'VendorUser' 
     
 # Pydantic causes these class variables to safely be instance variables.
 class UserInboundCreateModel(BaseModel):

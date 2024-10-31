@@ -44,8 +44,8 @@ def test_posts_invalid_pos_integration_missing_fields() -> None:
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'retailer_location_id' in error['loc']]
     assert len(error) == 1
-    assert error[0]['type'] == 'uuid_type'
-    assert error[0]['msg'] == 'UUID input should be a string, bytes or UUID object'
+    assert error[0]['type'] == 'missing'
+    assert error[0]['msg'] == 'Field required'
 
 def test_posts_invalid_pos_integration_bad_inputs() -> None:
      

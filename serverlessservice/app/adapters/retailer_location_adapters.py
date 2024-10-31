@@ -105,7 +105,7 @@ class RetailerLocationDataAdapter:
             search_terms.append(LikeSearchTerm('name', model.name_like, LikeComparatorModes.Like, True))
             
         if model.account_status is not None:
-            search_terms.append(ExactMatchSearchTerm('account_status', model.account_status, True))
+            search_terms.append(ExactMatchSearchTerm('account_status', model.account_status.value, True))
                          
         if model.location_state is not None:
             search_terms.append(ExactMatchSearchTerm('location_state', model.location_state, True))

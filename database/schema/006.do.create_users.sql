@@ -40,3 +40,13 @@ ALTER TABLE public.users
   ADD CONSTRAINT fk_users_vendor_id
   FOREIGN KEY (vendor_id)
   REFERENCES public.vendors(id); 
+
+
+-- Enums
+
+ALTER TABLE public.users DROP CONSTRAINT IF EXISTS enum_users_role;
+  
+ALTER TABLE public.users  
+   ADD CONSTRAINT enum_users_role 
+   CHECK (role IN ('SamsonAdmin', 'SamsonUser', 'RetailerAdmin', 'RetailerUser', 'RetailerManager', 'VendorAdmin', 'VendorUser') );
+ 

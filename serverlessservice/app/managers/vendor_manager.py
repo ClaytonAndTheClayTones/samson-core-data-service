@@ -11,7 +11,6 @@ from util.database import PagingModel
 
 accessor: VendorDataAccessor = VendorDataAccessor()
 
-
 class VendorManager:
 
     def create(self, inboundModel: VendorCreateModel) -> VendorModel | None:

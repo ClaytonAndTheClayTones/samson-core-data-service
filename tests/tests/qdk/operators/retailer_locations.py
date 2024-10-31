@@ -72,6 +72,7 @@ class RetailerLocationSearchModel(PagingRequestModel):
                 retailer_ids: str | None = None,   
                 name: str | None = None,
                 name_like: str | None = None,  
+                account_status: str | None = None,  
                 location_city: str | None = None,
                 location_state: str | None = None,
                 location_country: str | None = None,
@@ -90,6 +91,7 @@ class RetailerLocationSearchModel(PagingRequestModel):
         self.retailer_ids = retailer_ids  
         self.name = name
         self.name_like = name_like 
+        self.account_status = account_status
         self.location_city = location_city 
         self.location_state = location_state 
         self.location_country = location_country 

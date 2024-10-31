@@ -88,6 +88,8 @@ class UserSearchModel(PagingRequestModel):
                 vendor_ids: str | None = None,  
                 retailer_location_ids: str | None = None,
                 name_like: str | None = None,
+                username_like: str | None = None,
+                username: str | None = None,
                 role: str | None = None, 
                 page: int | None = None,
                 page_length: int | None = None,
@@ -106,6 +108,8 @@ class UserSearchModel(PagingRequestModel):
         self.retailer_location_ids = retailer_location_ids
         self.role = role
         self.name_like = name_like
+        self.username_like = username_like
+        self.username = username
  
 def mint_default_user(
     context: TestContext, 
@@ -159,13 +163,14 @@ def create_user(
  
         result_dict = result.json()
 
-        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "is_registered", "retailer_id", "retailer", "retailer_location_id", "retailer_location", "vendor_id", "vendor", "full_name"])
+        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "username", "retailer_id", "retailer", "retailer_location_id", "retailer_location", "vendor_id", "vendor", "full_name"])
 
         assert result_dict['id'] is not None
         assert result_dict['created_at'] is not None
         assert result_dict['updated_at'] is None
          
         assert result_dict['full_name'] == post_object.first_name + " " + post_object.last_name
+        assert result_dict['username'].lower() == post_object.username.lower()
     
     return_object = UserModel(**result.json())
     
@@ -229,8 +234,9 @@ def update_user(
  
         result_dict = result.json()
 
-        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["updated_at"])
- 
+        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["full_name", "updated_at"])
+        
+        assert result_dict['full_name'] == update_model.first_name + " " + update_model.last_name 
         assert result_dict['updated_at'] is not None
     
     return_object = UserModel(**result.json())

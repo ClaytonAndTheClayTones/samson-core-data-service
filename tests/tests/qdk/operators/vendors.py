@@ -96,6 +96,7 @@ class VendorSearchModel(PagingRequestModel):
                 hq_city: str | None = None,
                 hq_state: str | None = None,
                 hq_country: str | None = None,
+                account_status: str | None = None,
                 page: int | None = None,
                 page_length: int | None = None,
                 is_sort_descending: bool | None = None,
@@ -112,6 +113,7 @@ class VendorSearchModel(PagingRequestModel):
         self.name = name
         self.name_like = name_like
         self.is_registered = is_registered
+        self.account_status = account_status
         self.hq_city = hq_city
         self.hq_state = hq_state
         self.hq_country = hq_country

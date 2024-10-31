@@ -92,7 +92,7 @@ def test_posts_invalid_user_bad_inputs() -> None:
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'role' in error['loc']]
     assert len(error) == 1    
     assert error[0]['type'] == 'enum'
-    assert error[0]['msg'] == "Input should be 'SamsonAdmin', 'SamsonUser', 'RetailerAdmin', 'RetailerStoreUser', 'RetailerManager', 'UserAdmin' or 'UserUser'"
+    assert error[0]['msg'] == "Input should be 'SamsonAdmin', 'SamsonUser', 'RetailerAdmin', 'RetailerUser', 'RetailerManager', 'VendorAdmin' or 'VendorUser'"
     
     
 def test_posts_valid_user() -> None:

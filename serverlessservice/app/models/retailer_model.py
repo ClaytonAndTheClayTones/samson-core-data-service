@@ -46,6 +46,7 @@ class RetailerInboundUpdateModel(BaseModel):
 class RetailerInboundSearchModel(CommonInboundSearchModel):
     name: Optional[str] = Query(default=None)
     name_like: Optional[str] = Query(default=None)
+    account_status: Optional[RetailerAccountStatuses] = Query(default=None)
     hq_city: Optional[str] = Query(default=None)
     hq_state: Optional[str] = Query(default=None)
     hq_country: Optional[str] = Query(default=None)

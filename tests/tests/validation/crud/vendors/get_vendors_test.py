@@ -364,3 +364,33 @@ def test_gets_vendors_with_hq_country_filter() -> None:
     posted_item_4: list[VendorModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
+    
+def test_gets_vendors_with_account_status_filter() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object_1: VendorModel = create_vendor(context, VendorCreateModel(account_status = "PausedByBilling"))
+    posted_object_2: VendorModel = create_vendor(context, VendorCreateModel(account_status = "PausedByRequest"))
+    posted_object_3: VendorModel = create_vendor(context, VendorCreateModel(account_status = "PausedByBilling"))
+    posted_object_4: VendorModel = create_vendor(context, VendorCreateModel(account_status = "Unregistered"))
+
+    filters: VendorSearchModel = VendorSearchModel(
+        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
+        account_status = "PausedByBilling"
+    )
+    
+    result: PagedResponseItemList[VendorModel] = get_vendors(context, filters)
+
+    assert result is not None
+    assert result.items is not None 
+
+    assert len(result.items) == 2
+    
+    posted_item_1: list[VendorModel] = [item for item in result.items if item.id == posted_object_1.id]
+    assert len(posted_item_1) == 1  
+    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
+  
+    posted_item_3: list[VendorModel] = [item for item in result.items if item.id == posted_object_3.id]
+    assert len(posted_item_3) == 1 
+    assert_objects_are_equal(posted_item_3[0], posted_object_3) 
