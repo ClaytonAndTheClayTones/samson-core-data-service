@@ -56,7 +56,7 @@ class PosIntegrationManager:
 
         explicitNullSet = explicit_null_set or []
 
-        result = accessor.update(id, model)
+        result = accessor.update(id, model,explicitNullSet)
 
         return result
 

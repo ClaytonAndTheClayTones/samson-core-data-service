@@ -18,7 +18,8 @@ class RetailerLocationCreateModel():
                 location_city: str | None = None,
                 location_state: str | None = None,
                 location_country: str | None = None,
-                name: str | None = None) -> None:
+                name: str | None = None
+    ) -> None:
         
         self.retailer_id = retailer_id
         self.retailer = retailer  
@@ -37,17 +38,18 @@ class RetailerLocationModel():
 
     def __init__(self, 
                 id: str, 
-                created_at: datetime.datetime | None = None, 
-                updated_at: datetime.datetime | None = None, 
-                retailer_id: str | None = None,
+                retailer_id: str,
+                name: str,
+                account_status: str,
+                created_at: datetime.datetime, 
                 retailer: RetailerModel | None = None, 
-                name: str | None = None,
-                account_status: str | None = None,
                 contact_email: str | None = None,
                 contact_phone: str | None = None,
                 location_city: str | None = None,
                 location_state: str | None = None,
-                location_country: str | None = None) -> None:
+                location_country: str | None = None,
+                updated_at: datetime.datetime | None = None, 
+    ) -> None:
                 
         self.id = id
         self.created_at = created_at

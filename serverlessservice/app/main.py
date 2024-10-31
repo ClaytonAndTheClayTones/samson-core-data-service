@@ -6,6 +6,7 @@ from fastapi import FastAPI
 import uvicorn
 
 from routes.pos_integration_call_routes import set_pos_integration_call_routes
+from routes.product_routes import set_product_routes
 from routes.user_routes import set_user_routes
 from routes.utility_routes import set_utility_routes
 from routes.pos_integration_routes import set_pos_integration_routes
@@ -39,6 +40,7 @@ set_user_routes(app)
 set_vendor_routes(app)
 set_pos_integration_routes(app)
 set_pos_integration_call_routes(app)
+set_product_routes(app)
 
 if __name__ == '__main__' and enviroment.configuration.STAGE == 'local':
     uvicorn.run(app, host='0.0.0.0', port=8001)
