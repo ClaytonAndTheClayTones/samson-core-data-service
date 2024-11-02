@@ -11,7 +11,7 @@ from enum import Enum
 class InventoryIntakeJobStatuses(str, Enum):
     Requested = 'Requested'
     Processing = 'Processing'
-    Completed = 'Completed'
+    Complete = 'Complete'
     Failed = 'Failed' 
  
 from models.common_model import (
@@ -25,8 +25,7 @@ from models.common_model import (
 
 
 # Pydantic causes these class variables to safely be instance variables.
-class InventoryIntakeJobInboundCreateModel(BaseModel): 
-    retailer_id: Annotated[UUID4, Strict(False)] = Field(...)
+class InventoryIntakeJobInboundCreateModel(BaseModel):  
     retailer_location_id: Annotated[UUID4, Strict(False)] = Field(...)
     snapshot_hour: datetime = Field(...)  
     status: Optional[InventoryIntakeJobStatuses] = Field(default=None)
@@ -42,7 +41,8 @@ class InventoryIntakeJobInboundUpdateModel(BaseModel):
 
 # Pydantic causes these class variables to safely be instance variables.
 class InventoryIntakeJobInboundSearchModel(CommonInboundSearchModel): 
-    snapshot_hour: Optional[datetime] = Query(default=None)
+    snapshot_hour_min: Optional[datetime] = Query(default=None)
+    snapshot_hour_max: Optional[datetime] = Query(default=None)
     status: Optional[InventoryIntakeJobStatuses] = Query(default=None)
     retailer_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     retailer_location_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
@@ -52,9 +52,9 @@ class InventoryIntakeJobCreateModel:
 
     def __init__(
         self,
-        retailer_location_id: UUID,
-        retailer_id: UUID,
+        retailer_location_id: UUID ,
         snapshot_hour: datetime,
+        retailer_id: UUID | None = None,
         status: InventoryIntakeJobStatuses | None = None,
         status_details: dict[str,Any] | None = None,
         
@@ -87,7 +87,8 @@ class InventoryIntakeJobSearchModel(CommonSearchModel):
         ids: list[UUID] | None = None,
         retailer_ids: list[UUID] | None = None,
         retailer_location_ids: list[UUID] | None = None,
-        snapshot_hour: datetime | None = None,
+        snapshot_hour_min: datetime | None = None,
+        snapshot_hour_max: datetime | None = None,
         status: InventoryIntakeJobStatuses | None = None,
     ) -> None:
 
@@ -95,7 +96,8 @@ class InventoryIntakeJobSearchModel(CommonSearchModel):
 
         self.retailer_ids = retailer_ids
         self.retailer_location_ids = retailer_location_ids
-        self.snapshot_hour = snapshot_hour
+        self.snapshot_hour_min = snapshot_hour_min
+        self.snapshot_hour_max = snapshot_hour_max
         self.status = status
 
 
@@ -149,6 +151,6 @@ class InventoryIntakeJobDatabaseModel(CommonDatabaseModel):
 class InventoryIntakeJobOutboundModel(CommonOutboundResponseModel):
     retailer_id: UUID   
     retailer_location_id: str
-    snapshot_hour: datetime
+    snapshot_hour: str
     status: InventoryIntakeJobStatuses | None = None
     status_details: dict[str,Any] | None = None 

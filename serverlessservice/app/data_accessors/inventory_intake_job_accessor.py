@@ -54,11 +54,15 @@ class InventoryIntakeJobDataAccessor:
 
         connection = get_global_configuration().pg_connection
 
-        search_terms: list[
-            SearchTerm] = self.adapter.convert_from_search_model_to_search_terms(
-                model)
+        search_terms: list[SearchTerm] = self.adapter.convert_from_search_model_to_search_terms(
+                model
+        )
+        
         db_result: SelectQueryResults = connection.select(
-            'inventory_intake_jobs', search_terms, paging_model)
+            'inventory_intake_jobs', 
+            search_terms, 
+            paging_model
+        )
 
         results: ItemList[InventoryIntakeJobModel] = ItemList[InventoryIntakeJobModel](
             db_result.paging)

@@ -212,8 +212,8 @@ class UserDataAdapter:
             vendor_id=model. vendor_id,
             retailer_id=model. retailer_id,
             retailer_location_id=model.retailer_location_id, 
-            created_at=model.created_at,
-            updated_at=model.updated_at,
+            created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
+            updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )
 
         return outbound_model

@@ -1,4 +1,5 @@
 from typing import Any
+from adapters.inventory_intake_job_adapters import RangeSearchTerm
 from models.inventory_product_snapshot_model import (
     InventoryProductSnapshotCreateModel,
     InventoryProductSnapshotInboundCreateModel,
@@ -10,9 +11,7 @@ from models.inventory_product_snapshot_model import (
 from util.common import CommonUtilities
 from util.database import (
     ExactMatchSearchTerm,
-    InListSearchTerm,
-    LikeComparatorModes,
-    LikeSearchTerm,
+    InListSearchTerm, 
     SearchTerm,
 )
 
@@ -26,6 +25,8 @@ class InventoryProductSnapshotDataAdapter:
     ) -> InventoryProductSnapshotCreateModel:
         
         model = InventoryProductSnapshotCreateModel(
+            retailer_id=None,
+            vendor_id=None,
             product_id=inbound_create_model.product_id, 
             retailer_location_id=inbound_create_model.retailer_location_id, 
             snapshot_hour=inbound_create_model.snapshot_hour,
@@ -82,7 +83,8 @@ class InventoryProductSnapshotDataAdapter:
             ),
             sku=inbound_search_model.sku,
             lot_identifier=inbound_search_model.lot_identifier,
-            snapshot_hour=inbound_search_model.snapshot_hour,
+            snapshot_hour_min=inbound_search_model.snapshot_hour_min,
+            snapshot_hour_max=inbound_search_model.snapshot_hour_max,
             
         )
 
@@ -119,8 +121,8 @@ class InventoryProductSnapshotDataAdapter:
         if model.lot_identifier is not None:    
             search_terms.append(ExactMatchSearchTerm('lot_identifier', model.lot_identifier, True))
             
-        if model.snapshot_hour is not None:    
-            search_terms.append(ExactMatchSearchTerm('snapshot_hour', model.snapshot_hour, True))
+        if model.snapshot_hour_min is not None or model.snapshot_hour_max is not None:
+            search_terms.append(RangeSearchTerm('snapshot_hour', model.snapshot_hour_min, model.snapshot_hour_max))
             
         return search_terms
 
@@ -177,14 +179,14 @@ class InventoryProductSnapshotDataAdapter:
             retailer_id=model.retailer_id,
             retailer_location_id=model.retailer_location_id,
             product_id=model.product_id,
-            snapshot_hour=model.snapshot_hour,
+            snapshot_hour=model.snapshot_hour.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             sku=model.sku,
             stock_on_hand=model.stock_on_hand,
             price=model.price,
             lot_identifier=model.lot_identifier,
             vendor_id=model.vendor_id,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
+            created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
+            updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )
 
         return outbound_model

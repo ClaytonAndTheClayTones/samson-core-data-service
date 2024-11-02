@@ -205,8 +205,8 @@ class VendorDataAdapter:
             hq_country=model.hq_country,
             contact_email=model.contact_email,
             contact_phone=model.contact_phone,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
+            created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
+            updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z')    if model.updated_at is not None else None,
         )
 
         return outbound_model

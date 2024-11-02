@@ -31,15 +31,16 @@ class InventoryProductSnapshotInboundCreateModel(BaseModel):
     inventory_intake_job_id: Optional[Annotated[UUID4, Strict(False)]] = Field(default=None)
     
     snapshot_hour: datetime = Field(...)   
-    sku: str = Field(...)
+    sku: str = Field(..., max_length=255)
     stock_on_hand: int = Field(...)
     price: int = Field(...)
-    lot_identifier: Optional[str] = Field(default=None) 
+    lot_identifier: Optional[str] = Field(default=None, max_length=255) 
   
 
 # Pydantic causes these class variables to safely be instance variables.
 class InventoryProductSnapshotInboundSearchModel(CommonInboundSearchModel): 
-    snapshot_hour: Optional[datetime] = Query(default=None) 
+    snapshot_hour_min: Optional[datetime] = Query(default=None) 
+    snapshot_hour_max: Optional[datetime] = Query(default=None) 
     retailer_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     retailer_location_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     product_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
@@ -53,21 +54,25 @@ class InventoryProductSnapshotCreateModel:
     def __init__(
         self,
         product_id: UUID,       
-        retailer_location_id: UUID | None = None,
-        snapshot_hour: datetime | None = None,
-        sku: str | None = None,
-        stock_on_hand: int | None = None,
-        price: int | None = None,
-        lot_identifier: str | None = None,
+        retailer_location_id: UUID,
+        snapshot_hour: datetime ,
+        sku: str ,
+        stock_on_hand: int ,
+        price: int, 
+        retailer_id: UUID | None = None,
+        vendor_id: UUID | None = None,
         inventory_intake_job_id: UUID | None = None,
-        
+        lot_identifier: str | None = None, 
     ) -> None:
     
         self.retailer_location_id = retailer_location_id
         self.product_id = product_id
         self.inventory_intake_job_id = inventory_intake_job_id
+        self.retailer_id = retailer_id
+        self.vendor_id = vendor_id
         self.snapshot_hour = snapshot_hour
         self.sku = sku
+            
         self.stock_on_hand = stock_on_hand
         self.price = price
         self.lot_identifier = lot_identifier
@@ -79,7 +84,8 @@ class InventoryProductSnapshotSearchModel(CommonSearchModel):
         ids: list[UUID] | None = None,
         retailer_ids: list[UUID] | None = None,
         retailer_location_ids: list[UUID] | None = None,
-        snapshot_hour: datetime | None = None, 
+        snapshot_hour_min: datetime | None = None, 
+        snapshot_hour_max: datetime | None = None, 
         product_ids: list[UUID] | None = None,
         vendor_ids: list[UUID] | None = None,
         inventory_intake_job_ids: list[UUID] | None = None,
@@ -92,7 +98,8 @@ class InventoryProductSnapshotSearchModel(CommonSearchModel):
 
         self.retailer_ids = retailer_ids
         self.retailer_location_ids = retailer_location_ids
-        self.snapshot_hour = snapshot_hour
+        self.snapshot_hour_min = snapshot_hour_min
+        self.snapshot_hour_max = snapshot_hour_max
         self.product_ids = product_ids
         self.vendor_ids = vendor_ids
         self.inventory_intake_job_ids = inventory_intake_job_ids
@@ -108,12 +115,12 @@ class InventoryProductSnapshotModel(CommonModel):
         retailer_id: UUID,
         retailer_location_id: UUID,
         product_id: UUID,
-        created_at: datetime, 
+        snapshot_hour: datetime,
         sku: str,
         stock_on_hand: int,
         price: int,
+        created_at: datetime, 
         inventory_intake_job_id: UUID | None = None,
-        snapshot_hour: datetime | None = None,
         lot_identifier: str | None = None,
         vendor_id: UUID | None = None,
         updated_at: datetime | None = None,
@@ -121,8 +128,8 @@ class InventoryProductSnapshotModel(CommonModel):
 
         super().__init__(id, created_at, updated_at)
         
-        self.retailer_location_id
-        self.retailer_id=retailer_id
+        self.retailer_location_id = retailer_location_id
+        self.retailer_id = retailer_id
         self.product_id = product_id
         self.retailer_location_id = retailer_location_id
         self.inventory_intake_job_id = inventory_intake_job_id
@@ -142,12 +149,11 @@ class InventoryProductSnapshotDatabaseModel(CommonDatabaseModel):
         retailer_id: UUID,
         retailer_location_id: UUID,
         product_id: UUID,
-        created_at: datetime, 
         sku: str,
         stock_on_hand: int,
         price: int,
+        snapshot_hour: datetime ,
         inventory_intake_job_id: UUID | None = None,
-        snapshot_hour: datetime | None = None,
         lot_identifier: str | None = None,
         vendor_id: UUID | None = None,
         updated_at: datetime | None = None,
@@ -178,7 +184,7 @@ class InventoryProductSnapshotOutboundModel(CommonOutboundResponseModel):
     sku: str
     stock_on_hand: int
     price: int
+    snapshot_hour: str 
     inventory_intake_job_id: UUID | None = None
-    snapshot_hour: datetime | None = None
     lot_identifier: str | None = None
     vendor_id: UUID | None = None

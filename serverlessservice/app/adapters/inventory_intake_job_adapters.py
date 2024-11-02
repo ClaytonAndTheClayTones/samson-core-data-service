@@ -1,3 +1,4 @@
+import json
 from typing import Any
 from models.inventory_intake_job_model import (
     InventoryIntakeJobCreateModel,
@@ -15,6 +16,7 @@ from util.database import (
     InListSearchTerm,
     LikeComparatorModes,
     LikeSearchTerm,
+    RangeSearchTerm,
     SearchTerm,
 )
 
@@ -27,8 +29,8 @@ class InventoryIntakeJobDataAdapter:
         inbound_create_model: InventoryIntakeJobInboundCreateModel
     ) -> InventoryIntakeJobCreateModel:
         
-        model = InventoryIntakeJobCreateModel(
-            retailer_id=inbound_create_model.retailer_id,
+        model = InventoryIntakeJobCreateModel( 
+            retailer_id=None,
             retailer_location_id=inbound_create_model.retailer_location_id,
             snapshot_hour=inbound_create_model.snapshot_hour,
             status=inbound_create_model.status,
@@ -73,7 +75,8 @@ class InventoryIntakeJobDataAdapter:
                 else 
                     None
             ),
-            snapshot_hour=inbound_search_model.snapshot_hour,
+            snapshot_hour_min=inbound_search_model.snapshot_hour_min,
+            snapshot_hour_max=inbound_search_model.snapshot_hour_max, 
             status=inbound_search_model.status,
         )
 
@@ -95,14 +98,11 @@ class InventoryIntakeJobDataAdapter:
         if model.retailer_location_ids is not None:
             search_terms.append(InListSearchTerm('retailer_location_id', self.common_utilities.convert_uuid_list_to_string_list(model.retailer_location_ids)))
             
-        if model.name is not None:
-            search_terms.append(ExactMatchSearchTerm('name', model.name, True))
-            
-        if model.name_like is not None:
-            search_terms.append(LikeSearchTerm('name', model.name_like, LikeComparatorModes.Like, True))
-            
-        if model.pos_platform is not None:
-            search_terms.append(ExactMatchSearchTerm('pos_platform', model.pos_platform.value, True))
+        if model.status is not None:
+            search_terms.append(ExactMatchSearchTerm('status', model.status.value, True))
+        
+        if model.snapshot_hour_min is not None or model.snapshot_hour_max is not None:
+            search_terms.append(RangeSearchTerm('snapshot_hour', model.snapshot_hour_min, model.snapshot_hour_max))
 
         return search_terms
 
@@ -115,8 +115,8 @@ class InventoryIntakeJobDataAdapter:
             'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
             'retailer_location_id': str(model.retailer_location_id) if model.retailer_location_id is not None else None ,
             'snapshot_hour': model.snapshot_hour,
-            'status': model.status.value if model.status is not None else None,
-            'status_details': model.status_details,
+            'status': model.status.value if model.status is not None else None, 
+            'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
         }
 
         return database_model
@@ -128,7 +128,7 @@ class InventoryIntakeJobDataAdapter:
         
         database_model: dict[str, Any] = {
             'status': model.status.value if model.status is not None else None,
-            'status_details': model.status_details,
+            'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
             
         }
 
@@ -161,11 +161,11 @@ class InventoryIntakeJobDataAdapter:
             id=model.id,
             retailer_id=model.retailer_id,
             retailer_location_id=model.retailer_location_id,
-            snapshot_hour=model.snapshot_hour,
+            snapshot_hour=model.snapshot_hour.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             status=model.status,
             status_details=model.status_details,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
+            created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
+            updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )
 
         return outbound_model

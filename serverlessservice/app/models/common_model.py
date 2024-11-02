@@ -36,8 +36,8 @@ def validate_ids(value: str | None):
 
 class CommonOutboundResponseModel(BaseModel):
     id: UUID
-    created_at: datetime
-    updated_at: Optional[datetime]
+    created_at: str
+    updated_at: Optional[str]
 
 
 class CommonSearchModel:

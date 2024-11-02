@@ -198,8 +198,8 @@ class ProductDataAdapter:
             confirmed_core_product_id=model.confirmed_core_product_id,
             vendor_confirmation_status=model.vendor_confirmation_status,
             upc=model.upc,
-            created_at=model.created_at,
-            updated_at=model.updated_at,
+            created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
+            updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )
 
         return outbound_model
