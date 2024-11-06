@@ -3,6 +3,7 @@
 import os
 from mangum import Mangum
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from routes.inventory_intake_job_routes import set_inventory_intake_job_routes
@@ -31,6 +32,15 @@ app = FastAPI(
     docs_url='/docs',
     openapi_url='/openapi.json', 
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 if(enviroment.configuration.STAGE != 'local'):
     app.root_path = "/prod"
