@@ -258,10 +258,10 @@ def test_gets_inventory_product_snapshots_with_inventory_intake_job_ids_filter()
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(inventory_intake_job_id = posted_object_1.inventory_intake_job_id))
-    posted_object_2: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(inventory_intake_job_id = posted_object_2.inventory_intake_job_id))     
-    posted_object_3: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(inventory_intake_job_id = posted_object_3.inventory_intake_job_id))
-    posted_object_4: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(inventory_intake_job_id = posted_object_4.inventory_intake_job_id))
+    posted_object_1: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(create_inventory_intake_job_if_null= True))
+    posted_object_2: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(create_inventory_intake_job_if_null= True))    
+    posted_object_3: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(inventory_intake_job_id = posted_object_1.inventory_intake_job_id))
+    posted_object_4: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(create_inventory_intake_job_if_null= True))
 
     filters: InventoryProductSnapshotSearchModel = InventoryProductSnapshotSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
@@ -480,34 +480,4 @@ def test_gets_inventory_intake_jobs_with_sku_filter() -> None:
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
 
-        
-  
-def test_gets_inventory_intake_jobs_with_lot_identifier_filter() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(lot_identifier = f"1234567"))
-    posted_object_2: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(lot_identifier = f"1111111"))
-    posted_object_3: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(lot_identifier = f"1234567"))
-    posted_object_4: InventoryProductSnapshotModel = create_inventory_product_snapshot(context, InventoryProductSnapshotCreateModel(lot_identifier = f"2222222"))
-
-    filters: InventoryProductSnapshotSearchModel = InventoryProductSnapshotSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        lot_identifier = f"1234567"
-    )
-    
-    result: PagedResponseItemList[InventoryProductSnapshotModel] = get_inventory_product_snapshots(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-    
-    posted_item_1: list[InventoryProductSnapshotModel] = [item for item in result.items if item.id == posted_object_1.id]
-    assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
-  
-    posted_item_3: list[InventoryProductSnapshotModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
+         

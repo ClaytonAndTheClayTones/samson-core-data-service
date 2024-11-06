@@ -66,15 +66,14 @@ def test_posts_invalid_inventory_product_snapshot_bad_inputs() -> None:
         'snapshot_hour' : 'not a valid datetime', 
         'sku' : generate_random_string(256),
         'stock_on_hand' : 'not a valid integer', 
-        'price' : 'not a valid integer either',  
-        'lot_identifier' : generate_random_string(256),
+        'price' : 'not a valid integer either',   
     })
  
     assert result.status_code == 422
 
     errors = result.json()
 
-    assert len(errors['detail']) == 8
+    assert len(errors['detail']) == 7
     
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'retailer_location_id' in error['loc']]
     assert len(error) == 1
@@ -99,12 +98,7 @@ def test_posts_invalid_inventory_product_snapshot_bad_inputs() -> None:
     error: list[Any] = [error for error in errors['detail'] if  'body' in error['loc'] and 'sku' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'string_too_long'
-    assert error[0]['msg'] == 'String should have at most 255 characters' 
-
-    error: list[Any] = [error for error in errors['detail'] if  'body' in error['loc'] and 'lot_identifier' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'string_too_long'
-    assert error[0]['msg'] == 'String should have at most 255 characters' 
+    assert error[0]['msg'] == 'String should have at most 255 characters'  
  
     error: list[Any] = [error for error in errors['detail'] if  'body' in error['loc'] and 'stock_on_hand' in error['loc']]
     assert len(error) == 1

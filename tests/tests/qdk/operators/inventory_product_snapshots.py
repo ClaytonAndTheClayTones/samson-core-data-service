@@ -24,8 +24,7 @@ class InventoryProductSnapshotCreateModel():
         snapshot_hour: str | None = None,
         sku: str | None = None,
         stock_on_hand: int | None = None,
-        price: int | None = None,
-        lot_identifier: str | None = None,
+        price: int | None = None, 
     ) -> None:
          
         self.retailer_location_id = retailer_location_id
@@ -38,8 +37,7 @@ class InventoryProductSnapshotCreateModel():
         self.snapshot_hour = snapshot_hour
         self.sku = sku
         self.stock_on_hand = stock_on_hand
-        self.price = price
-        self.lot_identifier = lot_identifier
+        self.price = price 
           
 class InventoryProductSnapshotModel():  
 
@@ -59,8 +57,7 @@ class InventoryProductSnapshotModel():
         vendor: VendorModel | None = None, 
         product: RetailerLocationModel | None = None,
         inventory_intake_job_id: str | None = None,
-        inventory_intake_job: InventoryIntakeJobModel | None = None,  
-        lot_identifier: str | None = None, 
+        inventory_intake_job: InventoryIntakeJobModel | None = None,   
         updated_at: datetime.datetime | None = None,
     ) -> None:
         
@@ -79,8 +76,7 @@ class InventoryProductSnapshotModel():
             self.vendor = vendor
             self.product = product
             self.inventory_intake_job_id = inventory_intake_job_id
-            self.inventory_intake_job = inventory_intake_job
-            self.lot_identifier = lot_identifier
+            self.inventory_intake_job = inventory_intake_job 
             self.updated_at = updated_at
  
         
@@ -95,8 +91,7 @@ class InventoryProductSnapshotSearchModel(PagingRequestModel):
                 inventory_intake_job_ids: str | None = None,  
                 snapshot_hour_min: str | None = None,
                 snapshot_hour_max: str | None = None,
-                sku: str | None = None,
-                lot_identifier: str | None = None,
+                sku: str | None = None, 
                 page: int | None = None,
                 page_length: int | None = None,
                 is_sort_descending: bool | None = None,
@@ -116,8 +111,7 @@ class InventoryProductSnapshotSearchModel(PagingRequestModel):
         self.inventory_intake_job_ids = inventory_intake_job_ids 
         self.snapshot_hour_min = snapshot_hour_min
         self.snapshot_hour_max = snapshot_hour_max
-        self.sku = sku
-        self.lot_identifier = lot_identifier
+        self.sku = sku 
  
  
 def mint_default_inventory_product_snapshot(
@@ -155,8 +149,7 @@ def mint_default_inventory_product_snapshot(
         snapshot_hour = "2021-01-01T01:01:01.000Z",
         sku = "abcdefghijklmonpqrstuvwxyz1234567890",
         stock_on_hand = 44,
-        price = 1234,
-        lot_identifier = "0987654321aaaabbbbcccc", 
+        price = 1234, 
     )
 
     copy_object_when_appropriate(default_inventory_product_snapshot, overrides)

@@ -33,7 +33,7 @@ def set_inventory_intake_job_routes(app: FastAPI):
         '/inventory_intake_jobs',
         response_model=OutboundItemListResponse[InventoryIntakeJobOutboundModel],
     )
-    def get_retailer_locations(
+    def get_inventory_intake_jobs(
         inbound_search_model: InventoryIntakeJobInboundSearchModel = Depends(),
     ) -> OutboundItemListResponse[InventoryIntakeJobOutboundModel]:
 
@@ -43,15 +43,23 @@ def set_inventory_intake_job_routes(app: FastAPI):
 
     @app.get('/inventory_intake_jobs/{id}',
              response_model=InventoryIntakeJobOutboundModel)
-    def get_retailerlocation_by_id(id: UUID4):
+    def get_inventory_intake_job_by_id(id: UUID4):
 
         result = controller.get_by_id(id)
+
+        return result
+    
+    @app.post('/inventory_intake_jobs/{id}/run',
+             response_model=InventoryIntakeJobOutboundModel)
+    def run_inventory_intake_job (id: UUID4):
+
+        result = controller.run(id)
 
         return result
 
     @app.patch('/inventory_intake_jobs/{id}',
                response_model=InventoryIntakeJobOutboundModel)
-    def patch_retailerlocation(
+    def patch_inventory_intake_job(
             id: UUID4, inbound_update_model: InventoryIntakeJobInboundUpdateModel):
         result = controller.update(id, inbound_update_model)
 
@@ -59,7 +67,7 @@ def set_inventory_intake_job_routes(app: FastAPI):
 
     @app.delete('/inventory_intake_jobs/{id}',
                 response_model=InventoryIntakeJobOutboundModel)
-    def delete_retailerlocation(id: UUID4):
+    def delete_inventory_intake_job(id: UUID4):
 
         result = controller.delete(id)
 

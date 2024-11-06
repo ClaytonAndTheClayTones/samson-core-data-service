@@ -33,8 +33,7 @@ class InventoryProductSnapshotInboundCreateModel(BaseModel):
     snapshot_hour: datetime = Field(...)   
     sku: str = Field(..., max_length=255)
     stock_on_hand: int = Field(...)
-    price: int = Field(...)
-    lot_identifier: Optional[str] = Field(default=None, max_length=255) 
+    price: int = Field(...) 
   
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -46,8 +45,7 @@ class InventoryProductSnapshotInboundSearchModel(CommonInboundSearchModel):
     product_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     vendor_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     inventory_intake_job_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None)
-    sku: Optional[str] = Query(default=None)
-    lot_identifier: Optional[str] = Query(default=None) 
+    sku: Optional[str] = Query(default=None) 
 
 class InventoryProductSnapshotCreateModel:
 
@@ -61,8 +59,7 @@ class InventoryProductSnapshotCreateModel:
         price: int, 
         retailer_id: UUID | None = None,
         vendor_id: UUID | None = None,
-        inventory_intake_job_id: UUID | None = None,
-        lot_identifier: str | None = None, 
+        inventory_intake_job_id: UUID | None = None, 
     ) -> None:
     
         self.retailer_location_id = retailer_location_id
@@ -74,8 +71,7 @@ class InventoryProductSnapshotCreateModel:
         self.sku = sku
             
         self.stock_on_hand = stock_on_hand
-        self.price = price
-        self.lot_identifier = lot_identifier
+        self.price = price 
   
 class InventoryProductSnapshotSearchModel(CommonSearchModel):
 
@@ -88,8 +84,7 @@ class InventoryProductSnapshotSearchModel(CommonSearchModel):
         snapshot_hour_max: datetime | None = None, 
         product_ids: list[UUID] | None = None,
         vendor_ids: list[UUID] | None = None,
-        inventory_intake_job_ids: list[UUID] | None = None,
-        lot_identifier: str | None = None,
+        inventory_intake_job_ids: list[UUID] | None = None, 
         
         sku: str | None = None,
     ) -> None:
@@ -102,8 +97,7 @@ class InventoryProductSnapshotSearchModel(CommonSearchModel):
         self.snapshot_hour_max = snapshot_hour_max
         self.product_ids = product_ids
         self.vendor_ids = vendor_ids
-        self.inventory_intake_job_ids = inventory_intake_job_ids
-        self.lot_identifier = lot_identifier
+        self.inventory_intake_job_ids = inventory_intake_job_ids 
         self.sku = sku
 
 
@@ -120,8 +114,7 @@ class InventoryProductSnapshotModel(CommonModel):
         stock_on_hand: int,
         price: int,
         created_at: datetime, 
-        inventory_intake_job_id: UUID | None = None,
-        lot_identifier: str | None = None,
+        inventory_intake_job_id: UUID | None = None, 
         vendor_id: UUID | None = None,
         updated_at: datetime | None = None,
     ):
@@ -136,8 +129,7 @@ class InventoryProductSnapshotModel(CommonModel):
         self.snapshot_hour = snapshot_hour
         self.sku = sku
         self.stock_on_hand = stock_on_hand
-        self.price = price
-        self.lot_identifier = lot_identifier
+        self.price = price 
         self.vendor_id = vendor_id
         
 
@@ -153,8 +145,8 @@ class InventoryProductSnapshotDatabaseModel(CommonDatabaseModel):
         stock_on_hand: int,
         price: int,
         snapshot_hour: datetime ,
-        inventory_intake_job_id: UUID | None = None,
-        lot_identifier: str | None = None,
+        created_at: datetime,
+        inventory_intake_job_id: UUID | None = None, 
         vendor_id: UUID | None = None,
         updated_at: datetime | None = None,
     ):
@@ -169,8 +161,7 @@ class InventoryProductSnapshotDatabaseModel(CommonDatabaseModel):
         self.snapshot_hour = snapshot_hour
         self.sku = sku
         self.stock_on_hand = stock_on_hand
-        self.price = price
-        self.lot_identifier = lot_identifier
+        self.price = price 
         self.vendor_id = vendor_id
 
 
@@ -185,6 +176,5 @@ class InventoryProductSnapshotOutboundModel(CommonOutboundResponseModel):
     stock_on_hand: int
     price: int
     snapshot_hour: str 
-    inventory_intake_job_id: UUID | None = None
-    lot_identifier: str | None = None
+    inventory_intake_job_id: UUID | None = None  
     vendor_id: UUID | None = None

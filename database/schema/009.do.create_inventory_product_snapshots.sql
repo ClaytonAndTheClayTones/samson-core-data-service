@@ -7,9 +7,8 @@ create table if not exists inventory_product_snapshots (
   inventory_intake_job_id uuid NULL,
   snapshot_hour timestamptz(3)  NOT NULL , 
   sku varchar(255) NOT NULL,
-  stock_on_hand integer NOT NULL,
-  price integer NOT NULL,
-  lot_identifier varchar(255) NULL,    
+  stock_on_hand decimal(19,3) NOT NULL,
+  price integer NOT NULL, 
 	created_at timestamptz(3) NOT NULL DEFAULT now(),
 	updated_at timestamptz(3) 
 );
@@ -18,11 +17,10 @@ CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_product_id ON public.
 CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_retailer_id ON public.inventory_product_snapshots(retailer_id);   
 CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_retailer_location_id ON public.inventory_product_snapshots(retailer_location_id);
 CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_vendor_id ON public.inventory_product_snapshots(vendor_id);
-CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_inventory_intake_job_id ON public.inventory_product_snapshots(inventory_intake_job_id); 
-CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_lot_identifier ON public.inventory_product_snapshots(lot_identifier); 
+CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_inventory_intake_job_id ON public.inventory_product_snapshots(inventory_intake_job_id);  
 CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_snapshot_hour ON public.inventory_product_snapshots(snapshot_hour);
 CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_sku ON public.inventory_product_snapshots(sku);
-CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_sku_and_lot_identifier ON public.inventory_product_snapshots(sku, lot_identifier);
+CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_retailer_location_id_and_sku ON public.inventory_product_snapshots(retailer_location_id, sku);
 CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_retailer_location_id_and_snapshot_hour ON public.inventory_product_snapshots(retailer_location_id, snapshot_hour);
 CREATE INDEX IF NOT EXISTS idx_inventory_product_snapshots_retailer_location_id_and_product_id_and_snapshot_hour ON public.inventory_product_snapshots(retailer_location_id, product_id, snapshot_hour);
  

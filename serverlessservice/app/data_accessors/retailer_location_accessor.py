@@ -3,7 +3,6 @@ from uuid import UUID
 from adapters.retailer_location_adapters import RetailerLocationDataAdapter
 from models.retailer_location_model import (
     RetailerLocationCreateModel,
-    RetailerLocationDatabaseModel,
     RetailerLocationModel,
     RetailerLocationSearchModel,
     RetailerLocationUpdateModel,

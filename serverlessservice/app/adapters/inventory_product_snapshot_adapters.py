@@ -32,8 +32,7 @@ class InventoryProductSnapshotDataAdapter:
             snapshot_hour=inbound_create_model.snapshot_hour,
             sku=inbound_create_model.sku,
             stock_on_hand=inbound_create_model.stock_on_hand,
-            price=inbound_create_model.price,
-            lot_identifier=inbound_create_model.lot_identifier,
+            price=inbound_create_model.price, 
             inventory_intake_job_id=inbound_create_model.inventory_intake_job_id,
         )
 
@@ -81,8 +80,7 @@ class InventoryProductSnapshotDataAdapter:
                 else    
                     None
             ),
-            sku=inbound_search_model.sku,
-            lot_identifier=inbound_search_model.lot_identifier,
+            sku=inbound_search_model.sku, 
             snapshot_hour_min=inbound_search_model.snapshot_hour_min,
             snapshot_hour_max=inbound_search_model.snapshot_hour_max,
             
@@ -117,10 +115,7 @@ class InventoryProductSnapshotDataAdapter:
             
         if model.sku is not None:    
             search_terms.append(ExactMatchSearchTerm('sku', model.sku, True))
-        
-        if model.lot_identifier is not None:    
-            search_terms.append(ExactMatchSearchTerm('lot_identifier', model.lot_identifier, True))
-            
+ 
         if model.snapshot_hour_min is not None or model.snapshot_hour_max is not None:
             search_terms.append(RangeSearchTerm('snapshot_hour', model.snapshot_hour_min, model.snapshot_hour_max))
             
@@ -140,8 +135,7 @@ class InventoryProductSnapshotDataAdapter:
             'snapshot_hour': model.snapshot_hour,
             'sku': model.sku,
             'stock_on_hand': model.stock_on_hand,
-            'price': model.price,
-            'lot_identifier': model.lot_identifier,
+            'price': model.price, 
         }
 
         return database_model
@@ -160,8 +154,7 @@ class InventoryProductSnapshotDataAdapter:
             snapshot_hour=database_model['snapshot_hour'],
             sku=database_model['sku'],
             stock_on_hand=database_model['stock_on_hand'],
-            price=database_model['price'],
-            lot_identifier=database_model['lot_identifier'],
+            price=database_model['price'], 
             vendor_id=database_model['vendor_id'],
             created_at=database_model['created_at'],
             updated_at=database_model['updated_at'],
@@ -179,11 +172,11 @@ class InventoryProductSnapshotDataAdapter:
             retailer_id=model.retailer_id,
             retailer_location_id=model.retailer_location_id,
             product_id=model.product_id,
+            inventory_intake_job_id=model.inventory_intake_job_id,
             snapshot_hour=model.snapshot_hour.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             sku=model.sku,
             stock_on_hand=model.stock_on_hand,
-            price=model.price,
-            lot_identifier=model.lot_identifier,
+            price=model.price, 
             vendor_id=model.vendor_id,
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,

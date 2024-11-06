@@ -62,6 +62,21 @@ class InventoryIntakeJobController:
             adapter.convert_from_model_to_outbound_model(result))
 
         return response_model
+    
+    def run(self, id: UUID) -> InventoryIntakeJobOutboundModel | None:
+
+        result = manager.run(id)
+
+        if result is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f'InventoryIntakeJob with id {id} not found.',
+            )
+
+        response_model: InventoryIntakeJobOutboundModel = (
+            adapter.convert_from_model_to_outbound_model(result))
+
+        return response_model
 
     def search(
         self, inbound_model: InventoryIntakeJobInboundSearchModel
