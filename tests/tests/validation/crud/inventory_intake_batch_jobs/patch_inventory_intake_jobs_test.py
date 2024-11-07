@@ -1,20 +1,20 @@
 from typing import Any
 
-from tests.qdk.operators.inventory_intake_jobs import InventoryIntakeJobCreateModel, InventoryIntakeJobModel, InventoryIntakeJobUpdateModel, create_inventory_intake_job, update_inventory_intake_job
+from tests.qdk.operators.inventory_intake_batch_jobs import InventoryIntakeBatchJobCreateModel, InventoryIntakeBatchJobModel, InventoryIntakeBatchJobUpdateModel, create_inventory_intake_batch_job, update_inventory_intake_batch_job
 from tests.qdk.qa_requests import qa_patch, qa_post
 from tests.qdk.types import TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
-def test_patches_invalid_inventory_intake_job_bad_inputs() -> None:
+def test_patches_invalid_inventory_intake_batch_job_bad_inputs() -> None:
      
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object: InventoryIntakeJobModel = create_inventory_intake_job(context)
+    posted_object: InventoryIntakeBatchJobModel = create_inventory_intake_batch_job(context)
 
-    result = qa_patch(f"{context.api_url}/inventory_intake_jobs/{posted_object.id}", {
+    result = qa_patch(f"{context.api_url}/inventory_intake_batch_jobs/{posted_object.id}", {
        'status' : 'not a valid status',
        'status_details' : 'not a valid json object'
     })
@@ -35,7 +35,7 @@ def test_patches_invalid_inventory_intake_job_bad_inputs() -> None:
     assert error[0]['type'] == 'dict_type'
     assert error[0]['msg'] == 'Input should be a valid dictionary'
   
-def test_patches_valid_inventory_intake_job() -> None:
+def test_patches_valid_inventory_intake_batch_job() -> None:
      
     populate_configuration_if_not_exists() 
 
@@ -43,14 +43,14 @@ def test_patches_valid_inventory_intake_job() -> None:
 
     random_string = generate_random_string(14)
 
-    posted_object: InventoryIntakeJobModel = create_inventory_intake_job(context)  
+    posted_object: InventoryIntakeBatchJobModel = create_inventory_intake_batch_job(context)  
  
-    update_object: InventoryIntakeJobUpdateModel = InventoryIntakeJobUpdateModel(
+    update_object: InventoryIntakeBatchJobUpdateModel = InventoryIntakeBatchJobUpdateModel(
         status = "Complete",
         status_details = {
             "another_key": "another_value"
         }
     )
 
-    update_inventory_intake_job(context, posted_object.id or "", update_object)
+    update_inventory_intake_batch_job(context, posted_object.id or "", update_object)
  

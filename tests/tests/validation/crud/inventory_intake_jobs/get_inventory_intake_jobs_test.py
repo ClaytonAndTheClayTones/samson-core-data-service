@@ -299,7 +299,7 @@ def test_gets_inventory_intake_jobs_with_status_filter() -> None:
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
     
     
-def test_gets_inventory_intake_jobs_with_status_filter_min_only() -> None:
+def test_gets_inventory_intake_jobs_with_snapshot_hour_filter_min_only() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
@@ -329,7 +329,7 @@ def test_gets_inventory_intake_jobs_with_status_filter_min_only() -> None:
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
 
-def test_gets_inventory_intake_jobs_with_status_filter_max_only() -> None:
+def test_gets_inventory_intake_jobs_with_snapshot_hour_filter_max_only() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
