@@ -152,5 +152,5 @@ class InventoryIntakeJobOutboundModel(CommonOutboundResponseModel):
     retailer_id: UUID   
     retailer_location_id: str
     snapshot_hour: str
-    status: InventoryIntakeJobStatuses | None = None
-    status_details: dict[str,Any] | None = None 
+    status: InventoryIntakeJobStatuses 
+    status_details: dict[str,Any] 

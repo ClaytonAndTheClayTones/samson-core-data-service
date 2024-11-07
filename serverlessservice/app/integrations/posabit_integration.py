@@ -210,10 +210,38 @@ class PosabitIntegration:
 
         # insert inventory snapshot rows
         for inventory_snapshot_item in inventory_snapshot:
+            
             try: 
+                # detect existing inventory snapshots
+                existing_snapshot_item_search_model = InventoryProductSnapshotSearchModel(
+                    retailer_location_ids = [inventory_snapshot_item.retailer_location_id],
+                    snapshot_hour_min= inventory_snapshot_item.snapshot_hour,
+                    snapshot_hour_max= inventory_snapshot_item.snapshot_hour,
+                ) 
+                
+                existing_snapshot_ids : list[UUID] = []
+                existing_snapshot_item = self.inventory_productsnapshot_manager.search(existing_snapshot_item_search_model)
+                
+                if(existing_snapshot_item is not None and len(existing_snapshot_item.items) > 0):
+                   
+                    for existing_snapshot_item in existing_snapshot_item.items:
+                        
+                        print(f"Discovered existing inventory snapshot {existing_snapshot_item.id} for retailer location {existing_snapshot_item.retailer_location_id} and snapshot_hour {existing_snapshot_item.snapshot_hour}, will delete after successful new insert")  
+                        existing_snapshot_ids.append(existing_snapshot_item.id) 
+                
+                # create new snapshot    
                 inserted_snapshot_item = self.inventory_productsnapshot_manager.create(inventory_snapshot_item)
+                  
+                print(f"Created new existing inventory snapshot {inserted_snapshot_item.id} for retailer location {inserted_snapshot_item.retailer_location_id} and snapshot_hour {inserted_snapshot_item.snapshot_hour}")  
+                        
                 inventory_snapshot_rows.append(inserted_snapshot_item)
-                print(f"Inserted inventory snapshot item {inserted_snapshot_item.id}")
+                
+                # delete existing snapshots
+                if(len(existing_snapshot_ids) > 0):
+                    for existing_snapshot_id in existing_snapshot_ids: 
+                        self.inventory_productsnapshot_manager.delete(existing_snapshot_ids) 
+                        print(f"Deleted existing inventory snapshot {existing_snapshot_id}")
+                      
             except Exception as e:
                 print(f"Failed to insert inventory snapshot for sku {inventory_snapshot_item.sku} at retailer_location {inventory_snapshot_item.retailer_location_id} with error {e}")
                 
