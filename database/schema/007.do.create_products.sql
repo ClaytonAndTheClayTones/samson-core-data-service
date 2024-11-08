@@ -6,7 +6,7 @@ create table if not exists products (
 	confirmed_core_product_id uuid NULL, 
 	vendor_confirmation_status varchar(32) NOT NULL DEFAULT 'Unknown', 
 	name varchar(255) NOT NULL,     
-	upc varchar(255) NULL, 
+	vendor_sku varchar(255) NULL, 
 	created_at timestamptz(3) NOT NULL DEFAULT now(),
 	updated_at timestamptz(3) 
 );
@@ -18,7 +18,7 @@ CREATE INDEX IF NOT EXISTS idx_products_referring_retailer_location_id ON public
 CREATE INDEX IF NOT EXISTS idx_products_vendor_id ON public.products(vendor_id);   
 
 CREATE INDEX IF NOT EXISTS idx_products_vendor_confirmation_status ON public.products(vendor_confirmation_status);  
-CREATE INDEX IF NOT EXISTS idx_products_upc ON public.products(upc);  
+CREATE INDEX IF NOT EXISTS idx_products_vendor_sku ON public.products(vendor_sku);  
  
 -- Enums
 

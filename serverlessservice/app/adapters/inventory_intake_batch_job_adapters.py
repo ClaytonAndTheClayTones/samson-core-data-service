@@ -30,6 +30,7 @@ class InventoryIntakeBatchJobDataAdapter:
         model = InventoryIntakeBatchJobCreateModel(  
             start_time = inbound_create_model.start_time,
             end_time = inbound_create_model.end_time,
+            restricted_retailer_location_ids = self.common_utilities.convert_comma_delimited_ids_to_uuid_list(inbound_create_model.restricted_retailer_location_ids),
             status=inbound_create_model.status,
             status_details=inbound_create_model.status_details,
         )
@@ -84,7 +85,7 @@ class InventoryIntakeBatchJobDataAdapter:
             
         if model.end_time_min is not None or model.end_time_max is not None:
             search_terms.append(RangeSearchTerm('end_time', model.end_time_min, model.end_time_max))
- 
+     
         if model.status is not None:
             search_terms.append(ExactMatchSearchTerm('status', model.status.value, True))
   
@@ -98,6 +99,7 @@ class InventoryIntakeBatchJobDataAdapter:
         database_model: dict[str, Any] = { 
             'start_time': model.start_time,
             'end_time': model.end_time,
+            'restricted_retailer_location_ids': ",".join(str(x) for x in model.restricted_retailer_location_ids) if model.restricted_retailer_location_ids is not None else None,
             'status': model.status.value if model.status is not None else None, 
             'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
         }
@@ -128,6 +130,8 @@ class InventoryIntakeBatchJobDataAdapter:
             end_time=database_model['end_time'],
             status=database_model['status'],
             status_details=database_model['status_details'],
+            
+            restricted_retailer_location_ids = database_model['restricted_retailer_location_ids'].split(',') if database_model['restricted_retailer_location_ids'] is not None else None,
             created_at=database_model['created_at'],
             updated_at=database_model['updated_at'],
         )
@@ -145,6 +149,7 @@ class InventoryIntakeBatchJobDataAdapter:
             end_time=model.end_time.isoformat(timespec='milliseconds').replace('+00:00','Z'), 
             status=model.status,
             status_details=model.status_details,
+            restricted_retailer_location_ids =  model.restricted_retailer_location_ids,
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )

@@ -18,7 +18,7 @@ def test_posts_invalid_product_bad_inputs() -> None:
 
     result = qa_patch(f"{context.api_url}/products/{posted_object.id}", {
         'name' : generate_random_string(256),
-        'upc'   : generate_random_string(256), 
+        'vendor_sku'   : generate_random_string(256), 
         'vendor_id' : "not an id either",
         'confirmed_core_product_id' : "not an id at all",
         'vendor_confirmation_status' : "not a status" 
@@ -35,7 +35,7 @@ def test_posts_invalid_product_bad_inputs() -> None:
     assert error[0]['type'] == 'string_too_long'
     assert error[0]['msg'] == 'String should have at most 255 characters'   
   
-    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'upc' in error['loc']]
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'vendor_sku' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'string_too_long'
     assert error[0]['msg'] == 'String should have at most 255 characters' 
@@ -78,7 +78,7 @@ def test_patches_valid_product() -> None:
        
     update_object: ProductUpdateModel = ProductUpdateModel( 
         name = random_string + '_name', 
-        upc = random_string + '_upc',
+        vendor_sku = random_string + '_vendor_sku',
         vendor_confirmation_status = 'ConfirmedByVendor',
         confirmed_core_product_id = posted_product.id,
         vendor_id = posted_vendor.id

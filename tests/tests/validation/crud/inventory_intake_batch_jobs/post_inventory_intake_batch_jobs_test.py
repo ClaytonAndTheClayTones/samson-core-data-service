@@ -39,19 +39,25 @@ def test_posts_invalid_inventory_intake_batch_job_bad_inputs() -> None:
         'start_time' : 'not a valid time', 
         'end_time' : 'also not a valid time',
         'status_details' : 'not a valid json object',
-        'status' : 'not a valid status'
+        'status' : 'not a valid status', 
+        'restricted_retailer_location_ids' : 'not an id,also not an id',
     })
  
     assert result.status_code == 422
 
     errors = result.json()
 
-    assert len(errors['detail']) == 4
+    assert len(errors['detail']) == 5
  
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'start_time' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'datetime_from_date_parsing'
     assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'restricted_retailer_location_ids' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'invalid_id_list'
+    assert error[0]['msg'] == f"Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: not an id,\n\t1: also not an id\n]."
  
     error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'end_time' in error['loc']]
     assert len(error) == 1
@@ -68,6 +74,33 @@ def test_posts_invalid_inventory_intake_batch_job_bad_inputs() -> None:
     assert error[0]['type'] == 'enum'
     assert error[0]['msg'] == "Input should be 'Requested', 'Processing', 'Complete' or 'Failed'"
     
+def test_posts_invalid_inventory_intake_batch_job_bad_inputs_list_ids() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    result = qa_post(context.api_url + "/inventory_intake_batch_jobs", {
+        'start_time' : 'not a valid time',
+        'restricted_retailer_location_ids' : ['not an id','also not an id'],
+    })
+ 
+    assert result.status_code == 422
+
+    errors = result.json()
+
+    assert len(errors['detail']) == 2
+ 
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'start_time' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'datetime_from_date_parsing'
+    assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
+    
+    error: list[Any] = [error for error in errors['detail'] if 'body' in error['loc'] and 'restricted_retailer_location_ids' in error['loc']]
+    assert len(error) == 1
+    assert error[0]['type'] == 'invalid_id_list'
+    assert error[0]['msg'] == f"Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: not an id,\n\t1: also not an id\n]."
+   
 def test_posts_valid_inventory_intake_batch_job() -> None:
      
     populate_configuration_if_not_exists() 

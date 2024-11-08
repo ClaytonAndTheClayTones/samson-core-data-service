@@ -23,14 +23,14 @@ class ProductCreateModel():
         create_confirmed_core_product_if_null: bool | None = False,
             
         name: str | None = None,
-        upc: str | None = None,
+        vendor_sku: str | None = None,
         vendor_confirmation_status: str | None = None,
                 
     ) -> None:
          
         self.name = name
                 
-        self.upc = upc
+        self.vendor_sku = vendor_sku
         self.vendor_confirmation_status = vendor_confirmation_status
         self.confirmed_core_product_id = confirmed_core_product_id
         self.confirmed_core_product = confirmed_core_product
@@ -56,7 +56,7 @@ class ProductModel():
         confirmed_core_product_id: str | None = None,
         confirmed_core_product: Self | None = None,    
         name: str | None = None,
-        upc: str | None = None,
+        vendor_sku: str | None = None,
         vendor_confirmation_status: str | None = None, 
         updated_at: datetime.datetime | None = None
     ) -> None:
@@ -70,7 +70,7 @@ class ProductModel():
         self.vendor = vendor
         self.confirmed_core_product_id = confirmed_core_product_id
         self.confirmed_core_product = confirmed_core_product
-        self.upc = upc
+        self.vendor_sku = vendor_sku
         self.name = name
         self.vendor_confirmation_status = vendor_confirmation_status
         self.created_at = created_at
@@ -86,7 +86,7 @@ class ProductSearchModel(PagingRequestModel):
         confirmed_core_product_ids: str | None = None,
         name: str | None = None,
         name_like: str | None = None,  
-        upc: str | None = None,
+        vendor_sku: str | None = None,
         vendor_confirmation_status: str | None = None,
         page: int | None = None,
         page_length: int | None = None,
@@ -106,7 +106,7 @@ class ProductSearchModel(PagingRequestModel):
         self.referring_retailer_location_ids = referring_retailer_location_ids 
         self.vendor_ids = vendor_ids 
         self.confirmed_core_product_ids = confirmed_core_product_ids
-        self.upc = upc
+        self.vendor_sku = vendor_sku
         self.vendor_confirmation_status = vendor_confirmation_status
         self.name = name
         self.name_like = name_like
@@ -118,12 +118,12 @@ class ProductUpdateModel():
         confirmed_core_product_id: str | None = None,  
             
         name: str | None = None,
-        upc: str | None = None,
+        vendor_sku: str | None = None,
         vendor_confirmation_status: str | None = None
     ) -> None: 
           
         self.name = name 
-        self.upc = upc
+        self.vendor_sku = vendor_sku
         self.vendor_confirmation_status = vendor_confirmation_status
         self.confirmed_core_product_id = confirmed_core_product_id
         self.vendor_id = vendor_id
@@ -165,7 +165,7 @@ def mint_default_product(
     
     default_product: ProductCreateModel = ProductCreateModel(
         name = random_string + '_name', 
-        upc = random_string + '_upc',
+        vendor_sku = random_string + '_vendor_sku',
         vendor_confirmation_status = 'Candidate', 
     )
 

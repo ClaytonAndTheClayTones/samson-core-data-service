@@ -13,24 +13,38 @@ TListSearchable = TypeVar('TListSearchable', str, int, float)
 
 class CommonUtilities:
 
-    def convert_comma_delimited_ids_to_uuid_list(self, string: str):
+    def convert_comma_delimited_ids_to_uuid_list(self, value: str | list[str]):
+       
         returnlist: list[UUID] = []
-
-        str_list = string.split(',')
-
+        
+        str_list: list[str] = []
+        
+        if isinstance(value, str):
+            str_list = value.split(',')
+        elif isinstance(value, list):
+            str_list = value
+      
         for x in str_list:
             returnlist.append(uuid.UUID(x))
 
         return returnlist
 
-    def validate_comma_delimited_ids(self, ids_string: str):
+    def validate_comma_delimited_ids(self, ids_string: str | list[str] | None):
 
         if ids_string is None:
             return None
 
         errors: dict[int, str] = {}
 
-        ids = ids_string.split(',')
+        ids : list[str] = []
+        
+        if isinstance(ids_string, str):
+            ids = ids_string.split(',')
+        elif isinstance(ids_string, list):
+            ids = ids_string
+        else:
+            errors[0] = f'Property must be a valid list of v4 uuids. Could not parse comma delimited ids or list.'
+            return errors
 
         for index, x in enumerate(ids):
             try:

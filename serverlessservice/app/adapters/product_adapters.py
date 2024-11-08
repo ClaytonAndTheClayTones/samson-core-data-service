@@ -29,7 +29,7 @@ class ProductDataAdapter:
         
         model = ProductCreateModel(
             name = inbound_create_model.name,
-            upc = inbound_create_model.upc,
+            vendor_sku = inbound_create_model.vendor_sku,
             referring_retailer_location_id = inbound_create_model.referring_retailer_location_id,
             vendor_id = inbound_create_model.vendor_id,
             confirmed_core_product_id = inbound_create_model.confirmed_core_product_id, 
@@ -45,7 +45,7 @@ class ProductDataAdapter:
         
         model = ProductUpdateModel(
             name = inbound_update_model.name,
-            upc = inbound_update_model.upc, 
+            vendor_sku = inbound_update_model.vendor_sku, 
             vendor_id = inbound_update_model.vendor_id,
             confirmed_core_product_id = inbound_update_model.confirmed_core_product_id, 
             vendor_confirmation_status = inbound_update_model.vendor_confirmation_status,
@@ -93,7 +93,7 @@ class ProductDataAdapter:
                
             name=inbound_search_model.name,
             name_like=inbound_search_model.name_like,
-            upc=inbound_search_model.upc
+            vendor_sku=inbound_search_model.vendor_sku
  
         )
 
@@ -130,8 +130,8 @@ class ProductDataAdapter:
         if model.name_like is not None:
             search_terms.append(LikeSearchTerm('name', model.name_like, LikeComparatorModes.Like, True))
             
-        if model.upc is not None:    
-            search_terms.append(ExactMatchSearchTerm('upc', model.upc, True))
+        if model.vendor_sku is not None:    
+            search_terms.append(ExactMatchSearchTerm('vendor_sku', model.vendor_sku, True))
 
         return search_terms
 
@@ -144,7 +144,7 @@ class ProductDataAdapter:
             'vendor_id': str(model.vendor_id) if model.vendor_id is not None else None, 
             'confirmed_core_product_id': str(model.confirmed_core_product_id) if model.confirmed_core_product_id is not None else None, 
             'vendor_confirmation_status': model.vendor_confirmation_status.value  if model.vendor_confirmation_status is not None else None, 
-            'upc': model.upc,
+            'vendor_sku': model.vendor_sku,
         }
 
         return database_model
@@ -156,7 +156,7 @@ class ProductDataAdapter:
             'vendor_id': str(model.vendor_id) if model.vendor_id is not None else None, 
             'confirmed_core_product_id': str(model.confirmed_core_product_id) if model.confirmed_core_product_id is not None else None, 
             'vendor_confirmation_status': model.vendor_confirmation_status.value  if model.vendor_confirmation_status is not None else None, 
-            'upc': model.upc,
+            'vendor_sku': model.vendor_sku,
         }
 
         return database_model
@@ -175,7 +175,7 @@ class ProductDataAdapter:
             vendor_id=database_model['vendor_id'], 
             confirmed_core_product_id=database_model['confirmed_core_product_id'],
             vendor_confirmation_status=database_model['vendor_confirmation_status'],
-            upc=database_model['upc'],
+            vendor_sku=database_model['vendor_sku'],
             
             created_at=database_model['created_at'],
             updated_at=database_model['updated_at'],
@@ -197,7 +197,7 @@ class ProductDataAdapter:
             vendor_id=model.vendor_id, 
             confirmed_core_product_id=model.confirmed_core_product_id,
             vendor_confirmation_status=model.vendor_confirmation_status,
-            upc=model.upc,
+            vendor_sku=model.vendor_sku,
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )

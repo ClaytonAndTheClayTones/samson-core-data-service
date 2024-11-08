@@ -15,9 +15,10 @@ class InventoryIntakeBatchJobCreateModel():
         start_time: str | None = None,
         end_time: str | None = None,
         status: str | None = None,
+        restricted_retailer_location_ids: str | None = None,
         status_details: dict[str,Any] | None = None,
     ) -> None:
-         
+        self.restricted_retailer_location_ids = restricted_retailer_location_ids
         self.start_time = start_time
         self.end_time = end_time
         self.status = status
@@ -44,13 +45,15 @@ class InventoryIntakeBatchJobModel():
         end_time: str,
         status: str,
         created_at: datetime.datetime,
+        restricted_retailer_location_ids : list[str] | None = None,
         retailer_location: RetailerLocationModel | None = None, 
         retailer: RetailerModel | None = None,
         status_details: dict[str,Any] | None = None, 
         updated_at: datetime.datetime | None = None
     ) -> None:
 
-        self.id = id
+        self.id = id 
+        self.restricted_retailer_location_ids = restricted_retailer_location_ids
         self.start_time = start_time
         self.end_time = end_time 
         self.status = status
@@ -102,6 +105,7 @@ def mint_default_inventory_intake_batch_job(
     default_inventory_intake_batch_job: InventoryIntakeBatchJobCreateModel = InventoryIntakeBatchJobCreateModel(
         start_time= '2024-11-01T11:00:00.000Z',
         end_time= '2024-11-02T11:00:00.000Z',
+        restricted_retailer_location_ids = ['00000000-0000-0000-0000-000000000000','00000000-0000-0000-0000-111111111111','00000000-0000-0000-0000-222222222222'],
         status = 'Requested',
         status_details = {
             "key": "value"

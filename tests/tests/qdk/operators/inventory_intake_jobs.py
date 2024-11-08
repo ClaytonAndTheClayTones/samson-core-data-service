@@ -2,6 +2,7 @@ import datetime
 from typing import Any
 
 from requests import Response 
+from tests.qdk.operators.inventory_intake_batch_jobs import InventoryIntakeBatchJobCreateModel, InventoryIntakeBatchJobModel, create_inventory_intake_batch_job
 from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, create_retailer_location
 from tests.qdk.operators.retailers import RetailerCreateModel, RetailerModel
 from tests.qdk.qa_requests import qa_get, qa_patch, qa_post
@@ -14,6 +15,9 @@ class InventoryIntakeJobCreateModel():
         self, 
         retailer_location_id: str | None = None,
         retailer_location: RetailerLocationCreateModel | None = None, 
+        parent_batch_job_id: str | None = None,
+        parent_batch_job: InventoryIntakeBatchJobCreateModel | None = None,
+        create_parent_batch_job_if_null: bool | None = False,
         snapshot_hour: str | None = None,
         status: str | None = None,
         status_details: dict[str,Any] | None = None,
@@ -22,6 +26,10 @@ class InventoryIntakeJobCreateModel():
         self.retailer_location_id = retailer_location_id
         self.retailer_location = retailer_location
  
+        self.parent_batch_job_id = parent_batch_job_id
+        self.parent_batch_job = parent_batch_job
+        self.create_parent_batch_job_if_null = create_parent_batch_job_if_null
+        
         self.snapshot_hour = snapshot_hour
         self.status = status
         self.status_details = status_details
@@ -45,10 +53,12 @@ class InventoryIntakeJobModel():
         id: str, 
         retailer_location_id: str,
         retailer_id: str,
+        parent_batch_job_id: str,
         snapshot_hour: str,
         status: str,
         created_at: datetime.datetime,
         retailer_location: RetailerLocationModel | None = None, 
+        parent_batch_job: InventoryIntakeBatchJobModel | None = None,
         retailer: RetailerModel | None = None,
         status_details: dict[str,Any] | None = None, 
         updated_at: datetime.datetime | None = None
@@ -59,6 +69,8 @@ class InventoryIntakeJobModel():
         self.retailer_id = retailer_id
         self.snapshot_hour = snapshot_hour
         self.status = status
+        self.parent_batch_job = parent_batch_job
+        self.parent_batch_job_id = parent_batch_job_id
         self.retailer = retailer
         self.retailer_location = retailer_location
         self.status_details = status_details
@@ -71,6 +83,7 @@ class InventoryIntakeJobSearchModel(PagingRequestModel):
         ids: str | None = None,  
         retailer_ids: str | None = None,  
         retailer_location_ids: str | None = None,  
+        parent_batch_job_ids: str | None = None,
         snapshot_hour_min: str | None = None,
         snapshot_hour_max: str | None = None,
         status: str | None = None,
@@ -90,6 +103,7 @@ class InventoryIntakeJobSearchModel(PagingRequestModel):
         self.ids = ids 
         self.retailer_ids = retailer_ids 
         self.retailer_location_ids = retailer_location_ids 
+        self.parent_batch_job_ids = parent_batch_job_ids 
             
         self.snapshot_hour_min = snapshot_hour_min
         self.snapshot_hour_max = snapshot_hour_max
@@ -111,6 +125,14 @@ def mint_default_inventory_intake_job(
         overrides.retailer_location_id = new_retailer_location.id
 
         del overrides.retailer_location
+        
+            
+    if(overrides.parent_batch_job_id is None and overrides.create_parent_batch_job_if_null is True):
+
+        new_parent_batch_job = create_inventory_intake_batch_job(context, overrides.parent_batch_job, request_operators = request_operators)
+        overrides.parent_batch_job_id = new_parent_batch_job.id 
+
+        del overrides.parent_batch_job
         
     default_inventory_intake_job: InventoryIntakeJobCreateModel = InventoryIntakeJobCreateModel(
         snapshot_hour = '2024-11-01T11:00:00.000Z',
@@ -140,7 +162,7 @@ def create_inventory_intake_job(
  
         result_dict = result.json()
 
-        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "retailer_id", "retailer", "retailer_location_id", "retailer_location", "status", "status_details"])
+        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "retailer_id", "retailer", "retailer_location_id", "retailer_location", "parent_batch_job_id", "parent_batch_job", "status", "status_details"])
 
         assert result_dict['id'] is not None
         assert result_dict['created_at'] is not None

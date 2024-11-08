@@ -28,7 +28,8 @@ from models.common_model import (
 class InventoryIntakeBatchJobInboundCreateModel(BaseModel):   
     start_time: datetime = Field(...)  
     end_time: Optional[datetime] = Field(default=None)  
-    status: Optional[InventoryIntakeBatchJobStatuses] = Field(default=None)
+    restricted_retailer_location_ids: Annotated[Optional[str | list[str]], BeforeValidator(validate_ids)] = Field(default=None)
+    status: Optional[InventoryIntakeBatchJobStatuses] = Field(default=None) 
     status_details: Optional[dict[str,Any]] = Field(default=None)
 
 
@@ -36,8 +37,6 @@ class InventoryIntakeBatchJobInboundCreateModel(BaseModel):
 class InventoryIntakeBatchJobInboundUpdateModel(BaseModel):
     status: Optional[InventoryIntakeBatchJobStatuses] = Field( default=None)
     status_details: Optional[dict[str,Any]] = Field(default=None)
-
-
 
 # Pydantic causes these class variables to safely be instance variables.
 class InventoryIntakeBatchJobInboundSearchModel(CommonInboundSearchModel): 
@@ -56,6 +55,7 @@ class InventoryIntakeBatchJobCreateModel:
         end_time: datetime | None = None, 
         status: InventoryIntakeBatchJobStatuses | None = None,
         status_details: dict[str,Any] | None = None,
+        restricted_retailer_location_ids: list[UUID] | None = None,
         
     ) -> None:
         
@@ -63,6 +63,7 @@ class InventoryIntakeBatchJobCreateModel:
         self.end_time = end_time
         self.status = status
         self.status_details = status_details
+        self.restricted_retailer_location_ids = restricted_retailer_location_ids
 
 
 class InventoryIntakeBatchJobUpdateModel:
@@ -108,6 +109,7 @@ class InventoryIntakeBatchJobModel(CommonModel):
         status: InventoryIntakeBatchJobStatuses,
         status_details: dict[str,Any],
         created_at: datetime, 
+        restricted_retailer_location_ids: list[UUID] | None = None,
         end_time: datetime | None = None,
         updated_at: datetime | None = None,
     ):
@@ -115,8 +117,10 @@ class InventoryIntakeBatchJobModel(CommonModel):
         super().__init__(id, created_at, updated_at)
 
         self.start_time = start_time    
+            
         self.status = status
         self.status_details = status_details
+        self.restricted_retailer_location_ids = restricted_retailer_location_ids
         self.end_time = end_time
 
 
@@ -130,6 +134,7 @@ class InventoryIntakeBatchJobDatabaseModel(CommonDatabaseModel):
         status_details: dict[str,Any],
         created_at: datetime,
         end_time: datetime  | None = None,
+        restricted_retailer_location_ids: list[UUID] | None = None,
         updated_at: datetime | None = None,
     ):
 
@@ -140,6 +145,7 @@ class InventoryIntakeBatchJobDatabaseModel(CommonDatabaseModel):
         self.status_details = status_details
         self.start_time = start_time
         self.end_time = end_time
+        self.restricted_retailer_location_ids = restricted_retailer_location_ids
 
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -148,4 +154,6 @@ class InventoryIntakeBatchJobOutboundModel(CommonOutboundResponseModel):
     start_time: str
     end_time: str | None = None
     status: InventoryIntakeBatchJobStatuses
+    
+    restricted_retailer_location_ids: list[UUID] | None = None,
     status_details: dict[str,Any]

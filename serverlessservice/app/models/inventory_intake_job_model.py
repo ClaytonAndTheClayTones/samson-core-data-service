@@ -27,6 +27,7 @@ from models.common_model import (
 # Pydantic causes these class variables to safely be instance variables.
 class InventoryIntakeJobInboundCreateModel(BaseModel):  
     retailer_location_id: Annotated[UUID4, Strict(False)] = Field(...)
+    parent_batch_job_id: Annotated[Optional[UUID4], Strict(False)] = Field(default=None)
     snapshot_hour: datetime = Field(...)  
     status: Optional[InventoryIntakeJobStatuses] = Field(default=None)
     status_details: Optional[dict[str,Any]] = Field(default=None)
@@ -46,21 +47,24 @@ class InventoryIntakeJobInboundSearchModel(CommonInboundSearchModel):
     status: Optional[InventoryIntakeJobStatuses] = Query(default=None)
     retailer_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     retailer_location_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
+    parent_batch_job_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
 
 
 class InventoryIntakeJobCreateModel:
 
     def __init__(
         self,
-        retailer_location_id: UUID ,
+        retailer_location_id: UUID , 
         snapshot_hour: datetime,
         retailer_id: UUID | None = None,
+        parent_batch_job_id: UUID | None = None,
         status: InventoryIntakeJobStatuses | None = None,
         status_details: dict[str,Any] | None = None,
         
     ) -> None:
  
         self.retailer_location_id = retailer_location_id
+        self.parent_batch_job_id = parent_batch_job_id
         self.retailer_id = retailer_id
         self.snapshot_hour = snapshot_hour
         self.status = status
@@ -87,6 +91,7 @@ class InventoryIntakeJobSearchModel(CommonSearchModel):
         ids: list[UUID] | None = None,
         retailer_ids: list[UUID] | None = None,
         retailer_location_ids: list[UUID] | None = None,
+        parent_batch_job_ids: list[UUID] | None = None,
         snapshot_hour_min: datetime | None = None,
         snapshot_hour_max: datetime | None = None,
         status: InventoryIntakeJobStatuses | None = None,
@@ -96,6 +101,7 @@ class InventoryIntakeJobSearchModel(CommonSearchModel):
 
         self.retailer_ids = retailer_ids
         self.retailer_location_ids = retailer_location_ids
+        self.parent_batch_job_ids = parent_batch_job_ids
         self.snapshot_hour_min = snapshot_hour_min
         self.snapshot_hour_max = snapshot_hour_max
         self.status = status
@@ -110,8 +116,9 @@ class InventoryIntakeJobModel(CommonModel):
         retailer_location_id: UUID,
         snapshot_hour: datetime,
         status: InventoryIntakeJobStatuses,
-        status_details: dict[str,Any],
+        status_details: dict[str,Any], 
         created_at: datetime, 
+        parent_batch_job_id: UUID | None = None,
         updated_at: datetime | None = None,
     ):
 
@@ -119,6 +126,7 @@ class InventoryIntakeJobModel(CommonModel):
 
         self.retailer_id = retailer_id
         self.retailer_location_id = retailer_location_id        
+        self.parent_batch_job_id = parent_batch_job_id        
         self.snapshot_hour = snapshot_hour
         self.status = status
         self.status_details = status_details
@@ -134,7 +142,8 @@ class InventoryIntakeJobDatabaseModel(CommonDatabaseModel):
         snapshot_hour: datetime,
         status: InventoryIntakeJobStatuses,
         status_details: dict[str,Any],
-        created_at: datetime,
+        created_at: datetime, 
+        parent_batch_job_id: UUID | None = None,
         updated_at: datetime | None = None,
     ):
 
@@ -142,6 +151,7 @@ class InventoryIntakeJobDatabaseModel(CommonDatabaseModel):
 
         self.retailer_id = retailer_id
         self.retailer_location_id = retailer_location_id
+        self.parent_batch_job_id = parent_batch_job_id
         self.snapshot_hour = snapshot_hour
         self.status = status
         self.status_details = status_details
@@ -150,7 +160,8 @@ class InventoryIntakeJobDatabaseModel(CommonDatabaseModel):
 # Pydantic causes these class variables to safely be instance variables.
 class InventoryIntakeJobOutboundModel(CommonOutboundResponseModel):
     retailer_id: UUID   
-    retailer_location_id: str
+    retailer_location_id: UUID
+    parent_batch_job_id: UUID | None = None
     snapshot_hour: str
     status: InventoryIntakeJobStatuses 
     status_details: dict[str,Any] 

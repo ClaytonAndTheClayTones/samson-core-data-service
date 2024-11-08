@@ -17,12 +17,11 @@ class DicsPhoneNumber(PhoneNumber):
     phone_format = 'E164'
 
 
-def validate_ids(value: str | None):
+def validate_ids(value: str | list[str] | None):
     if value is not None:
+        
         common_utilities: CommonUtilities = CommonUtilities()
-        results: dict[
-            int,
-            str] | None = common_utilities.validate_comma_delimited_ids(value)
+        results: dict[int, str] | None = common_utilities.validate_comma_delimited_ids(value)
 
         if results is not None:
             message = (common_utilities.

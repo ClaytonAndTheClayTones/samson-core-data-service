@@ -2,6 +2,7 @@ create table if not exists inventory_intake_batch_jobs (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),  
   start_time  timestamptz(3) NOT NULL,   
   end_time  timestamptz(3) NOT NULL DEFAULT now(),   
+  restricted_retailer_location_ids  text NULL,
   status  varchar(32) NOT NULL DEFAULT 'Requested',
   status_details json NOT NULL DEFAULT '{}',
 	created_at timestamptz(3) NOT NULL DEFAULT now(),

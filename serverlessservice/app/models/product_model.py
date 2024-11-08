@@ -29,7 +29,7 @@ class ProductInboundCreateModel(BaseModel):
     confirmed_core_product_id: Optional[Annotated[UUID4, Strict(False)]] = Field(default=None) 
     
     name: str = Field(..., max_length=255)
-    upc: Optional[str] = Field(..., max_length=255)
+    vendor_sku: Optional[str] = Field(..., max_length=255)
     vendor_confirmation_status: Optional[ProductVendorConfirmationStatuses] = Field(default = None)
     
 
@@ -40,7 +40,7 @@ class ProductInboundUpdateModel(BaseModel):
     confirmed_core_product_id: Optional[Annotated[UUID4, Strict(False)]] = Field(default=None) 
     vendor_confirmation_status: Optional[ProductVendorConfirmationStatuses] = Field(default = None)    
     name: Optional[str] = Field(default = None, max_length=255)
-    upc: Optional[str] = Field(default = None, max_length=255)
+    vendor_sku: Optional[str] = Field(default = None, max_length=255)
     vendor_confirmation_status: Optional[ProductVendorConfirmationStatuses] = Field(default = None)
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -51,7 +51,7 @@ class ProductInboundSearchModel(CommonInboundSearchModel):
     referring_retailer_location_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     vendor_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     confirmed_core_product_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
-    upc: Optional[str] = Query(default=None) 
+    vendor_sku: Optional[str] = Query(default=None) 
     vendor_confirmation_status: Optional[ProductVendorConfirmationStatuses] = Query(default=None)
     location_country: Optional[str] = Query(default=None)
 
@@ -61,7 +61,7 @@ class ProductCreateModel:
     def __init__(
         self,
         name: str,
-        upc: str | None = None, 
+        vendor_sku: str | None = None, 
         referring_retailer_id: UUID | None = None,
         referring_retailer_location_id: UUID | None = None,
         vendor_id: UUID | None = None,
@@ -70,7 +70,7 @@ class ProductCreateModel:
     ) -> None:
 
         self.name = name
-        self.upc = upc 
+        self.vendor_sku = vendor_sku 
         self.referring_retailer_id = referring_retailer_id
         self.referring_retailer_location_id = referring_retailer_location_id
         self.vendor_id = vendor_id
@@ -84,14 +84,14 @@ class ProductUpdateModel:
     def __init__(
         self,
         name: str | None = None,
-        upc: str | None = None,  
+        vendor_sku: str | None = None,  
         vendor_id: UUID | None = None,
         confirmed_core_product_id: UUID | None = None,  
         vendor_confirmation_status: ProductVendorConfirmationStatuses | None = None,
     ) -> None:
 
         self.name = name 
-        self.upc = upc 
+        self.vendor_sku = vendor_sku 
         self.vendor_id = vendor_id
         self.confirmed_core_product_id = confirmed_core_product_id
         self.vendor_confirmation_status = vendor_confirmation_status
@@ -108,7 +108,7 @@ class ProductSearchModel(CommonSearchModel):
         
         name: str | None = None,
         name_like: str | None = None,
-        upc: str | None = None,
+        vendor_sku: str | None = None,
         vendor_confirmation_status: ProductVendorConfirmationStatuses | None = None,
  
     ) -> None:
@@ -118,7 +118,7 @@ class ProductSearchModel(CommonSearchModel):
         self.name = name
                 
         self.name_like = name_like
-        self.upc = upc
+        self.vendor_sku = vendor_sku
         self.referring_retailer_ids = referring_retailer_ids 
         self.referring_retailer_location_ids = referring_retailer_location_ids
         self.vendor_ids = vendor_ids
@@ -133,7 +133,7 @@ class ProductDatabaseModel(CommonDatabaseModel):
         name: str,
         created_at: datetime, 
         vendor_confirmation_status: ProductVendorConfirmationStatuses,
-        upc: str | None = None,
+        vendor_sku: str | None = None,
         referring_retailer_id: UUID | None = None,
         referring_retailer_location_id: UUID | None = None,
         vendor_id: UUID | None = None,
@@ -145,7 +145,7 @@ class ProductDatabaseModel(CommonDatabaseModel):
 
         self.id = id
         self.name = name
-        self.upc = upc
+        self.vendor_sku = vendor_sku
             
         self.referring_retailer_id = referring_retailer_id
         self.referring_retailer_location_id = referring_retailer_location_id
@@ -161,7 +161,7 @@ class ProductModel(CommonModel):
         name: str,
         created_at: datetime, 
         vendor_confirmation_status: ProductVendorConfirmationStatuses,
-        upc: str | None = None,
+        vendor_sku: str | None = None,
         referring_retailer_id: UUID | None = None,
         referring_retailer_location_id: UUID | None = None,
         vendor_id: UUID | None = None,
@@ -173,7 +173,7 @@ class ProductModel(CommonModel):
 
         self.name = name
             
-        self.upc = upc
+        self.vendor_sku = vendor_sku
         self.vendor_confirmation_status = vendor_confirmation_status
         self.referring_retailer_id = referring_retailer_id
         self.referring_retailer_location_id = referring_retailer_location_id
@@ -184,7 +184,7 @@ class ProductModel(CommonModel):
 # Pydantic causes these class variables to safely be instance variables.
 class ProductOutboundModel(CommonOutboundResponseModel):
     name: str
-    upc: str | None = None
+    vendor_sku: str | None = None
     referring_retailer_id: UUID | None = None
     referring_retailer_location_id: UUID | None = None
     vendor_id: UUID | None = None
