@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 def set_utility_routes(app: FastAPI):
 
-    @app.get("/v1/hello")
+    @app.get("/hello")
     def list_items():
         """
         Return a hello hello 

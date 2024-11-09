@@ -4,5 +4,9 @@
     "us-west-2b",
     "us-west-2c",
     "us-west-2d"
+  ],
+  "acknowledged-issue-numbers": [
+    31716,
+    31716
   ]
 }

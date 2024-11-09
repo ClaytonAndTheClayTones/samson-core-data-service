@@ -127,7 +127,11 @@ class DicsCoreServiceStack(cdk.Stack):
                 allow_origins=Cors.ALL_ORIGINS, 
                 allow_methods=Cors.ALL_METHODS, 
                 allow_headers=Cors.DEFAULT_HEADERS + ["Authorization", "Samson-Hydration"]
-            )
-        ) 
+            ),
+            proxy=True,
+        )
+         
+        
+         
         
  
