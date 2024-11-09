@@ -4,6 +4,7 @@ from os import path
 import aws_cdk as cdk
 import aws_cdk.aws_lambda as lambda_
 import aws_cdk.aws_apigateway as apigateway
+from aws_cdk.aws_apigateway import Cors, CorsOptions
 import aws_cdk.aws_lambda_python_alpha as python_lambda
 import aws_cdk.aws_ec2 as ec2 
 
@@ -118,6 +119,15 @@ class DicsCoreServiceStack(cdk.Stack):
         
         database.grant_connect(lambda_function, db_user='dics_service')
 
-        api = apigateway.LambdaRestApi(self, f"{cds_prefix}-api-gateway", handler=lambda_function,)
+        api = apigateway.LambdaRestApi(
+            self, 
+            f"{cds_prefix}-api-gateway", 
+            handler=lambda_function, 
+            default_cors_preflight_options=CorsOptions(
+                allow_origins=Cors.ALL_ORIGINS, 
+                allow_methods=Cors.ALL_METHODS, 
+                allow_headers=Cors.DEFAULT_HEADERS + ["Authorization", "Samson-Hydration"]
+            )
+        ) 
         
  
