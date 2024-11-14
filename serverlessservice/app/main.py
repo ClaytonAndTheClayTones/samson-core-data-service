@@ -6,6 +6,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
+from routes.sales_intake_job_routes import set_sales_intake_job_routes
+from routes.sales_intake_batch_job_routes import set_sales_intake_batch_job_routes
 from routes.inventory_intake_job_routes import set_inventory_intake_job_routes
 from routes.inventory_intake_batch_job_routes import set_inventory_intake_batch_job_routes
 from routes.inventory_product_snapshot_routes import set_inventory_product_snapshot_routes
@@ -17,6 +19,8 @@ from routes.pos_integration_routes import set_pos_integration_routes
 from routes.vendor_routes import set_vendor_routes
 from routes.retailer_routes import set_retailer_routes
 from routes.retailer_location_routes import set_retailer_location_routes
+from routes.historical_sale_routes import set_historical_sale_routes
+from routes.historical_sale_item_routes import set_historical_sale_item_routes
 
 from util.environment import Environment
  
@@ -56,7 +60,11 @@ set_pos_integration_call_routes(app)
 set_product_routes(app)
 set_inventory_intake_job_routes(app)
 set_inventory_intake_batch_job_routes(app)
+set_sales_intake_job_routes(app)
+set_sales_intake_batch_job_routes(app)
 set_inventory_product_snapshot_routes(app)
+set_historical_sale_routes(app)
+set_historical_sale_item_routes(app)
 
 if __name__ == '__main__' and enviroment.configuration.STAGE == 'local':
     uvicorn.run(app, host='0.0.0.0', port=8001)

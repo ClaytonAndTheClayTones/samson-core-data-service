@@ -58,8 +58,11 @@ class CommonDatabaseModel:
 
 class CommonModel:
 
-    def __init__(self, id: UUID, created_at: datetime,
-                 updated_at: datetime | None) -> None:
+    def __init__(
+        self, 
+        id: UUID, 
+        created_at: datetime,
+        updated_at: datetime | None) -> None:
 
         self.id = id
         self.created_at = created_at

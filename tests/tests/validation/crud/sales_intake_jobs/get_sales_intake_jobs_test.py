@@ -1,31 +1,31 @@
 from time import sleep
 from typing import Any
 
-from tests.qdk.operators.inventory_intake_jobs import InventoryIntakeJobCreateModel, InventoryIntakeJobModel, InventoryIntakeJobSearchModel, create_inventory_intake_job, get_inventory_intake_job_by_id, get_inventory_intake_jobs
+from tests.qdk.operators.sales_intake_jobs import SalesIntakeJobCreateModel, SalesIntakeJobModel, SalesIntakeJobSearchModel, create_sales_intake_job, get_sales_intake_job_by_id, get_sales_intake_jobs
 from tests.qdk.qa_requests import qa_get
 from tests.qdk.types import PagedResponseItemList, TestContext
 from tests.qdk.utils import assert_objects_are_equal 
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
-def test_gets_inventory_intake_job_by_id() -> None:
+def test_gets_sales_intake_job_by_id() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object = create_inventory_intake_job(context)
+    posted_object = create_sales_intake_job(context)
 
-    result = get_inventory_intake_job_by_id(context, posted_object.id)
+    result = get_sales_intake_job_by_id(context, posted_object.id)
 
     assert result is not None
     assert result.id == posted_object.id
 
-def test_gets_inventory_intake_jobs_invalid_inputs() -> None:
+def test_gets_sales_intake_jobs_invalid_inputs() -> None:
      
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
      
-    result = qa_get(f"{context.api_url}/inventory_intake_jobs", query_params={
+    result = qa_get(f"{context.api_url}/sales_intake_jobs", query_params={
         'ids': 'not an id,also not an id', 
         'retailer_ids': 'not valid,at all,cmon man',  
         'retailer_location_ids': 'invalid,id,jamboree', 
@@ -88,21 +88,21 @@ def test_gets_inventory_intake_jobs_invalid_inputs() -> None:
     assert error[0]['type'] == 'bool_parsing'
     assert error[0]['msg'] == 'Input should be a valid boolean, unable to interpret input'
 
-def test_gets_inventory_intake_jobs_with_ids_filter() -> None:
+def test_gets_sales_intake_jobs_with_ids_filter() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context)
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context)
 
-    filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}"
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters)
+    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
 
     assert result is not None
     assert result.items is not None
@@ -115,49 +115,49 @@ def test_gets_inventory_intake_jobs_with_ids_filter() -> None:
 
     assert len(result.items) == 4 
     
-    posted_item_1: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
+    posted_item_1: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
     assert_objects_are_equal(posted_item_1[0], posted_object_1)
 
-    posted_item_2: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_2.id]
+    posted_item_2: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_2.id]
     assert len(posted_item_2) == 1 
     assert_objects_are_equal(posted_item_2[0], posted_object_2)
   
-    posted_item_3: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
+    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
   
-    posted_item_4: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
+    posted_item_4: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
 
-def test_gets_inventory_intake_jobs_with_paging() -> None:
+def test_gets_sales_intake_jobs_with_paging() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context)
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context)
     
     sleep(1)
     
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context)
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context)
 
-    filters_1: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters_1: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         page = 1,
         page_length = 2
     )
 
-    filters_2: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters_2: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         page = 2,
         page_length = 2
     )
     
-    result_page_1: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters_1)
-    result_page_2: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters_2)
+    result_page_1: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters_1)
+    result_page_2: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters_2)
 
     ## Page 1
 
@@ -170,11 +170,11 @@ def test_gets_inventory_intake_jobs_with_paging() -> None:
     assert result_page_1.paging.sort_by == 'created_at'
     assert result_page_1.paging.is_sort_descending == False
 
-    posted_item_page_1_item_1: list[InventoryIntakeJobModel] = [item for item in result_page_1.items if item.id == posted_object_1.id]
+    posted_item_page_1_item_1: list[SalesIntakeJobModel] = [item for item in result_page_1.items if item.id == posted_object_1.id]
     assert len(posted_item_page_1_item_1) == 1  
     assert_objects_are_equal(posted_item_page_1_item_1[0], posted_object_1)
 
-    posted_item_page_1_item_2: list[InventoryIntakeJobModel] = [item for item in result_page_1.items if item.id == posted_object_2.id]
+    posted_item_page_1_item_2: list[SalesIntakeJobModel] = [item for item in result_page_1.items if item.id == posted_object_2.id]
     assert len(posted_item_page_1_item_2) == 1  
     assert_objects_are_equal(posted_item_page_1_item_2[0], posted_object_2)
    
@@ -191,202 +191,202 @@ def test_gets_inventory_intake_jobs_with_paging() -> None:
 
     assert len(result_page_1.items) == 2
      
-    posted_item_page_2_item_1: list[InventoryIntakeJobModel] = [item for item in result_page_2.items if item.id == posted_object_3.id]
+    posted_item_page_2_item_1: list[SalesIntakeJobModel] = [item for item in result_page_2.items if item.id == posted_object_3.id]
     assert len(posted_item_page_2_item_1) == 1  
     assert_objects_are_equal(posted_item_page_2_item_1[0], posted_object_3)
 
-    posted_item_page_2_item_2: list[InventoryIntakeJobModel] = [item for item in result_page_2.items if item.id == posted_object_4.id]
+    posted_item_page_2_item_2: list[SalesIntakeJobModel] = [item for item in result_page_2.items if item.id == posted_object_4.id]
     assert len(posted_item_page_2_item_2) == 1  
     assert_objects_are_equal(posted_item_page_2_item_2[0], posted_object_4)
       
-def test_gets_inventory_intake_jobs_with_retailer_ids_filter() -> None:
+def test_gets_sales_intake_jobs_with_retailer_ids_filter() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(retailer_location_id = posted_object_1.retailer_location_id))
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context)
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(retailer_location_id = posted_object_1.retailer_location_id))
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context)
 
-    filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         retailer_ids = f"{posted_object_1.retailer_id},{posted_object_4.retailer_id}"
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters)
+    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
 
     assert result is not None
     assert result.items is not None 
 
     assert len(result.items) == 3
     
-    posted_item_1: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
+    posted_item_1: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
     assert_objects_are_equal(posted_item_1[0], posted_object_1) 
   
-    posted_item_3: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
+    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
 
-    posted_item_4: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
+    posted_item_4: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4) 
     
-def test_gets_inventory_intake_jobs_with_retailer_location_ids_filter() -> None:
+def test_gets_sales_intake_jobs_with_retailer_location_ids_filter() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context)
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(retailer_location_id = posted_object_1.retailer_location_id))
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context)
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context)
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(retailer_location_id = posted_object_1.retailer_location_id))
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context)
 
-    filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         retailer_location_ids = f"{posted_object_1.retailer_location_id},{posted_object_4.retailer_location_id}"
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters)
+    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
 
     assert result is not None
     assert result.items is not None 
 
     assert len(result.items) == 3
     
-    posted_item_1: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
+    posted_item_1: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
     assert_objects_are_equal(posted_item_1[0], posted_object_1) 
   
-    posted_item_3: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
+    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
 
-    posted_item_4: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
+    posted_item_4: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4) 
     
     
-def test_gets_inventory_intake_jobs_with_status_filter() -> None:
+def test_gets_sales_intake_jobs_with_status_filter() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(status = f"Complete"))
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(status = f"Failed"))
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(status = f"Complete"))
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(status = f"Requested"))
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(status = f"Complete"))
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(status = f"Failed"))
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(status = f"Complete"))
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(status = f"Requested"))
 
-    filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         status = f"Complete"
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters)
+    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
 
     assert result is not None
     assert result.items is not None 
 
     assert len(result.items) == 2
     
-    posted_item_1: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
+    posted_item_1: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
     assert_objects_are_equal(posted_item_1[0], posted_object_1) 
   
-    posted_item_3: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
+    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
     
     
-def test_gets_inventory_intake_jobs_with_snapshot_hour_filter_min_only() -> None:
+def test_gets_sales_intake_jobs_with_snapshot_hour_filter_min_only() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
 
-    filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         snapshot_hour_min = "2023-03-03T03:00:00.000Z" 
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters)
+    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
 
     assert result is not None
     assert result.items is not None 
 
     assert len(result.items) == 2
     
-    posted_item_2: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_2.id]
+    posted_item_2: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_2.id]
     assert len(posted_item_2) == 1  
     assert_objects_are_equal(posted_item_2[0], posted_object_2) 
   
-    posted_item_4: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
+    posted_item_4: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
 
-def test_gets_inventory_intake_jobs_with_snapshot_hour_filter_max_only() -> None:
+def test_gets_sales_intake_jobs_with_snapshot_hour_filter_max_only() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
 
-    filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         snapshot_hour_max = "2022-02-02T02:00:00.000Z" 
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters)
+    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
 
     assert result is not None
     assert result.items is not None 
 
     assert len(result.items) == 2
     
-    posted_item_1: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
+    posted_item_1: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
     assert_objects_are_equal(posted_item_1[0], posted_object_1) 
   
-    posted_item_3: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
+    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
     
 
-def test_gets_inventory_intake_jobs_with_status_filter_max_only() -> None:
+def test_gets_sales_intake_jobs_with_status_filter_max_only() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
+    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
+    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
+    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
+    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
 
-    filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
+    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
         snapshot_hour_min = "2022-02-02T02:00:00.000Z",
         snapshot_hour_max = "2023-03-03T03:00:00.000Z" 
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters)
+    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
 
     assert result is not None
     assert result.items is not None 
 
     assert len(result.items) == 2
   
-    posted_item_3: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
+    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
         
-    posted_item_4: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
+    posted_item_4: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1  
     assert_objects_are_equal(posted_item_4[0], posted_object_4) 

@@ -171,7 +171,7 @@ class InventoryProductSnapshotOutboundModel(CommonOutboundResponseModel):
     retailer_id: UUID
     retailer_location_id: UUID
     product_id: UUID
-    created_at: datetime
+    created_at: str
     sku: str
     stock_on_hand: int
     price: int

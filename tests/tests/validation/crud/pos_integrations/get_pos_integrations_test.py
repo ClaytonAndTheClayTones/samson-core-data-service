@@ -114,7 +114,7 @@ def test_gets_pos_integrations_with_ids_filter() -> None:
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
     
-def test_gets_retailer_locations_with_retailer_ids_filter() -> None:
+def test_gets_pos_integrations_with_retailer_ids_filter() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
@@ -148,7 +148,7 @@ def test_gets_retailer_locations_with_retailer_ids_filter() -> None:
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4) 
     
-def test_gets_retailer_locations_with_retailer_location_ids_filter() -> None:
+def test_gets_pos_integrations_with_retailer_location_ids_filter() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
