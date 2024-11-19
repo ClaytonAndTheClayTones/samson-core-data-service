@@ -18,8 +18,13 @@ from util.database import (
     SearchTerm,
 )
 
+from adapters.retailer_adapters import RetailerDataAdapter
+from adapters.retailer_location_adapters import RetailerLocationDataAdapter
+
 
 class PosIntegrationDataAdapter:
+    retailer_adapter: RetailerDataAdapter = RetailerDataAdapter()
+    retailer_location_adapter: RetailerLocationDataAdapter = RetailerLocationDataAdapter()
     common_utilities: CommonUtilities = CommonUtilities()
 
     def convert_from_inbound_create_model_to_create_model(
@@ -85,9 +90,9 @@ class PosIntegrationDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: PosIntegrationSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: PosIntegrationSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -112,9 +117,9 @@ class PosIntegrationDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: PosIntegrationCreateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: PosIntegrationCreateModel
+    ) -> dict[str, Any]:
        
         database_model: dict[str, Any] = {
             'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
@@ -129,9 +134,9 @@ class PosIntegrationDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, 
-            model: PosIntegrationUpdateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: PosIntegrationUpdateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name,
@@ -145,9 +150,9 @@ class PosIntegrationDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> PosIntegrationModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> PosIntegrationModel:
         
         model = PosIntegrationModel(
             id=database_model['id'],
@@ -165,19 +170,22 @@ class PosIntegrationDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: PosIntegrationModel
-        ) -> PosIntegrationOutboundModel:
+        self, 
+        model: PosIntegrationModel
+    ) -> PosIntegrationOutboundModel:
         
         outbound_model = PosIntegrationOutboundModel(
             id=model.id,
             retailer_id=model.retailer_id,
+            retailer = self.retailer_adapter.convert_from_model_to_outbound_model(model.retailer) if model.retailer is not None else None,
             retailer_location_id=model.retailer_location_id,
+            retailer_location = self.retailer_location_adapter.convert_from_model_to_outbound_model(model.retailer_location) if model.retailer_location is not None else None,
             name=model.name,
             url=model.url,
             key=model.key,
             description=model.description,
             pos_platform=model.pos_platform,
+        
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )

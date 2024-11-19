@@ -3,7 +3,7 @@ from typing import Any
 from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, create_pos_integration
 from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, RetailerLocationUpdateModel, create_retailer_location, update_retailer_location
 from tests.qdk.qa_requests import qa_patch, qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -75,7 +75,7 @@ def test_patches_valid_retailer_location() -> None:
 
     random_string = generate_random_string(14)
 
-    posted_object: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel(create_pos_integration_if_null = True))
+    posted_object: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel())
        
     update_object: RetailerLocationUpdateModel = RetailerLocationUpdateModel( 
         name = random_string + '_name', 
@@ -88,4 +88,34 @@ def test_patches_valid_retailer_location() -> None:
     )
 
     update_retailer_location(context, posted_object.id or "", update_object)
+    
+def test_patches_valid_retailer_location_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    random_string = generate_random_string(14)
+
+    posted_object: RetailerLocationModel = create_retailer_location(context, RetailerLocationCreateModel())
+       
+    update_object: RetailerLocationUpdateModel = RetailerLocationUpdateModel( 
+        name = random_string + '_name', 
+        location_city = 'patchville',
+        location_state = 'north new patchplace',
+        location_country = 'PP',
+        contact_email = 'madeupemailaddrepatchyss@example.com', 
+        contact_phone = '+12345612345',
+        account_status = 'Deactivated'
+    )
+ 
+    created_retailer_location = update_retailer_location(
+        context, 
+        posted_object.id or "", 
+        update_object, 
+        request_operators=RequestOperators(hydration_properties=["retailer"]))
+     
+    assert created_retailer_location.retailer is not None
+    assert created_retailer_location.retailer.id is not None
+    assert created_retailer_location.retailer.id == created_retailer_location.retailer_id
  

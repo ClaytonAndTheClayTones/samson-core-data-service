@@ -2,7 +2,7 @@ from typing import Any
 
 from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, PosIntegrationModel, PosIntegrationUpdateModel, create_pos_integration, update_pos_integration
 from tests.qdk.qa_requests import qa_patch, qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -59,5 +59,42 @@ def test_patches_valid_pos_integration() -> None:
         url = "nowhere.example.net"
     )
 
-    update_pos_integration(context, posted_object.id or "", update_object)
+    update_pos_integration(context, posted_object.id or "", update_object) 
+    
+def test_patches_valid_pos_integration_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    random_string = generate_random_string(14)
+
+    posted_object: PosIntegrationModel = create_pos_integration(context)  
+ 
+    update_object: PosIntegrationUpdateModel = PosIntegrationUpdateModel(
+        name = random_string + "_name",
+        description = "describe away my main man",
+        pos_platform = "Posabit",
+        key = "09876543212qwertyuiop",
+        url = "nowhere.example.net"
+    )
+
+    result = update_pos_integration(
+        context, 
+        posted_object.id or "", 
+        update_object,
+        request_operators=RequestOperators(hydration_properties=["retailer,retailer_location,retailer_location.retailer"])
+    )
+    
+    assert result.retailer is not None
+    assert result.retailer.id is not None
+    assert result.retailer.id == result.retailer_id
+    
+    assert result.retailer_location is not None
+    assert result.retailer_location.id is not None
+    assert result.retailer_location.id == result.retailer_location_id
+    
+    assert result.retailer_location.retailer is not None
+    assert result.retailer_location.retailer.id is not None
+    assert result.retailer_location.retailer.id == result.retailer_id
  

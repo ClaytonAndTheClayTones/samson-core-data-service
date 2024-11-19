@@ -99,18 +99,18 @@ class HistoricalSaleItemModel():
         
             self.id = id
             self.retailer_location_id = retailer_location_id
-            self.retailer_location = retailer_location
+            self.retailer_location = RetailerLocationModel(**retailer_location) if retailer_location is not None else None
             self.retailer_id = retailer_id
-            self.retailer = retailer 
+            self.retailer = RetailerModel(**retailer) if retailer is not None else None
             self.sales_intake_job_id = sales_intake_job_id
-            self.sales_intake_job = sales_intake_job
+            self.sales_intake_job = SalesIntakeJobModel(**sales_intake_job) if sales_intake_job is not None else None
             self.product_id = product_id
-            self.product = product
+            self.product = ProductModel(**product) if product is not None else None
             self.product_vendor_id = product_vendor_id
-            self.product_vendor = product_vendor
-            
+            self.product_vendor = VendorModel(**product_vendor) if product_vendor is not None else None
             self.historical_sale_id = historical_sale_id
-            self.historical_sale = historical_sale
+            self.historical_sale = HistoricalSaleModel(**historical_sale) if historical_sale is not None else None
+            
             self.sale_timestamp = sale_timestamp
             self.created_at = created_at
             
@@ -270,7 +270,7 @@ def get_historical_sale_item_by_id(
 
     url: str = f"{context.api_url}/historical_sale_items/{id}"
     
-    result: Response = qa_get(url)
+    result: Response = qa_get(url, request_operators = request_operators)
      
     return_object = HistoricalSaleItemModel(**result.json())
     
@@ -301,4 +301,30 @@ def get_historical_sale_items(
     )
     
     return return_object 
- 
+
+def historical_sale_item_hydration_check(historical_sale_item: HistoricalSaleItemModel) -> None:
+    assert historical_sale_item.product is not None
+    assert historical_sale_item.product.id is not None
+    assert historical_sale_item.product.id == historical_sale_item.product_id
+    
+    assert historical_sale_item.product_vendor is not None
+    assert historical_sale_item.product_vendor.id is not None
+    assert historical_sale_item.product_vendor.id == historical_sale_item.product_vendor_id
+    
+    assert historical_sale_item.historical_sale is not None
+    assert historical_sale_item.historical_sale.id is not None
+    assert historical_sale_item.historical_sale.id == historical_sale_item.historical_sale_id
+    
+    assert historical_sale_item.retailer_location is not None
+    assert historical_sale_item.retailer_location.id is not None
+    assert historical_sale_item.retailer_location.id == historical_sale_item.retailer_location_id
+    
+    assert historical_sale_item.retailer is not None
+    assert historical_sale_item.retailer.id is not None
+    assert historical_sale_item.retailer.id == historical_sale_item.retailer_id
+    
+    assert historical_sale_item.sales_intake_job is not None
+    assert historical_sale_item.sales_intake_job.id is not None 
+    assert historical_sale_item.sales_intake_job.id == historical_sale_item.sales_intake_job_id         
+    
+    

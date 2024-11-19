@@ -1,5 +1,9 @@
 from typing import Any
-from adapters.inventory_intake_job_adapters import RangeSearchTerm
+from adapters.inventory_intake_job_adapters import InventoryIntakeJobDataAdapter, RangeSearchTerm
+from adapters.product_adapters import ProductDataAdapter
+from adapters.retailer_adapters import RetailerDataAdapter
+from adapters.retailer_location_adapters import RetailerLocationDataAdapter
+from adapters.vendor_adapters import VendorDataAdapter
 from models.inventory_product_snapshot_model import (
     InventoryProductSnapshotCreateModel,
     InventoryProductSnapshotInboundCreateModel,
@@ -17,7 +21,22 @@ from util.database import (
 
 
 class InventoryProductSnapshotDataAdapter:
-    common_utilities: CommonUtilities = CommonUtilities()
+    def __init__(
+        self,
+        retailer_adapter : RetailerDataAdapter = RetailerDataAdapter(),
+        retailer_location_adapter : RetailerLocationDataAdapter = RetailerLocationDataAdapter(),
+        product_adapter : ProductDataAdapter = ProductDataAdapter(),
+        inventory_intake_job_adapter : InventoryIntakeJobDataAdapter = InventoryIntakeJobDataAdapter(),
+        vendor_adapter : VendorDataAdapter = VendorDataAdapter(),
+        common_utilities: CommonUtilities = CommonUtilities()
+    ) -> None:
+        
+        self.retailer_adapter = retailer_adapter
+        self.retailer_location_adapter = retailer_location_adapter
+        self.product_adapter = product_adapter
+        self.inventory_intake_job_adapter = inventory_intake_job_adapter
+        self.vendor_adapter = vendor_adapter    
+        self.common_utilities = common_utilities
 
     def convert_from_inbound_create_model_to_create_model(
         self, 
@@ -89,9 +108,9 @@ class InventoryProductSnapshotDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: InventoryProductSnapshotSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: InventoryProductSnapshotSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -122,9 +141,9 @@ class InventoryProductSnapshotDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: InventoryProductSnapshotCreateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: InventoryProductSnapshotCreateModel
+    ) -> dict[str, Any]:
        
         database_model: dict[str, Any] = {  
             'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
@@ -141,9 +160,9 @@ class InventoryProductSnapshotDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> InventoryProductSnapshotModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> InventoryProductSnapshotModel:
         
         model = InventoryProductSnapshotModel(
             id=database_model['id'],
@@ -163,21 +182,26 @@ class InventoryProductSnapshotDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: InventoryProductSnapshotModel
-        ) -> InventoryProductSnapshotOutboundModel:
+        self, 
+        model: InventoryProductSnapshotModel
+    ) -> InventoryProductSnapshotOutboundModel:
         
         outbound_model = InventoryProductSnapshotOutboundModel(
             id=model.id,
             retailer_id=model.retailer_id,
+            retailer=self.retailer_adapter.convert_from_model_to_outbound_model(model.retailer) if model.retailer is not None else None,
             retailer_location_id=model.retailer_location_id,
+            retailer_location = self.retailer_location_adapter.convert_from_model_to_outbound_model(model.retailer_location) if model.retailer_location is not None else None,
             product_id=model.product_id,
+            product=self.product_adapter.convert_from_model_to_outbound_model(model.product) if model.product is not None else None,
             inventory_intake_job_id=model.inventory_intake_job_id,
+            inventory_intake_job=self.inventory_intake_job_adapter.convert_from_model_to_outbound_model(model.inventory_intake_job) if model.inventory_intake_job is not None else None,
             snapshot_hour=model.snapshot_hour.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             sku=model.sku,
             stock_on_hand=model.stock_on_hand,
             price=model.price, 
             vendor_id=model.vendor_id,
+            vendor=self.vendor_adapter.convert_from_model_to_outbound_model(model.vendor) if model.vendor is not None else None,
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )

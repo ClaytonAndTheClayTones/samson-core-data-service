@@ -93,9 +93,9 @@ class UserDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: UserSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: UserSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -147,9 +147,9 @@ class UserDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: UserCreateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: UserCreateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'first_name': model.first_name,
@@ -164,10 +164,10 @@ class UserDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, 
-            model: UserUpdateModel
-        ) -> dict[str, Any]:
-        
+        self, 
+        model: UserUpdateModel
+    ) -> dict[str, Any]:
+    
         database_model: dict[str, Any] = {
             'first_name': model.first_name,
             'last_name': model.last_name,
@@ -177,9 +177,9 @@ class UserDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> UserModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> UserModel:
         
         model = UserModel(
             id=database_model['id'],
@@ -198,9 +198,9 @@ class UserDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: UserModel
-        ) -> UserOutboundModel:
+        self, 
+        model: UserModel
+    ) -> UserOutboundModel:
         
         outbound_model = UserOutboundModel(
             id=model.id,

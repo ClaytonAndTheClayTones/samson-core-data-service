@@ -7,6 +7,9 @@ from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
 from pydantic_core import PydanticUndefined
 from enum import Enum
 
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel
+
 
 class PosPlatforms(str, Enum):
     Posabit = 'Posabit'
@@ -66,10 +69,13 @@ class PosIntegrationCreateModel:
         url: str,
         key: str,
         pos_platform: PosPlatforms, 
+        retailer_id: UUID | None = None,
         description: str | None = None,
     ) -> None:
  
         self.retailer_location_id = retailer_location_id
+        
+        self.retailer_id = retailer_id
         self.name = name
         self.url = url
         self.key = key
@@ -127,6 +133,8 @@ class PosIntegrationModel(CommonModel):
         key: str,
         pos_platform: PosPlatforms,
         created_at: datetime,
+        retailer: RetailerModel | None = None,
+        retailer_location: RetailerLocationModel | None = None,
         description: str | None = None,
         updated_at: datetime | None = None,
     ):
@@ -135,6 +143,8 @@ class PosIntegrationModel(CommonModel):
 
         self.retailer_id = retailer_id
         self.retailer_location_id = retailer_location_id
+        self.retailer = retailer
+        self.retailer_location = retailer_location
         self.name = name
         self.url = url
         self.key = key
@@ -154,6 +164,8 @@ class PosIntegrationDatabaseModel(CommonDatabaseModel):
         key: str,
         pos_platform: PosPlatforms,
         created_at: datetime,
+        retailer: RetailerOutboundModel | None = None,
+        retailer_location: RetailerLocationOutboundModel | None = None,
         description: str | None = None,
         updated_at: datetime | None = None,
     ):
@@ -162,6 +174,8 @@ class PosIntegrationDatabaseModel(CommonDatabaseModel):
 
         self.retailer_id = retailer_id
         self.retailer_location_id = retailer_location_id
+        self.retailer = retailer
+        self.retailer_location = retailer_location
         self.name = name
         self.url = url
         self.key = key
@@ -176,5 +190,7 @@ class PosIntegrationOutboundModel(CommonOutboundResponseModel):
     name: str
     url: str
     key: str
+    retailer: RetailerOutboundModel | None = None
+    retailer_location: RetailerLocationOutboundModel | None = None
     pos_platform: PosPlatforms | None = None
     description: str | None = None

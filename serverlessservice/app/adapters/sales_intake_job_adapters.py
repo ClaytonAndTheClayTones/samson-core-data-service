@@ -83,9 +83,9 @@ class SalesIntakeJobDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: SalesIntakeJobSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: SalesIntakeJobSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -107,9 +107,9 @@ class SalesIntakeJobDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: SalesIntakeJobCreateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: SalesIntakeJobCreateModel
+    ) -> dict[str, Any]:
        
         database_model: dict[str, Any] = {
             'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
@@ -122,9 +122,9 @@ class SalesIntakeJobDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, 
-            model: SalesIntakeJobUpdateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: SalesIntakeJobUpdateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'status': model.status.value if model.status is not None else None,
@@ -135,9 +135,9 @@ class SalesIntakeJobDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> SalesIntakeJobModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> SalesIntakeJobModel:
         
         model = SalesIntakeJobModel(
             id=database_model['id'],
@@ -153,9 +153,9 @@ class SalesIntakeJobDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: SalesIntakeJobModel
-        ) -> SalesIntakeJobOutboundModel:
+        self, 
+        model: SalesIntakeJobModel
+    ) -> SalesIntakeJobOutboundModel:
         
         outbound_model = SalesIntakeJobOutboundModel(
             id=model.id,

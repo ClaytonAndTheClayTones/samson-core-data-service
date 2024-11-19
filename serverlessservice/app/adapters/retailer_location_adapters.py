@@ -17,9 +17,13 @@ from util.database import (
     LikeSearchTerm,
     SearchTerm,
 )
+from adapters.retailer_adapters import RetailerDataAdapter
 
 
 class RetailerLocationDataAdapter:
+    
+    retailer_adapter: RetailerDataAdapter = RetailerDataAdapter()
+
     common_utilities: CommonUtilities = CommonUtilities()
 
     def convert_from_inbound_create_model_to_create_model(
@@ -86,9 +90,9 @@ class RetailerLocationDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: RetailerLocationSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: RetailerLocationSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -118,7 +122,10 @@ class RetailerLocationDataAdapter:
 
         return search_terms
 
-    def convert_from_create_model_to_database_model(self, model: RetailerLocationCreateModel) -> dict[str, Any]:
+    def convert_from_create_model_to_database_model(
+        self, 
+        model: RetailerLocationCreateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name,
@@ -133,7 +140,10 @@ class RetailerLocationDataAdapter:
 
         return database_model
 
-    def convert_from_update_model_to_database_model(self, model: RetailerLocationUpdateModel) -> dict[str, Any]:
+    def convert_from_update_model_to_database_model(
+        self, 
+        model: RetailerLocationUpdateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name, 
@@ -148,9 +158,9 @@ class RetailerLocationDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> RetailerLocationModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> RetailerLocationModel:
             
         model = RetailerLocationModel(
             id=database_model['id'],
@@ -169,13 +179,14 @@ class RetailerLocationDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self,
-            model: RetailerLocationModel
-        ) -> RetailerLocationOutboundModel:
+        self,
+        model: RetailerLocationModel
+    ) -> RetailerLocationOutboundModel:
         
         outbound_model = RetailerLocationOutboundModel(
             id=model.id,
             retailer_id=model.retailer_id, 
+            retailer = self.retailer_adapter.convert_from_model_to_outbound_model(model.retailer) if model.retailer is not None else None,
             name=model.name,
             location_state=model.location_state,
             location_city=model.location_city,
@@ -185,6 +196,6 @@ class RetailerLocationDataAdapter:
             account_status=model.account_status,
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
-        )
+        ) 
 
         return outbound_model

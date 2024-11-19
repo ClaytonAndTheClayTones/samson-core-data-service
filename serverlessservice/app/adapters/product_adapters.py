@@ -100,9 +100,9 @@ class ProductDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: ProductSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: ProductSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -135,7 +135,10 @@ class ProductDataAdapter:
 
         return search_terms
 
-    def convert_from_create_model_to_database_model(self, model: ProductCreateModel) -> dict[str, Any]:
+    def convert_from_create_model_to_database_model(
+        self, 
+        model: ProductCreateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name,
@@ -149,7 +152,10 @@ class ProductDataAdapter:
 
         return database_model
 
-    def convert_from_update_model_to_database_model(self, model: ProductUpdateModel) -> dict[str, Any]:
+    def convert_from_update_model_to_database_model(
+        self, 
+        model: ProductUpdateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name, 
@@ -162,9 +168,9 @@ class ProductDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> ProductModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> ProductModel:
             
         model = ProductModel(
             id=database_model['id'],
@@ -184,10 +190,10 @@ class ProductDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self,
-            model: ProductModel
-        ) -> ProductOutboundModel:
-        
+        self,
+        model: ProductModel
+    ) -> ProductOutboundModel:
+    
         outbound_model = ProductOutboundModel(
             id=model.id,
             name=model.name, 

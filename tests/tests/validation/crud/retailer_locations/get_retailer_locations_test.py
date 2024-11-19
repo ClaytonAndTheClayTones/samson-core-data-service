@@ -1,9 +1,9 @@
 from time import sleep
 from typing import Any
 
-from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, RetailerLocationSearchModel, create_retailer_location, get_retailer_location_by_id, get_retailer_locations
+from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, RetailerLocationSearchModel, create_retailer_location, get_retailer_location_by_id, get_retailer_locations, retailer_location_hydration_check
 from tests.qdk.qa_requests import qa_get, qa_post
-from tests.qdk.types import PagedResponseItemList, TestContext
+from tests.qdk.types import PagedResponseItemList, RequestOperators, TestContext
 from tests.qdk.utils import assert_objects_are_equal, generate_random_string
 from urllib.parse import urlencode   
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
@@ -19,6 +19,24 @@ def test_gets_retailer_location_by_id() -> None:
 
     assert result is not None
     assert result.id == posted_object.id
+
+def test_gets_retailer_location_by_id_with_hydration() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object = create_retailer_location(context)
+
+    result = get_retailer_location_by_id(
+        context, 
+        posted_object.id,
+        request_operators=RequestOperators(hydration_properties=["retailer"])
+    )
+
+    assert result is not None
+    assert result.id == posted_object.id
+
+    retailer_location_hydration_check(result)
 
 def test_gets_retailer_locations_invalid_inputs() -> None:
      
@@ -107,6 +125,69 @@ def test_gets_retailer_locations_with_ids_filter() -> None:
     posted_item_4: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
+     
+def test_gets_retailer_locations_with_ids_filter_with_hydration() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object_1: RetailerLocationModel = create_retailer_location(context)
+    posted_object_2: RetailerLocationModel = create_retailer_location(context)
+    posted_object_3: RetailerLocationModel = create_retailer_location(context)
+    posted_object_4: RetailerLocationModel = create_retailer_location(context)
+
+    filters: RetailerLocationSearchModel = RetailerLocationSearchModel(
+        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}"
+    )
+    
+    result: PagedResponseItemList[RetailerLocationModel] = get_retailer_locations(
+        context, 
+        filters,
+        request_operators=RequestOperators(hydration_properties=["retailer"])
+    )
+
+    assert result is not None
+    assert result.items is not None
+    
+    assert result.paging is not None
+    assert result.paging.page == 1
+    assert result.paging.page_length == 25
+    assert result.paging.sort_by == 'created_at'
+    assert result.paging.is_sort_descending == False
+
+    assert len(result.items) == 4 
+    
+    posted_item_1: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_1.id]
+    assert len(posted_item_1) == 1  
+    assert_objects_are_equal(posted_item_1[0], posted_object_1, ["retailer"])
+        
+    assert posted_item_1[0].retailer is not None
+    assert posted_item_1[0].retailer.id is not None
+    assert posted_item_1[0].retailer.id == posted_item_1[0].retailer_id
+
+    posted_item_2: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_2.id]
+    assert len(posted_item_2) == 1 
+    assert_objects_are_equal(posted_item_2[0], posted_object_2, ["retailer"])
+    
+    assert posted_item_2[0].retailer is not None
+    assert posted_item_2[0].retailer.id is not None
+    assert posted_item_2[0].retailer.id == posted_item_2[0].retailer_id
+  
+    posted_item_3: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_3.id]
+    assert len(posted_item_3) == 1 
+    assert_objects_are_equal(posted_item_3[0], posted_object_3, ["retailer"])
+    
+    assert posted_item_3[0].retailer is not None
+    assert posted_item_3[0].retailer.id is not None
+    assert posted_item_3[0].retailer.id == posted_item_3[0].retailer_id
+  
+    posted_item_4: list[RetailerLocationModel] = [item for item in result.items if item.id == posted_object_4.id]
+    assert len(posted_item_4) == 1 
+    assert_objects_are_equal(posted_item_4[0], posted_object_4, ["retailer"])
+    
+    assert posted_item_4[0].retailer is not None
+    assert posted_item_4[0].retailer.id is not None
+    assert posted_item_4[0].retailer.id == posted_item_4[0].retailer_id
 
 def test_gets_retailer_locations_with_paging() -> None:
     populate_configuration_if_not_exists() 

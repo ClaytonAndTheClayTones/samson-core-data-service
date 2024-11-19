@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import UUID4
 import uvicorn
 
@@ -9,8 +9,8 @@ from models.inventory_product_snapshot_model import (
 )
 from controllers.inventory_product_snapshot_controller import InventoryProductSnapshotController
 from models.common_model import (
-    OutboundItemListResponse, )
-from util.environment import Environment
+    OutboundItemListResponse
+) 
 
 controller: InventoryProductSnapshotController = InventoryProductSnapshotController()
 
@@ -23,8 +23,10 @@ def set_inventory_product_snapshot_routes(app: FastAPI):
         status_code=201,
     )
     def post_retailerlocation(
-        inbound_create_model: InventoryProductSnapshotInboundCreateModel, ):
-        result = controller.create(inbound_create_model)
+        inbound_create_model: InventoryProductSnapshotInboundCreateModel,
+        request: Request):
+        
+        result = controller.create(inbound_create_model, request.headers)
 
         return result
 
@@ -33,25 +35,28 @@ def set_inventory_product_snapshot_routes(app: FastAPI):
         response_model=OutboundItemListResponse[InventoryProductSnapshotOutboundModel],
     )
     def get_retailer_locations(
+        request: Request,
         inbound_search_model: InventoryProductSnapshotInboundSearchModel = Depends(),
     ) -> OutboundItemListResponse[InventoryProductSnapshotOutboundModel]:
 
-        result = controller.search(inbound_search_model)
+        result = controller.search(inbound_search_model, request.headers)
 
         return result
 
-    @app.get('/inventory_product_snapshots/{id}',
-             response_model=InventoryProductSnapshotOutboundModel)
-    def get_retailerlocation_by_id(id: UUID4):
+    @app.get(
+        '/inventory_product_snapshots/{id}',
+        response_model=InventoryProductSnapshotOutboundModel
+    )
+    def get_retailerlocation_by_id(id: UUID4, request: Request):
 
-        result = controller.get_by_id(id)
+        result = controller.get_by_id(id, request.headers)
 
         return result
  
     @app.delete('/inventory_product_snapshots/{id}',
                 response_model=InventoryProductSnapshotOutboundModel)
-    def delete_retailerlocation(id: UUID4):
+    def delete_retailerlocation(id: UUID4, request: Request):
 
-        result = controller.delete(id)
+        result = controller.delete(id, request.headers)
 
         return result

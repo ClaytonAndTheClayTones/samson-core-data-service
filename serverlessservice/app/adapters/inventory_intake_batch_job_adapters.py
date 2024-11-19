@@ -71,10 +71,10 @@ class InventoryIntakeBatchJobDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: InventoryIntakeBatchJobSearchModel
-        ) -> list[SearchTerm]:
-        
+        self, 
+        model: InventoryIntakeBatchJobSearchModel
+    ) -> list[SearchTerm]:
+    
         search_terms: list[SearchTerm] = []
 
         if model.ids is not None:
@@ -92,10 +92,10 @@ class InventoryIntakeBatchJobDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: InventoryIntakeBatchJobCreateModel
-        ) -> dict[str, Any]:
-       
+        self, 
+        model: InventoryIntakeBatchJobCreateModel
+    ) -> dict[str, Any]:
+    
         database_model: dict[str, Any] = { 
             'start_time': model.start_time,
             'end_time': model.end_time,
@@ -107,10 +107,10 @@ class InventoryIntakeBatchJobDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, 
-            model: InventoryIntakeBatchJobUpdateModel
-        ) -> dict[str, Any]:
-        
+        self, 
+        model: InventoryIntakeBatchJobUpdateModel
+    ) -> dict[str, Any]:
+    
         database_model: dict[str, Any] = {
             'status': model.status.value if model.status is not None else None,
             'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
@@ -120,9 +120,9 @@ class InventoryIntakeBatchJobDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> InventoryIntakeBatchJobModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> InventoryIntakeBatchJobModel:
         
         model = InventoryIntakeBatchJobModel(
             id=database_model['id'],  
@@ -139,9 +139,9 @@ class InventoryIntakeBatchJobDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: InventoryIntakeBatchJobModel
-        ) -> InventoryIntakeBatchJobOutboundModel:
+        self, 
+        model: InventoryIntakeBatchJobModel
+    ) -> InventoryIntakeBatchJobOutboundModel:
         
         outbound_model = InventoryIntakeBatchJobOutboundModel(
             id=model.id,

@@ -2,7 +2,7 @@ import datetime
 
 from requests import Response 
 from tests.qdk.operators.inventory_intake_jobs import InventoryIntakeJobCreateModel, InventoryIntakeJobModel, create_inventory_intake_job
-from tests.qdk.operators.products import create_product
+from tests.qdk.operators.products import ProductModel, create_product
 from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, create_retailer_location
 from tests.qdk.operators.retailers import RetailerModel
 from tests.qdk.operators.vendors import VendorModel
@@ -70,13 +70,13 @@ class InventoryProductSnapshotModel():
             self.stock_on_hand = stock_on_hand
             self.price = price
             self.created_at = created_at
-            self.retailer_location = retailer_location
-            self.retailer = retailer
+            self.retailer_location = RetailerLocationModel(**retailer_location) if retailer_location is not None else None
+            self.retailer = RetailerModel(**retailer) if retailer is not None else None
             self.vendor_id = vendor_id
-            self.vendor = vendor
-            self.product = product
+            self.vendor = VendorModel(**vendor) if vendor is not None else None
+            self.product = ProductModel(**product) if product is not None else None
             self.inventory_intake_job_id = inventory_intake_job_id
-            self.inventory_intake_job = inventory_intake_job 
+            self.inventory_intake_job = InventoryIntakeJobModel(**inventory_intake_job) if inventory_intake_job is not None else None
             self.updated_at = updated_at
  
         

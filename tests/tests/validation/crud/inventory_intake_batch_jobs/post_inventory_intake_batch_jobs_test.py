@@ -108,7 +108,7 @@ def test_posts_valid_inventory_intake_batch_job() -> None:
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
     create_inventory_intake_batch_job(context)  
-    
+  
 def test_posts_valid_inventory_intake_batch_job_defaulted_values() -> None:
      
     populate_configuration_if_not_exists() 

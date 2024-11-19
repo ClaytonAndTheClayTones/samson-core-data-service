@@ -7,6 +7,13 @@ from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
 from pydantic_core import PydanticUndefined
 from enum import Enum
 
+from models.product_model import ProductModel, ProductOutboundModel
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel
+from models.sales_intake_job_model import SalesIntakeJobModel, SalesIntakeJobOutboundModel
+from models.vendor_model import VendorModel, VendorOutboundModel 
+from models.historical_sale_model import HistoricalSaleModel, HistoricalSaleOutboundModel
+
 class ProductUnitOfMeasurements(str, Enum):
     Milligrams  = 'Milligrams'
     Grams = 'Grams'
@@ -28,8 +35,7 @@ from models.common_model import (
     CommonSearchModel,
     validate_ids,
 ) 
-
-  
+ 
 # Pydantic causes these class variables to safely be instance variables.
 class HistoricalSaleItemInboundCreateModel(BaseModel):  
     historical_sale_id: Annotated[UUID4, Strict(False)] = Field(...)  
@@ -160,59 +166,6 @@ class HistoricalSaleItemSearchModel(CommonSearchModel):
         self.sale_timestamp_min = sale_timestamp_min
         self.sale_timestamp_max = sale_timestamp_max 
 
-class HistoricalSaleItemModel(CommonModel):
-  
-    def __init__(
-        self,
-        id: UUID,
-        product_id: UUID,
-        retailer_id: UUID,
-        retailer_location_id: UUID,
-        historical_sale_id: UUID,
-        sale_timestamp: datetime,
-        sku: str,
-        sale_count: float,
-        total: int,
-        created_at: datetime, 
-        sub_total: int | None = None,
-        pos_sale_id: str | None = None,
-        pos_product_id: str | None = None, 
-        lot_identifier: str | None = None,
-        unit_of_weight: ProductUnitOfMeasurements | None = None,
-        weight_in_units: float | None = None,
-        sale_item_name: str | None = None,
-        discount: int | None = None,
-        tax: int | None = None,
-        cost : int | None = None,
-        
-        product_vendor_id: UUID | None = None,  
-        sales_intake_job_id: UUID | None = None,  
-        updated_at: datetime | None = None,
-    ):
-
-        super().__init__(id, created_at, updated_at)
-        
-        self.product_id = product_id
-        self.product_vendor_id = product_vendor_id
-        self.retailer_id = retailer_id
-        self.retailer_location_id = retailer_location_id
-        self.sales_intake_job_id = sales_intake_job_id 
-        self.historical_sale_id = historical_sale_id
-        self.pos_sale_id = pos_sale_id
-        self.pos_product_id = pos_product_id
-        self.lot_identifier = lot_identifier
-        self.unit_of_weight = unit_of_weight
-        self.weight_in_units = weight_in_units
-        self.sale_item_name = sale_item_name
-        self.sale_timestamp = sale_timestamp
-        self.sku = sku
-        self.sale_count = sale_count
-        self.total = total
-        self.sub_total = sub_total
-        self.discount = discount
-        self.tax = tax
-        self.cost = cost  
- 
 
 class HistoricalSaleItemDatabaseModel(CommonDatabaseModel):
 
@@ -266,28 +219,104 @@ class HistoricalSaleItemDatabaseModel(CommonDatabaseModel):
         self.discount = discount
         self.tax = tax
         self.cost = cost  
+         
+         
+class HistoricalSaleItemModel(CommonModel):
+  
+    def __init__(
+        self,
+        id: UUID,
+        product_id: UUID,
+        retailer_id: UUID,
+        retailer_location_id: UUID,
+        historical_sale_id: UUID,
+        sale_timestamp: datetime,
+        sku: str,
+        sale_count: float,
+        total: int,
+        created_at: datetime, 
+        sub_total: int | None = None,
+        pos_sale_id: str | None = None,
+        pos_product_id: str | None = None, 
+        lot_identifier: str | None = None,
+        unit_of_weight: ProductUnitOfMeasurements | None = None,
+        weight_in_units: float | None = None,
+        sale_item_name: str | None = None,
+        discount: int | None = None,
+        tax: int | None = None,
+        cost : int | None = None,
+        
+        product_vendor_id: UUID | None = None,  
+        sales_intake_job_id: UUID | None = None,
+        product: ProductModel | None = None,
+        retailer: RetailerModel | None = None,
+        retailer_location: RetailerLocationModel | None = None,
+        historical_sale: HistoricalSaleModel | None = None,
+        sales_intake_job: SalesIntakeJobModel | None = None,
+        product_vendor: VendorModel | None = None,
+        updated_at: datetime | None = None,
+    ):
+
+        super().__init__(id, created_at, updated_at)
+        
+        self.product_id = product_id
+        self.product_vendor_id = product_vendor_id
+        self.retailer_id = retailer_id
+        self.retailer_location_id = retailer_location_id
+        self.sales_intake_job_id = sales_intake_job_id 
+        self.historical_sale_id = historical_sale_id
+        self.pos_sale_id = pos_sale_id
+        self.pos_product_id = pos_product_id
+        self.lot_identifier = lot_identifier
+        self.unit_of_weight = unit_of_weight
+        self.weight_in_units = weight_in_units
+        self.sale_item_name = sale_item_name
+        self.sale_timestamp = sale_timestamp
+        self.sku = sku
+        self.sale_count = sale_count
+        self.total = total
+        self.sub_total = sub_total
+        self.discount = discount
+        self.tax = tax
+        self.cost = cost  
+        
+        self.product = product
+        self.retailer = retailer
+        self.retailer_location = retailer_location
+        self.historical_sale = historical_sale
+        self.sales_intake_job = sales_intake_job
+        self.product_vendor = product_vendor
+        
+    
         
 # Pydantic causes these class variables to safely be instance variables.
 class HistoricalSaleItemOutboundModel(CommonOutboundResponseModel):
-  
-        product_id: UUID
-        retailer_id: UUID
-        retailer_location_id: UUID
-        historical_sale_id: UUID
-        sale_timestamp: str
-        sku: str
-        sale_count: float
-        total: int
-        sub_total: int | None = None
-        pos_sale_id: str | None = None
-        pos_product_id: str | None = None
-        lot_identifier: str | None = None
-        unit_of_weight: ProductUnitOfMeasurements | None = None
-        weight_in_units: float | None = None
-        sale_item_name: str | None = None
-        discount: int | None = None
-        tax: int | None = None
-        cost : int | None = None
-        
-        product_vendor_id: UUID | None = None 
-        sales_intake_job_id: UUID | None = None  
+
+    product_id: UUID
+    retailer_id: UUID
+    retailer_location_id: UUID
+    historical_sale_id: UUID
+    sale_timestamp: str
+    sku: str
+    sale_count: float
+    total: int
+    sub_total: int | None = None
+    pos_sale_id: str | None = None
+    pos_product_id: str | None = None
+    lot_identifier: str | None = None
+    unit_of_weight: ProductUnitOfMeasurements | None = None
+    weight_in_units: float | None = None
+    sale_item_name: str | None = None
+    discount: int | None = None
+    tax: int | None = None
+    cost : int | None = None
+    
+    product_vendor_id: UUID | None = None 
+    sales_intake_job_id: UUID | None = None  
+    
+    product: ProductOutboundModel | None = None
+    retailer: RetailerOutboundModel | None = None
+    retailer_location: RetailerLocationOutboundModel | None = None
+    historical_sale: HistoricalSaleOutboundModel | None = None
+    sales_intake_job: SalesIntakeJobOutboundModel | None = None
+    product_vendor: VendorOutboundModel | None = None

@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import UUID4
 import uvicorn
 
@@ -24,8 +24,10 @@ def set_sales_intake_batch_job_routes(app: FastAPI):
         status_code=201,
     )
     def post_retailerlocation(
-        inbound_create_model: SalesIntakeBatchJobInboundCreateModel, ):
-        result = controller.create(inbound_create_model)
+        inbound_create_model: SalesIntakeBatchJobInboundCreateModel,  
+        request: Request
+    ):
+        result = controller.create(inbound_create_model, request.headers)
 
         return result
 
@@ -33,7 +35,8 @@ def set_sales_intake_batch_job_routes(app: FastAPI):
         '/sales_intake_batch_jobs',
         response_model=OutboundItemListResponse[SalesIntakeBatchJobOutboundModel],
     )
-    def get_sales_intake_batch_jobs(
+    def get_sales_intake_batch_jobs( 
+        request: Request,
         inbound_search_model: SalesIntakeBatchJobInboundSearchModel = Depends(),
     ) -> OutboundItemListResponse[SalesIntakeBatchJobOutboundModel]:
 
@@ -41,34 +44,40 @@ def set_sales_intake_batch_job_routes(app: FastAPI):
 
         return result
 
-    @app.get('/sales_intake_batch_jobs/{id}',
-             response_model=SalesIntakeBatchJobOutboundModel)
-    def get_sales_intake_batch_job_by_id(id: UUID4):
+    @app.get(
+        '/sales_intake_batch_jobs/{id}',
+        response_model=SalesIntakeBatchJobOutboundModel
+    )
+    def get_sales_intake_batch_job_by_id(id: UUID4, request: Request):
 
-        result = controller.get_by_id(id)
+        result = controller.get_by_id(id, request.headers)
 
         return result
     
     @app.post('/sales_intake_batch_jobss/{id}/run',
              response_model=SalesIntakeBatchJobOutboundModel)
-    def run_sales_intake_batch_job (id: UUID4):
+    def run_sales_intake_batch_job (id: UUID4, request: Request):
 
-        result = controller.run(id)
+        result = controller.run(id, request.headers)
 
         return result
 
     @app.patch('/sales_intake_batch_jobs/{id}',
                response_model=SalesIntakeBatchJobOutboundModel)
     def patch_sales_intake_batch_job(
-            id: UUID4, inbound_update_model: SalesIntakeBatchJobInboundUpdateModel):
-        result = controller.update(id, inbound_update_model)
+        id: UUID4, 
+        inbound_update_model: SalesIntakeBatchJobInboundUpdateModel,
+        request: Request
+    ) -> SalesIntakeBatchJobOutboundModel | None:
+        
+        result = controller.update(id, inbound_update_model, request.headers)
 
         return result
 
     @app.delete('/sales_intake_batch_jobs/{id}',
                 response_model=SalesIntakeBatchJobOutboundModel)
-    def delete_sales_intake_batch_job(id: UUID4):
+    def delete_sales_intake_batch_job(id: UUID4, request: Request):
 
-        result = controller.delete(id)
+        result = controller.delete(id, request.headers)
 
         return result

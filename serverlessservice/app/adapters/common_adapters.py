@@ -1,26 +1,34 @@
 from typing import Any
-from models.retailer_model import (
-    RetailerCreateModel,
-    RetailerDatabaseModel,
-    RetailerInboundCreateModel,
-    RetailerInboundSearchModel,
-    RetailerInboundUpdateModel,
-    RetailerModel,
-    RetailerOutboundModel,
-    RetailerSearchModel,
-    RetailerUpdateModel,
-)
+
+from fastapi.datastructures import Headers 
+
 from models.common_model import (
     CommonInboundPagedModel,
     OutboundResultantPagingModel,
 )
 from util.database import PagingModel, ResultantPagingModel
+from util.common import RequestOperators
 
 
 class CommonAdapters:
+    def convert_from_headers_to_operators(
+        self, 
+        headers: Headers
+    ) -> RequestOperators:
+        
+        requestOperators = RequestOperators()
+        
+        samson_hydration = headers.get("Samson-Hydration")
+        
+        if(samson_hydration is not None):
+            requestOperators.hydration = samson_hydration.split(",")
 
+        return requestOperators
+        
     def convert_from_paged_inbound_model_to_paging_model(
-            self, inbound_model: CommonInboundPagedModel) -> PagingModel:
+        self, 
+        inbound_model: CommonInboundPagedModel
+    ) -> PagingModel:
 
         model = PagingModel(
             page=inbound_model.page,
@@ -32,7 +40,9 @@ class CommonAdapters:
         return model
 
     def convert_from_paging_model_to_outbound_paging_model(
-            self, model: ResultantPagingModel) -> OutboundResultantPagingModel:
+        self, 
+        model: ResultantPagingModel
+    ) -> OutboundResultantPagingModel:
 
         outbound_model = OutboundResultantPagingModel(
             page=model.page,

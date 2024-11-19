@@ -71,9 +71,9 @@ class SalesIntakeBatchJobDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: SalesIntakeBatchJobSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: SalesIntakeBatchJobSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -92,9 +92,9 @@ class SalesIntakeBatchJobDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: SalesIntakeBatchJobCreateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: SalesIntakeBatchJobCreateModel
+    ) -> dict[str, Any]:
        
         database_model: dict[str, Any] = { 
             'start_time': model.start_time,
@@ -107,10 +107,10 @@ class SalesIntakeBatchJobDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, 
-            model: SalesIntakeBatchJobUpdateModel
-        ) -> dict[str, Any]:
-        
+        self, 
+        model: SalesIntakeBatchJobUpdateModel
+    ) -> dict[str, Any]:
+    
         database_model: dict[str, Any] = {
             'status': model.status.value if model.status is not None else None,
             'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
@@ -120,9 +120,9 @@ class SalesIntakeBatchJobDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> SalesIntakeBatchJobModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> SalesIntakeBatchJobModel:
         
         model = SalesIntakeBatchJobModel(
             id=database_model['id'],  
@@ -139,9 +139,9 @@ class SalesIntakeBatchJobDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: SalesIntakeBatchJobModel
-        ) -> SalesIntakeBatchJobOutboundModel:
+        self, 
+        model: SalesIntakeBatchJobModel
+    ) -> SalesIntakeBatchJobOutboundModel:
         
         outbound_model = SalesIntakeBatchJobOutboundModel(
             id=model.id,

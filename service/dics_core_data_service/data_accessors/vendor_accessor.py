@@ -9,6 +9,7 @@ from models.vendor_model import (
     VendorUpdateModel,
 )
 from models.common_model import ItemList
+from util.common import RequestOperators
 from util.configuration import get_global_configuration
 from util.database import PagingModel, SearchTerm
 from util.db_connection import SelectQueryResults
@@ -38,7 +39,11 @@ class VendorDataAccessor:
 
         connection = get_global_configuration().pg_connection
 
-        db_result = connection.select_by_id('vendors', id)
+        db_result = connection.select_by_id(
+            'vendors',
+            id,
+            request_operators
+        )
 
         if db_result is None:
             return None
@@ -51,7 +56,9 @@ class VendorDataAccessor:
     def select(
             self,
             model: VendorSearchModel,
-            paging_model: PagingModel | None = None) -> ItemList[VendorModel]:
+            paging_model: PagingModel | None = None,
+            request_operators: RequestOperators | None = None
+        ) -> ItemList[VendorModel]:
 
         connection = get_global_configuration().pg_connection
 
@@ -59,7 +66,11 @@ class VendorDataAccessor:
             SearchTerm] = self.adapter.convert_from_search_model_to_search_terms(
                 model)
         db_result: SelectQueryResults = connection.select(
-            'vendors', search_terms, paging_model)
+            'vendors', 
+            search_terms, 
+            paging_model,
+            request_operators
+        )
 
         results: ItemList[VendorModel] = ItemList[VendorModel](
             db_result.paging)
@@ -78,11 +89,8 @@ class VendorDataAccessor:
         self,
         id: UUID,
         model: VendorUpdateModel,
-        explicitNullSet: list[str] | None = None,
-    ):
-
-        explicitNullSet = explicitNullSet or []
-
+        request_operators: RequestOperators | None = None
+    ): 
         connection = get_global_configuration().pg_connection
 
         db_model: dict[
@@ -90,7 +98,12 @@ class VendorDataAccessor:
             Any] = self.adapter.convert_from_update_model_to_database_model(
                 model)
 
-        db_result = connection.update('vendors', id, db_model)
+        db_result = connection.update(
+            'vendors',
+            id,
+            db_model,
+            request_operators
+        )
 
         if db_result is None:
             return None
@@ -100,11 +113,19 @@ class VendorDataAccessor:
 
         return result_model
 
-    def delete(self, id: UUID):
+    def delete(
+        self, 
+        id: UUID,
+        request_operators: RequestOperators | None = None
+    ):
 
         connection = get_global_configuration().pg_connection
 
-        db_result = connection.delete('vendors', id)
+        db_result = connection.delete(
+            'vendors',
+            id,
+            request_operators
+        )
 
         if db_result is None:
             return None

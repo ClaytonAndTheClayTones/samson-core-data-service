@@ -7,6 +7,12 @@ from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
 from pydantic_core import PydanticUndefined
 from enum import Enum
 
+from models.inventory_intake_job_model import InventoryIntakeJobModel, InventoryIntakeJobOutboundModel
+from models.product_model import ProductModel, ProductOutboundModel
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel
+from models.vendor_model import VendorModel, VendorOutboundModel
+
 
 class InventoryProductSnapshotStatuses(str, Enum):
     Requested = 'Requested'
@@ -101,38 +107,6 @@ class InventoryProductSnapshotSearchModel(CommonSearchModel):
         self.sku = sku
 
 
-class InventoryProductSnapshotModel(CommonModel):
-
-    def __init__(
-        self,
-        id: UUID,
-        retailer_id: UUID,
-        retailer_location_id: UUID,
-        product_id: UUID,
-        snapshot_hour: datetime,
-        sku: str,
-        stock_on_hand: int,
-        price: int,
-        created_at: datetime, 
-        inventory_intake_job_id: UUID | None = None, 
-        vendor_id: UUID | None = None,
-        updated_at: datetime | None = None,
-    ):
-
-        super().__init__(id, created_at, updated_at)
-        
-        self.retailer_location_id = retailer_location_id
-        self.retailer_id = retailer_id
-        self.product_id = product_id
-        self.retailer_location_id = retailer_location_id
-        self.inventory_intake_job_id = inventory_intake_job_id
-        self.snapshot_hour = snapshot_hour
-        self.sku = sku
-        self.stock_on_hand = stock_on_hand
-        self.price = price 
-        self.vendor_id = vendor_id
-        
-
 class InventoryProductSnapshotDatabaseModel(CommonDatabaseModel):
 
     def __init__(
@@ -165,6 +139,48 @@ class InventoryProductSnapshotDatabaseModel(CommonDatabaseModel):
         self.vendor_id = vendor_id
 
 
+class InventoryProductSnapshotModel(CommonModel):
+
+    def __init__(
+        self,
+        id: UUID,
+        retailer_id: UUID,
+        retailer_location_id: UUID,
+        product_id: UUID,
+        snapshot_hour: datetime,
+        sku: str,
+        stock_on_hand: int,
+        price: int,
+        created_at: datetime, 
+        inventory_intake_job_id: UUID | None = None, 
+        retailer: RetailerModel | None = None,
+        retailer_location: RetailerLocationModel | None = None,
+        product: ProductModel | None = None,
+        vendor: VendorModel | None = None,
+        inventory_intake_job: InventoryIntakeJobModel | None = None,
+        vendor_id: UUID | None = None,
+        updated_at: datetime | None = None,
+    ):
+
+        super().__init__(id, created_at, updated_at)
+        
+        self.retailer_location_id = retailer_location_id
+        self.retailer_id = retailer_id
+        self.product_id = product_id
+        self.retailer_location_id = retailer_location_id
+        self.inventory_intake_job_id = inventory_intake_job_id
+        self.snapshot_hour = snapshot_hour
+        self.sku = sku
+        self.stock_on_hand = stock_on_hand
+        self.price = price 
+        self.vendor_id = vendor_id
+        
+        self.retailer = retailer
+        self.retailer_location = retailer_location
+        self.product = product
+        self.vendor = vendor
+        self.inventory_intake_job = inventory_intake_job
+
 # Pydantic causes these class variables to safely be instance variables.
 class InventoryProductSnapshotOutboundModel(CommonOutboundResponseModel):
      
@@ -178,3 +194,8 @@ class InventoryProductSnapshotOutboundModel(CommonOutboundResponseModel):
     snapshot_hour: str 
     inventory_intake_job_id: UUID | None = None  
     vendor_id: UUID | None = None
+    retailer: RetailerOutboundModel | None = None,
+    retailer_location: RetailerLocationOutboundModel | None = None,
+    product: ProductOutboundModel | None = None,
+    vendor: VendorOutboundModel | None = None,
+    inventory_intake_job: InventoryIntakeJobOutboundModel | None = None,

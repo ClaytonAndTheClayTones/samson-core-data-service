@@ -2,7 +2,7 @@ from typing import Any
 
 from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, create_retailer_location 
 from tests.qdk.qa_requests import qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -102,5 +102,20 @@ def test_posts_valid_retailer_location() -> None:
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
  
-    create_retailer_location(context, RetailerLocationCreateModel(create_pos_integration_if_null=True))
+    create_retailer_location(context)
+  
+def test_posts_valid_retailer_location_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL) 
  
+    created_retailer_location = create_retailer_location(
+        context,
+        None,
+        request_operators=RequestOperators(hydration_properties=["retailer"])
+    )
+ 
+    assert created_retailer_location.retailer is not None
+    assert created_retailer_location.retailer.id is not None
+    assert created_retailer_location.retailer.id == created_retailer_location.retailer_id

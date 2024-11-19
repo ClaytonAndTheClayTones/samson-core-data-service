@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import UUID4
 import uvicorn
 
@@ -23,35 +23,47 @@ def set_historical_sale_item_routes(app: FastAPI):
         status_code=201,
     )
     def post_retailerlocation(
-        inbound_create_model: HistoricalSaleItemInboundCreateModel, ):
-        result = controller.create(inbound_create_model)
+        inbound_create_model: HistoricalSaleItemInboundCreateModel, 
+        request: Request
+    ):
+        result = controller.create(inbound_create_model, request.headers)
 
         return result
 
     @app.get(
         '/historical_sale_items',
         response_model=OutboundItemListResponse[HistoricalSaleItemOutboundModel],
-    )
+    )    
     def get_retailer_locations(
-        inbound_search_model: HistoricalSaleItemInboundSearchModel = Depends(),
+        request: Request,
+        inbound_search_model: HistoricalSaleItemInboundSearchModel = Depends(), 
     ) -> OutboundItemListResponse[HistoricalSaleItemOutboundModel]:
 
-        result = controller.search(inbound_search_model)
+        result = controller.search(inbound_search_model, request.headers)
 
         return result
 
-    @app.get('/historical_sale_items/{id}',
-             response_model=HistoricalSaleItemOutboundModel)
-    def get_retailerlocation_by_id(id: UUID4):
-
-        result = controller.get_by_id(id)
+    @app.get(
+        '/historical_sale_items/{id}',
+        response_model=HistoricalSaleItemOutboundModel
+    )
+    def get_retailerlocation_by_id(
+        id: UUID4,    
+        request: Request
+    ): 
+        result = controller.get_by_id(id, request.headers)
 
         return result
  
-    @app.delete('/historical_sale_items/{id}',
-                response_model=HistoricalSaleItemOutboundModel)
-    def delete_retailerlocation(id: UUID4):
+    @app.delete(
+        '/historical_sale_items/{id}',
+        response_model=HistoricalSaleItemOutboundModel
+    )
+    def delete_retailerlocation(
+        id: UUID4,
+        request: Request
+    ):
 
-        result = controller.delete(id)
+        result = controller.delete(id, request.headers)
 
         return result
