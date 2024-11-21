@@ -1,9 +1,9 @@
 import datetime
 from typing import Self
 
-from requests import Response  
+from requests import Response   
 from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, create_retailer_location
-from tests.qdk.operators.retailers import RetailerCreateModel, RetailerModel, create_retailer
+from tests.qdk.operators.retailers import RetailerModel
 from tests.qdk.operators.vendors import VendorCreateModel, VendorModel, create_vendor
 from tests.qdk.qa_requests import qa_get, qa_patch, qa_post
 from tests.qdk.types import PagedResponseItemList, PagingRequestModel, PagingResponseModel, RequestOperators, TestContext
@@ -63,13 +63,13 @@ class ProductModel():
                 
         self.id = id
         self.referring_retailer_id = referring_retailer_id
-        self.referring_retailer = referring_retailer
+        self.referring_retailer = RetailerModel(**referring_retailer) if referring_retailer is not None else None
         self.referring_retailer_location_id = referring_retailer_location_id
-        self.referring_retailer_location = referring_retailer_location
+        self.referring_retailer_location = RetailerLocationModel(**referring_retailer_location) if referring_retailer_location is not None else None
         self.vendor_id = vendor_id
-        self.vendor = vendor
+        self.vendor = VendorModel(**vendor) if vendor is not None else None
         self.confirmed_core_product_id = confirmed_core_product_id
-        self.confirmed_core_product = confirmed_core_product
+        self.confirmed_core_product = ProductModel(**confirmed_core_product) if confirmed_core_product is not None else None
         self.vendor_sku = vendor_sku
         self.name = name
         self.vendor_confirmation_status = vendor_confirmation_status
@@ -208,7 +208,7 @@ def get_product_by_id(
 
     url = f"{context.api_url}/products/{id}"
     
-    result = qa_get(url)
+    result = qa_get(url, request_operators = request_operators)
  
     return_object = ProductModel(**result.json())
     
@@ -258,13 +258,28 @@ def update_product(
  
         result_dict = result.json()
 
-        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["updated_at"])
+        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["updated_at", "referring_retailer", "referring_retailer_location", "vendor", "confirmed_core_product"])
  
         assert result_dict['updated_at'] is not None
     
     return_object = ProductModel(**result.json())
     
     return return_object 
-    
 
+def product_hydration_check(product: ProductModel) -> None:
+  
+    assert product.referring_retailer_location is not None
+    assert product.referring_retailer_location.id is not None
+    assert product.referring_retailer_location.id == product.referring_retailer_location_id
+  
+    assert product.referring_retailer is not None
+    assert product.referring_retailer.id is not None
+    assert product.referring_retailer.id == product.referring_retailer_id 
     
+    assert product.confirmed_core_product is not None
+    assert product.confirmed_core_product.id is not None
+    assert product.confirmed_core_product.id == product.confirmed_core_product_id
+    
+    assert product.vendor is not None
+    assert product.vendor.id is not None
+    assert product.vendor.id == product.vendor_id 

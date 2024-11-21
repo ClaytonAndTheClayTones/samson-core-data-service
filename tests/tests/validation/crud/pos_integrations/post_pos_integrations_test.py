@@ -1,6 +1,6 @@
 from typing import Any
 
-from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, create_pos_integration
+from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, create_pos_integration, pos_integration_hydration_check
 from tests.qdk.qa_requests import qa_post
 from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
@@ -109,15 +109,5 @@ def test_posts_valid_retailer_location_with_hydration() -> None:
             "retailer_location.retailer"
         ])
     )
- 
-    assert created_entity.retailer is not None
-    assert created_entity.retailer.id is not None
-    assert created_entity.retailer.id == created_entity.retailer_id
-    
-    assert created_entity.retailer_location is not None
-    assert created_entity.retailer_location.id is not None
-    assert created_entity.retailer_location.id == created_entity.retailer_location_id
-    
-    assert created_entity.retailer_location.retailer is not None
-    assert created_entity.retailer_location.retailer.id is not None
-    assert created_entity.retailer_location.retailer.id == created_entity.retailer_id
+
+    pos_integration_hydration_check(created_entity)

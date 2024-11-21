@@ -1,6 +1,6 @@
 from typing import Any
 
-from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, create_retailer_location 
+from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, create_retailer_location, retailer_location_hydration_check 
 from tests.qdk.qa_requests import qa_post
 from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
@@ -119,3 +119,5 @@ def test_posts_valid_retailer_location_with_hydration() -> None:
     assert created_retailer_location.retailer is not None
     assert created_retailer_location.retailer.id is not None
     assert created_retailer_location.retailer.id == created_retailer_location.retailer_id
+    
+    retailer_location_hydration_check(created_retailer_location)

@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Annotated, Optional
+from typing import Annotated, Optional, Self
 from uuid import UUID
 from fastapi import Query
 from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
@@ -14,6 +14,9 @@ from models.common_model import (
     DicsPhoneNumber,
     validate_ids,
 )
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel
+from models.vendor_model import VendorModel, VendorOutboundModel
 
 class ProductVendorConfirmationStatuses(Enum):
     Candidate = 'Candidate'
@@ -166,6 +169,10 @@ class ProductModel(CommonModel):
         referring_retailer_location_id: UUID | None = None,
         vendor_id: UUID | None = None,
         confirmed_core_product_id: UUID | None = None,
+        referring_retailer: RetailerModel | None = None,
+        referring_retailer_location: RetailerLocationModel | None = None,
+        vendor: VendorModel | None = None,
+        confirmed_core_product: Self | None = None,
         updated_at: datetime | None = None,
     ):
 
@@ -178,7 +185,12 @@ class ProductModel(CommonModel):
         self.referring_retailer_id = referring_retailer_id
         self.referring_retailer_location_id = referring_retailer_location_id
         self.vendor_id = vendor_id
-        self.confirmed_core_product_id = confirmed_core_product_id         
+        self.confirmed_core_product_id = confirmed_core_product_id     
+        
+        self.referring_retailer = referring_retailer
+        self.referring_retailer_location = referring_retailer_location
+        self.vendor = vendor
+        self.confirmed_core_product = confirmed_core_product
 
  
 # Pydantic causes these class variables to safely be instance variables.
@@ -190,3 +202,7 @@ class ProductOutboundModel(CommonOutboundResponseModel):
     vendor_id: UUID | None = None
     confirmed_core_product_id: UUID | None = None
     vendor_confirmation_status: ProductVendorConfirmationStatuses | None = None
+    referring_retailer: RetailerOutboundModel | None = None
+    referring_retailer_location: RetailerLocationOutboundModel | None = None
+    vendor: VendorOutboundModel | None = None
+    confirmed_core_product: Self | None = None

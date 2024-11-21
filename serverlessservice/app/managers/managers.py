@@ -1,6 +1,6 @@
 import json
 from uuid import UUID 
-  
+
 from data_accessors.historical_sale_accessor import HistoricalSaleDataAccessor 
 from data_accessors.historical_sale_item_accessor import HistoricalSaleItemDataAccessor
 from data_accessors.inventory_intake_batch_job_accessor import InventoryIntakeBatchJobDataAccessor
@@ -13,27 +13,127 @@ from data_accessors.retailer_accessor import RetailerDataAccessor
 from data_accessors.retailer_location_accessor import RetailerLocationDataAccessor
 from data_accessors.sales_intake_batch_job_accessor import SalesIntakeBatchJobDataAccessor
 from data_accessors.sales_intake_job_accessor import SalesIntakeJobDataAccessor   
-from integrations import posabit_integration
+from data_accessors.vendor_accessor import VendorDataAccessor   
+from data_accessors.user_accessor import UserDataAccessor
+   
+from integrations.posabit_integration import PosabitIntegration
+ 
 from models.historical_sale_item_model import (
     HistoricalSaleItemCreateModel,
     HistoricalSaleItemModel,
     HistoricalSaleItemSearchModel, 
 )
+
 from models.common_model import ItemList
-from models.inventory_intake_batch_job_model import InventoryIntakeBatchJobCreateModel, InventoryIntakeBatchJobModel, InventoryIntakeBatchJobSearchModel, InventoryIntakeBatchJobStatuses, InventoryIntakeBatchJobUpdateModel
-from models.inventory_intake_job_model import InventoryIntakeJobCreateModel, InventoryIntakeJobModel, InventoryIntakeJobSearchModel, InventoryIntakeJobStatuses, InventoryIntakeJobUpdateModel
-from models.inventory_product_snapshot_model import InventoryProductSnapshotCreateModel, InventoryProductSnapshotModel, InventoryProductSnapshotSearchModel
-from models.pos_integration_call_model import PosIntegrationCallCreateModel, PosIntegrationCallModel, PosIntegrationCallSearchModel
-from models.pos_integration_model import PosIntegrationCreateModel, PosIntegrationModel, PosIntegrationSearchModel, PosIntegrationUpdateModel, PosPlatforms
-from models.product_model import ProductCreateModel, ProductModel, ProductSearchModel, ProductUpdateModel
-from models.sales_intake_batch_job_model import SalesIntakeBatchJobCreateModel, SalesIntakeBatchJobModel, SalesIntakeBatchJobSearchModel, SalesIntakeBatchJobStatuses, SalesIntakeBatchJobUpdateModel
-from models.sales_intake_job_model import SalesIntakeJobCreateModel, SalesIntakeJobModel, SalesIntakeJobSearchModel, SalesIntakeJobStatuses, SalesIntakeJobUpdateModel
-from models.historical_sale_model import HistoricalSaleCreateModel, HistoricalSaleModel, HistoricalSaleSearchModel
-from models.user_model import UserCreateModel, UserModel, UserSearchModel, UserUpdateModel
-from models.vendor_model import VendorCreateModel, VendorModel, VendorSearchModel, VendorUpdateModel
-from models.retailer_location_model import RetailerLocationCreateModel, RetailerLocationModel, RetailerLocationSearchModel, RetailerLocationUpdateModel
-from models.retailer_model import RetailerCreateModel, RetailerModel, RetailerSearchModel, RetailerUpdateModel
-from util.database import PagingModel 
+
+from models.inventory_intake_batch_job_model import (   
+    InventoryIntakeBatchJobCreateModel, 
+    InventoryIntakeBatchJobModel, 
+    InventoryIntakeBatchJobSearchModel, 
+    InventoryIntakeBatchJobStatuses, 
+    InventoryIntakeBatchJobUpdateModel
+)
+from models.inventory_intake_job_model import (   
+    InventoryIntakeJobCreateModel, 
+    InventoryIntakeJobModel, 
+    InventoryIntakeJobSearchModel, 
+    InventoryIntakeJobStatuses, 
+    InventoryIntakeJobUpdateModel
+)
+from models.inventory_product_snapshot_model import (   
+    InventoryProductSnapshotCreateModel, 
+    InventoryProductSnapshotModel, 
+    InventoryProductSnapshotSearchModel
+)
+from models.pos_integration_call_model import (   
+    PosIntegrationCallCreateModel, 
+    PosIntegrationCallModel, 
+    PosIntegrationCallSearchModel
+)            
+from models.pos_integration_model import (   
+    PosIntegrationCreateModel, 
+    PosIntegrationModel, 
+    PosIntegrationSearchModel, 
+    PosIntegrationUpdateModel, 
+    PosPlatforms
+)
+from models.product_model import (   
+    ProductCreateModel, 
+    ProductModel, 
+    ProductSearchModel, 
+    ProductUpdateModel
+)
+from models.sales_intake_batch_job_model import (   
+    SalesIntakeBatchJobCreateModel, 
+    SalesIntakeBatchJobModel, 
+    SalesIntakeBatchJobSearchModel, 
+    SalesIntakeBatchJobStatuses, 
+    SalesIntakeBatchJobUpdateModel
+)
+from models.sales_intake_job_model import (   
+    SalesIntakeJobCreateModel, 
+    SalesIntakeJobModel, 
+    SalesIntakeJobSearchModel, 
+    SalesIntakeJobStatuses, 
+    SalesIntakeJobUpdateModel
+)
+from models.historical_sale_model import (   
+    HistoricalSaleCreateModel, 
+    HistoricalSaleModel, 
+    HistoricalSaleSearchModel
+)
+from models.user_model import (   
+    UserCreateModel, 
+    UserModel, 
+    UserSearchModel, 
+    UserUpdateModel
+)
+from models.vendor_model import (   
+    VendorCreateModel, 
+    VendorModel, 
+    VendorSearchModel, 
+    VendorUpdateModel
+)
+from models.retailer_location_model import (   
+    RetailerLocationCreateModel, 
+    RetailerLocationModel, 
+    RetailerLocationSearchModel, 
+    RetailerLocationUpdateModel
+)
+from models.retailer_model import (   
+    RetailerCreateModel, 
+    RetailerModel, 
+    RetailerSearchModel, 
+    RetailerUpdateModel
+)
+from models.sales_intake_batch_job_model import (   
+    SalesIntakeBatchJobCreateModel, 
+    SalesIntakeBatchJobModel, 
+    SalesIntakeBatchJobSearchModel, 
+    SalesIntakeBatchJobStatuses, 
+    SalesIntakeBatchJobUpdateModel
+)
+from models.sales_intake_job_model import (   
+    SalesIntakeJobCreateModel, 
+    SalesIntakeJobModel, 
+    SalesIntakeJobSearchModel, 
+    SalesIntakeJobStatuses, 
+    SalesIntakeJobUpdateModel
+)
+from models.user_model import (   
+    UserCreateModel, 
+    UserModel, 
+    UserSearchModel, 
+    UserUpdateModel
+)
+from models.vendor_model import (   
+    VendorCreateModel, 
+    VendorModel, 
+    VendorSearchModel, 
+    VendorUpdateModel
+)
+
+from util.database import PagingModel  
 from util.common import RequestOperators
 from util.hydration import Hydrator
  
@@ -50,31 +150,36 @@ class Manager:
         historical_sales_accessor: HistoricalSaleDataAccessor = HistoricalSaleDataAccessor(),   
         pos_integration_accessor: PosIntegrationDataAccessor = PosIntegrationDataAccessor(),
         pos_integration_call_accessor: PosIntegrationCallDataAccessor = PosIntegrationCallDataAccessor(),
-        posabit_integration: posabit_integration.PosabitIntegration = posabit_integration.PosabitIntegration(),
+        posabit_integration: PosabitIntegration = PosabitIntegration(),
         inventory_intake_batch_job_accessor: InventoryIntakeBatchJobDataAccessor = InventoryIntakeBatchJobDataAccessor(),
         inventory_intake_job_accessor: InventoryIntakeJobDataAccessor = InventoryIntakeJobDataAccessor(),
         sales_intake_job_accessor: SalesIntakeJobDataAccessor = SalesIntakeJobDataAccessor(),
         sales_intake_batch_job_accessor: SalesIntakeBatchJobDataAccessor = SalesIntakeBatchJobDataAccessor(),
         inventory_product_snapshot_accessor: InventoryProductSnapshotDataAccessor = InventoryProductSnapshotDataAccessor(), 
+        user_accessor: UserDataAccessor = UserDataAccessor(),
+        vendor_accessor: VendorDataAccessor = VendorDataAccessor(),
     ) -> None: 
+        
         self.hydrator = hydrator
+
         self.historical_sale_item_accessor = historical_sale_item_accessor
         self.historical_sale_accessor = historical_sale_accessor
         self.retailer_location_accessor = retailer_location_accessor
+        self.retailer_accessor = retailer_accessor
         self.product_accessor = product_accessor
         self.historical_sales_accessor = historical_sales_accessor
-        self.inventory_intake_batch_job_accessor = inventory_intake_batch_job_accessor
         self.pos_integration_accessor = pos_integration_accessor
+        self.pos_integration_call_accessor = pos_integration_call_accessor
         self.posabit_integration = posabit_integration
         self.inventory_intake_batch_job_accessor = inventory_intake_batch_job_accessor
         self.inventory_intake_job_accessor = inventory_intake_job_accessor
-        self.inventory_product_snapshot_accessor = inventory_product_snapshot_accessor
-        self.retailer_accessor = retailer_accessor
-        self.pos_integration_call_accessor = pos_integration_call_accessor
         self.sales_intake_job_accessor = sales_intake_job_accessor
         self.sales_intake_batch_job_accessor = sales_intake_batch_job_accessor
+        self.inventory_product_snapshot_accessor = inventory_product_snapshot_accessor
+        self.user_accessor = user_accessor
+        self.vendor_accessor = vendor_accessor
+         
         
-    
     def create_historical_sale_item(
         self, 
         inbound_model: HistoricalSaleItemCreateModel,
@@ -103,7 +208,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_historical_sale_items([result], request_operators)
         
         return result
 
@@ -118,7 +223,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_historical_sale_items([result], request_operators)
         
         return result
 
@@ -135,7 +240,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate(result.items, request_operators)
+        self.hydrate_historical_sale_items(result.items, request_operators)
         
         return result
  
@@ -229,7 +334,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_historical_sales([result], request_operators)
         
         return result
 
@@ -244,7 +349,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_historical_sales([result], request_operators)
         
         return result
 
@@ -261,7 +366,7 @@ class Manager:
             request_operators = request_operators
        )
 
-        self.hydrate(result.items, request_operators)
+        self.hydrate_historical_sales(result.items, request_operators)
         
         return result 
 
@@ -322,7 +427,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_intake_batch_jobs([result], request_operators)
         
         return result
 
@@ -337,7 +442,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_intake_batch_jobs([result], request_operators)
         
         return result
 
@@ -354,7 +459,7 @@ class Manager:
             request_operators = request_operators
        )
 
-        self.hydrate(result.items, request_operators)
+        self.hydrate_inventory_intake_batch_jobs(result.items, request_operators)
         
         return result
 
@@ -367,7 +472,7 @@ class Manager:
 
         result = self.inventory_intake_batch_job_accessor.update(id, model,request_operators=request_operators)
 
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_intake_batch_jobs([result], request_operators)
         
         return result
 
@@ -431,7 +536,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_intake_job([result], request_operators)
 
         return result
 
@@ -446,7 +551,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_intake_job([result], request_operators)
         
         return result
 
@@ -463,7 +568,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate(result.items, request_operators)
+        self.hydrate_inventory_intake_job(result.items, request_operators)
 
         return result
 
@@ -480,7 +585,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_intake_job([result], request_operators)
 
         return result
 
@@ -548,7 +653,7 @@ class Manager:
                 return
 
 
-    def hydrate(
+    def hydrate_inventory_intake_job(
         self,
         result_list: list[InventoryIntakeJobModel],
         request_operators: RequestOperators | None = None
@@ -580,10 +685,7 @@ class Manager:
             self.search_inventory_intake_batch_jobs,
             request_operators.hydration if request_operators is not None else None
         ) 
-
  
-    
-    
     def create_inventory_product_snapshot(
         
         self, 
@@ -608,7 +710,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_product_snapshots([result], request_operators)
 
         return result
 
@@ -623,7 +725,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_inventory_product_snapshots([result], request_operators)
         
         return result
 
@@ -640,7 +742,7 @@ class Manager:
             request_operators = request_operators
        )
 
-        self.hydrate(result.items, request_operators)
+        self.hydrate_inventory_product_snapshots(result.items, request_operators)
         
         return result
  
@@ -690,6 +792,24 @@ class Manager:
             self.search_inventory_intake_jobs,
             request_operators.hydration if request_operators is not None else None
         ) 
+        
+        # hydrate sales intake job
+        self.hydrator.hydrate_target(
+            "product",
+            result_list, 
+            ProductSearchModel(),
+            self.search_products,
+            request_operators.hydration if request_operators is not None else None
+        ) 
+        
+        # hydrate sales intake job
+        self.hydrator.hydrate_target(
+            "vendor",
+            result_list, 
+            VendorSearchModel(),
+            self.search_vendors,
+            request_operators.hydration if request_operators is not None else None
+        ) 
 
  
     def create_pos_integration_call(
@@ -710,7 +830,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_pos_integration_calls([result], request_operators)
 
         return result
 
@@ -725,7 +845,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_pos_integration_calls([result], request_operators)
         
         return result
 
@@ -742,7 +862,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate(result.items, request_operators)
+        self.hydrate_pos_integration_calls(result.items, request_operators)
         
         return result
 
@@ -788,7 +908,7 @@ class Manager:
             "pos_integration", 
             result_list, 
             PosIntegrationSearchModel(),
-            self.search_retailer_locations,
+            self.search_pos_integrations,
             request_operators.hydration if request_operators is not None else None
         )
     
@@ -809,7 +929,7 @@ class Manager:
             request_operators = request_operators
         ) 
         
-        self.hydrate([result], request_operators)
+        self.hydrate_pos_integrations([result], request_operators)
         
         return result 
         
@@ -824,7 +944,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_pos_integrations([result], request_operators)
    
         return result
 
@@ -841,7 +961,7 @@ class Manager:
             request_operators = request_operators
         ) 
         
-        self.hydrate(result.items, request_operators)
+        self.hydrate_pos_integrations(result.items, request_operators)
         
         return result
 
@@ -857,7 +977,7 @@ class Manager:
             request_operators = request_operators
         )
          
-        self.hydrate([result], request_operators)
+        self.hydrate_pos_integrations([result], request_operators)
         
         return result
 
@@ -915,7 +1035,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_products([result], request_operators)
         
         return result
 
@@ -930,7 +1050,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_products([result], request_operators)
         
         return result
 
@@ -947,7 +1067,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate(result.items, request_operators)
+        self.hydrate_products(result.items, request_operators)
 
         return result
 
@@ -960,7 +1080,7 @@ class Manager:
 
         result = self.product_accessor.update(id, model, request_operators=request_operators)
 
-        self.hydrate([result], request_operators)
+        self.hydrate_products([result], request_operators)
         
         return result
 
@@ -1015,7 +1135,7 @@ class Manager:
             "confirmed_core_product", 
             result_list, 
             ProductSearchModel(),
-            self,
+            self.search_products,
             request_operators.hydration if request_operators is not None else None
         )
  
@@ -1032,7 +1152,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_retailer_locations([result], request_operators)
 
         return result
 
@@ -1047,7 +1167,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_retailer_locations([result], request_operators)
         
         return result
 
@@ -1064,7 +1184,7 @@ class Manager:
             request_operators = request_operators
        )
         
-        self.hydrate(result.items, request_operators)
+        self.hydrate_retailer_locations(result.items, request_operators)
         
         return result
 
@@ -1075,13 +1195,13 @@ class Manager:
         request_operators: RequestOperators | None = None
     ) -> RetailerLocationModel | None:
   
-        result = self.pretailer_location_accessor.update(
+        result = self.retailer_location_accessor.update(
             id, 
             model,  
             request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_retailer_locations([result], request_operators)
         
         return result
 
@@ -1109,7 +1229,7 @@ class Manager:
             "retailer", 
             result_list, 
             RetailerSearchModel(),
-            self.search_retails,
+            self.search_retailers,
             request_operators.hydration if request_operators is not None else None
         )
          
@@ -1124,7 +1244,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_retailers([result], request_operators)
         
         return result
 
@@ -1139,7 +1259,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_retailers([result], request_operators)
         
         return result
 
@@ -1156,7 +1276,7 @@ class Manager:
             request_operators = request_operators
        )
 
-        self.hydrate(result.items, request_operators)
+        self.hydrate_retailers(result.items, request_operators)
         
         return result
 
@@ -1173,7 +1293,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_retailers([result], request_operators)
 
         return result
 
@@ -1210,7 +1330,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate(result = [result], request_operators = request_operators)
+        self.hydrate_sales_intake_batch_jobs(result_list = [result], request_operators = request_operators)
 
         return result
 
@@ -1225,11 +1345,11 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate(result = [result], request_operators = request_operators)
+        self.hydrate_sales_intake_batch_jobs(result_list = [result], request_operators = request_operators)
 
         return result
 
-    def search_sales_intake_batch_job(
+    def search_sales_intake_batch_jobs(
         self,
         model: SalesIntakeBatchJobSearchModel,
         paging_model: PagingModel | None = None,
@@ -1241,8 +1361,8 @@ class Manager:
             paging_model = paging_model,
             request_operators = request_operators
         )
-    
-        self.hydrate(result = [result], request_operators = request_operators)
+
+        self.hydrate_sales_intake_batch_jobs(result.items, request_operators)
  
         return result
 
@@ -1255,7 +1375,7 @@ class Manager:
         
         result = self.sales_intake_batch_job_accessor.update(id, model,request_operators=request_operators)
 
-        self.hydrate(result = [result], request_operators = request_operators)
+        self.hydrate_sales_intake_batch_jobs([result], request_operators = request_operators)
 
         return result
 
@@ -1289,42 +1409,18 @@ class Manager:
         job_to_run.status = SalesIntakeBatchJobStatuses.Processing
         
         self.sales_intake_job_accessor.update(id, job_to_run)
+     
+        try:
         
-        pos_integration_search_model: PosIntegrationSearchModel = PosIntegrationSearchModel(
-            retailer_location_ids=[job_to_run.retailer_location_id]
-        )
-        
-        pos_integrations = self.search_pos_integrations(pos_integration_search_model)
-        
-        print("Found the following pos integrations:" + json.dumps([{ "id" : x.id, "name" : x.name} for x in pos_integrations.items], indent=4))
-        
-        for pos_integration in pos_integrations.items:
-            try:
-            
-                if(pos_integration.pos_platform == PosPlatforms.Posabit):
-                    self.posabit_integration.process_sales_snapshot(job_to_run, pos_integration)
-                    
-                    job_to_run.status = SalesIntakeBatchJobStatuses.Complete
-                    
-                    self.sales_intake_job_accessor.update(id, job_to_run)
-                else:
-                    raise Exception(f"Pos Integration Platform {pos_integration.pos_platform} not supported")
+            print("This job isn't implemented.")
 
-            except Exception as e:
+        except Exception as e:
                 
-                info = {"id" : pos_integration.id, "name" : pos_integration.name}
-                
-                print(f"Pos Integration {json.dumps(info)} failed with error: {e}")
-                
-                job_to_run.status = SalesIntakeBatchJobStatuses.Failed
-                
-                self.sales_intake_job_accessor.update(id, job_to_run)
-                
-                return
-
-    def hydrate(
+            print(f"This job failed.")
+                 
+    def hydrate_sales_intake_batch_jobs(
         self,
-        id: UUID,
+        result_list: list[SalesIntakeBatchJobModel],
         request_operators: RequestOperators | None = None
     ) -> SalesIntakeBatchJobModel | None:
         
@@ -1346,7 +1442,9 @@ class Manager:
             model = inbound_model,
             request_operators = request_operators
         )
-
+        
+        self.hydrate_sales_intake_jobs([result], request_operators)
+         
         return result
 
     def get_sales_intake_job_by_id(
@@ -1359,7 +1457,9 @@ class Manager:
             id = id,
             request_operators = request_operators
         )
-
+        
+        self.hydrate_sales_intake_jobs([result], request_operators)
+        
         return result
 
     def search_sales_intake_jobs(
@@ -1373,8 +1473,10 @@ class Manager:
             model = model,
             paging_model = paging_model,
             request_operators = request_operators
-       )
+        )
 
+        self.hydrate_sales_intake_jobs(result.items, request_operators)
+         
         return result
 
     def update_sales_intake_job(
@@ -1386,6 +1488,8 @@ class Manager:
  
         result = self.sales_intake_job_accessor.update(id, model, request_operators=request_operators)
 
+        self.hydrate_sales_intake_jobs([result], request_operators)
+         
         return result
 
     def delete_sales_intake_job(
@@ -1431,7 +1535,7 @@ class Manager:
             try:
             
                 if(pos_integration.pos_platform == PosPlatforms.Posabit):
-                    self.posabit_integration.process_sales_snapshot(job_to_run, pos_integration)
+                    self.process_sales_snapshot(job_to_run, pos_integration)
                     
                     job_to_run.status = SalesIntakeJobStatuses.Complete
                     
@@ -1500,7 +1604,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_users([result], request_operators)
         
         return result
 
@@ -1515,7 +1619,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate([result], request_operators)
+        self.hydrate_users([result], request_operators)
 
         return result
 
@@ -1532,7 +1636,7 @@ class Manager:
             request_operators = request_operators
         )
         
-        self.hydrate(result.items, request_operators)
+        self.hydrate_users(result.items, request_operators)
 
         return result
 
@@ -1545,7 +1649,7 @@ class Manager:
         
         result = self.user_accessor.update(id, model, request_operators=request_operators)
         
-        self.hydrate([result], request_operators)
+        self.hydrate_users([result], request_operators)
 
         return result
 
@@ -1608,7 +1712,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_vendors([result], request_operators)
         
         return result
 
@@ -1623,7 +1727,7 @@ class Manager:
             request_operators = request_operators
         )
 
-        self.hydrate([result], request_operators)
+        self.hydrate_vendors([result], request_operators)
         
         return result
 
@@ -1634,13 +1738,13 @@ class Manager:
         request_operators: RequestOperators | None = None
     ) -> ItemList[VendorModel]:
 
-        result = self.accessor.select(
+        result = self.vendor_accessor.select(
             model = model,
             paging_model = paging_model,
             request_operators = request_operators
        )
 
-        self.hydrate(result.items, request_operators)
+        self.hydrate_vendors(result.items, request_operators)
         
         return result
 
@@ -1651,9 +1755,9 @@ class Manager:
         request_operators: RequestOperators | None = None
     ) -> VendorModel | None: 
 
-        result = self.accessor.update(id, model, request_operators=request_operators)
+        result = self.vendor_accessor.update(id, model, request_operators=request_operators)
 
-        self.hydrate([result], request_operators)
+        self.hydrate_vendors([result], request_operators)
         
         return result
 

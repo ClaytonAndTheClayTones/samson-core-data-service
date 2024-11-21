@@ -18,8 +18,14 @@ from util.database import (
     SearchTerm,
 )
  
-class UserDataAdapter:
-    common_utilities: CommonUtilities = CommonUtilities()
+class UserDataAdapter: 
+    
+    def __init__(
+        self,
+        common_utilities: CommonUtilities = CommonUtilities()
+    ) -> None:
+        
+        self.common_utilities = common_utilities
 
     def convert_from_inbound_create_model_to_create_model(
         self,

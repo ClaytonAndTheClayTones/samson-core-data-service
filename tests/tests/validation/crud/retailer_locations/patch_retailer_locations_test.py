@@ -1,7 +1,7 @@
 from typing import Any
 
 from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, create_pos_integration
-from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, RetailerLocationUpdateModel, create_retailer_location, update_retailer_location
+from tests.qdk.operators.retailer_locations import RetailerLocationCreateModel, RetailerLocationModel, RetailerLocationUpdateModel, create_retailer_location, retailer_location_hydration_check, update_retailer_location
 from tests.qdk.qa_requests import qa_patch, qa_post
 from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
@@ -109,13 +109,11 @@ def test_patches_valid_retailer_location_with_hydration() -> None:
         account_status = 'Deactivated'
     )
  
-    created_retailer_location = update_retailer_location(
+    updated_retailer_location = update_retailer_location(
         context, 
         posted_object.id or "", 
         update_object, 
         request_operators=RequestOperators(hydration_properties=["retailer"]))
      
-    assert created_retailer_location.retailer is not None
-    assert created_retailer_location.retailer.id is not None
-    assert created_retailer_location.retailer.id == created_retailer_location.retailer_id
+    retailer_location_hydration_check(updated_retailer_location)
  

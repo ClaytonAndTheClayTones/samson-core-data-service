@@ -21,11 +21,16 @@ from adapters.retailer_adapters import RetailerDataAdapter
 
 
 class RetailerLocationDataAdapter:
-    
-    retailer_adapter: RetailerDataAdapter = RetailerDataAdapter()
-
-    common_utilities: CommonUtilities = CommonUtilities()
-
+ 
+    def __init__(
+        self,
+        retailer_adapter: RetailerDataAdapter = RetailerDataAdapter(),
+        common_utilities: CommonUtilities = CommonUtilities()
+    ) -> None:
+        
+        self.retailer_adapter = retailer_adapter
+        self.common_utilities = common_utilities
+        
     def convert_from_inbound_create_model_to_create_model(
         self,
         inbound_create_model: RetailerLocationInboundCreateModel

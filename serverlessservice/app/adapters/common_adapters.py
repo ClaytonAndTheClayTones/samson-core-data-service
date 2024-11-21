@@ -8,9 +8,9 @@ from models.common_model import (
 )
 from util.database import PagingModel, ResultantPagingModel
 from util.common import RequestOperators
-
-
+ 
 class CommonAdapters:
+    
     def convert_from_headers_to_operators(
         self, 
         headers: Headers

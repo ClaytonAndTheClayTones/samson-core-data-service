@@ -42,7 +42,7 @@ def set_product_routes(app: FastAPI):
         inbound_search_model: ProductInboundSearchModel = Depends(),
     ) -> OutboundItemListResponse[ProductOutboundModel]:
 
-        result = controller.search(inbound_search_model)
+        result = controller.search(inbound_search_model, request.headers)
 
         return result
 
@@ -55,7 +55,7 @@ def set_product_routes(app: FastAPI):
         request: Request
     ):
 
-        result = controller.get_by_id(id)
+        result = controller.get_by_id(id, request.headers)
 
         return result
 

@@ -10,8 +10,7 @@ from models.user_model import (
     UserOutboundModel,
 )
 from controllers.user_controller import UserController
-from models.common_model import (
-    CommonOutboundResponseModel,
+from models.common_model import ( 
     OutboundItemListResponse,
 )
 from util.environment import Environment

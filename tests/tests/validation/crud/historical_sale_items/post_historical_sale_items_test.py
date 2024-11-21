@@ -176,7 +176,7 @@ def test_posts_valid_historical_sale_item() -> None:
         context=context
     )
   
-def test_posts_valid_historical_sale_item() -> None:
+def test_posts_valid_historical_sale_item_with_hydration() -> None:
      
     populate_configuration_if_not_exists() 
 

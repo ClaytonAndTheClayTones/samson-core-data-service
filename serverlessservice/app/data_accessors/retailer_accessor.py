@@ -15,8 +15,14 @@ from util.database import PagingModel, SearchTerm
 from util.db_connection import SelectQueryResults
  
 class RetailerDataAccessor:
-    adapter: RetailerDataAdapter = RetailerDataAdapter()
 
+    def __init__(
+        self,
+        adapter: RetailerDataAdapter = RetailerDataAdapter()
+    ) -> None:
+        
+        self.adapter = adapter
+    
     def insert(
         self,
         model: RetailerCreateModel,

@@ -1,5 +1,8 @@
 import json
 from typing import Any
+from adapters.pos_integration_adapters import PosIntegrationDataAdapter
+from adapters.retailer_adapters import RetailerDataAdapter
+from adapters.retailer_location_adapters import RetailerLocationDataAdapter
 from models.pos_integration_call_model import (
     PosIntegrationCallCreateModel,
     PosIntegrationCallInboundCreateModel,
@@ -16,8 +19,20 @@ from util.database import (
 )
 
 
-class PosIntegrationCallDataAdapter:
-    common_utilities: CommonUtilities = CommonUtilities()
+class PosIntegrationCallDataAdapter: 
+    
+    def __init__(
+        self,
+        common_utilities: CommonUtilities = CommonUtilities(),
+        retailer_adapter: RetailerDataAdapter = RetailerDataAdapter(),
+        retailer_location_adapter: RetailerLocationDataAdapter = RetailerLocationDataAdapter(),
+        pos_integration_adapter: PosIntegrationDataAdapter = PosIntegrationDataAdapter(),
+    ) -> None:
+        
+        self.common_utilities = common_utilities
+        self.retailer_adapter = retailer_adapter
+        self.retailer_location_adapter = retailer_location_adapter
+        self.pos_integration_adapter = pos_integration_adapter
 
     def convert_from_inbound_create_model_to_create_model(
         self, 
@@ -28,7 +43,7 @@ class PosIntegrationCallDataAdapter:
             pos_integration_id = inbound_create_model.pos_integration_id,
             request = inbound_create_model.request,
             response = inbound_create_model.response,
-            response_status_code = inbound_create_model.response_status_code
+            response_status_code = inbound_create_model.response_status_code,
         )
 
         return model
@@ -135,8 +150,11 @@ class PosIntegrationCallDataAdapter:
         outbound_model = PosIntegrationCallOutboundModel(
             id=model.id,
             retailer_id=model.retailer_id,
+            retailer=self.retailer_adapter.convert_from_model_to_outbound_model(model.retailer) if model.retailer is not None else None,
             retailer_location_id=model.retailer_location_id,
+            retailer_location=self.retailer_location_adapter.convert_from_model_to_outbound_model(model.retailer_location) if model.retailer_location is not None else None,
             pos_integration_id=model.pos_integration_id,
+            pos_integration=self.pos_integration_adapter.convert_from_model_to_outbound_model(model.pos_integration) if model.pos_integration is not None else None,
             request=model.request,
             response=model.response,
             response_status_code=model.response_status_code,

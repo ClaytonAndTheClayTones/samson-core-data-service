@@ -23,9 +23,17 @@ from adapters.retailer_location_adapters import RetailerLocationDataAdapter
 
 
 class PosIntegrationDataAdapter:
-    retailer_adapter: RetailerDataAdapter = RetailerDataAdapter()
-    retailer_location_adapter: RetailerLocationDataAdapter = RetailerLocationDataAdapter()
-    common_utilities: CommonUtilities = CommonUtilities()
+
+    def __init__(
+        self,
+        retailer_adapter: RetailerDataAdapter = RetailerDataAdapter(),
+        retailer_location_adapter: RetailerLocationDataAdapter = RetailerLocationDataAdapter(),
+        common_utilities: CommonUtilities = CommonUtilities()
+    ) -> None:
+        
+        self.retailer_adapter = retailer_adapter
+        self.retailer_location_adapter = retailer_location_adapter
+        self.common_utilities = common_utilities
 
     def convert_from_inbound_create_model_to_create_model(
         self, 

@@ -8,7 +8,6 @@ from adapters.common_adapters import CommonAdapters
 from managers.managers import Manager
 from models.historical_sale_model import (
     HistoricalSaleCreateModel,
-    HistoricalSaleDatabaseModel,
     HistoricalSaleInboundCreateModel,
     HistoricalSaleInboundSearchModel, 
     HistoricalSaleModel,
@@ -22,30 +21,37 @@ from models.common_model import (
 )
 from util.common import RequestOperators
 from util.database import PagingModel
- 
-adapter: HistoricalSaleDataAdapter = HistoricalSaleDataAdapter()
-common_adapter: CommonAdapters = CommonAdapters()
-manager: Manager =  Manager()
 
 
 class HistoricalSaleController:
 
+    def __init__(
+        self, 
+        adapter: HistoricalSaleDataAdapter = HistoricalSaleDataAdapter(),
+        common_adapter: CommonAdapters = CommonAdapters(),
+        manager: Manager = Manager()
+    ) -> None:
+        
+        self.adapter = adapter
+        self.common_adapter = common_adapter
+        self.manager = manager
+        
     def create(
         self, 
         inbound_model: HistoricalSaleInboundCreateModel,
         headers: dict[str,str]
     ) -> HistoricalSaleOutboundModel | None:
         
-        request_operators = common_adapter.convert_from_headers_to_operators(headers)
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
         
-        model: HistoricalSaleCreateModel = adapter.convert_from_inbound_create_model_to_create_model(inbound_model)
+        model: HistoricalSaleCreateModel =self.adapter.convert_from_inbound_create_model_to_create_model(inbound_model)
 
-        result = manager.create_historical_sale(model, request_operators)
+        result = self.manager.create_historical_sale(model, request_operators)
 
         if result is None:
             raise Exception('Received no model from create operation.')
 
-        response_model: HistoricalSaleOutboundModel = adapter.convert_from_model_to_outbound_model(result)
+        response_model: HistoricalSaleOutboundModel =self.adapter.convert_from_model_to_outbound_model(result)
 
         return response_model
 
@@ -55,9 +61,9 @@ class HistoricalSaleController:
         headers: dict[str,str]
     ) -> HistoricalSaleOutboundModel | None:
 
-        request_operators = common_adapter.convert_from_headers_to_operators(headers)
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
         
-        result = manager.get_historical_sale_by_id(id, request_operators)
+        result = self.manager.get_historical_sale_by_id(id, request_operators)
 
         if result is None:
             raise HTTPException(
@@ -65,7 +71,7 @@ class HistoricalSaleController:
                 detail=f'HistoricalSale with id {id} not found.',
             )
 
-        response_model: HistoricalSaleOutboundModel = adapter.convert_from_model_to_outbound_model(result)
+        response_model: HistoricalSaleOutboundModel =self.adapter.convert_from_model_to_outbound_model(result)
 
         return response_model
 
@@ -75,22 +81,22 @@ class HistoricalSaleController:
         headers: dict[str,str]
     ) -> OutboundItemListResponse[HistoricalSaleOutboundModel]: 
 
-        request_operators = common_adapter.convert_from_headers_to_operators(headers)
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
         
-        paging_model: PagingModel = common_adapter.convert_from_paged_inbound_model_to_paging_model(inbound_model)
+        paging_model: PagingModel = self.common_adapter.convert_from_paged_inbound_model_to_paging_model(inbound_model)
 
-        search_model: HistoricalSaleSearchModel = adapter.convert_from_inbound_search_model_to_search_model(inbound_model)
+        search_model: HistoricalSaleSearchModel =self.adapter.convert_from_inbound_search_model_to_search_model(inbound_model)
 
-        results: ItemList[HistoricalSaleModel] = manager.search_historical_sales(search_model, paging_model, request_operators)
+        results: ItemList[HistoricalSaleModel] = self.manager.search_historical_sales(search_model, paging_model, request_operators)
 
         return_result_list = list(
             map(
-                lambda x: adapter.convert_from_model_to_outbound_model(x),
+                lambda x:self.adapter.convert_from_model_to_outbound_model(x),
                 results.items,
             )
         )
 
-        outbound_paging: OutboundResultantPagingModel = common_adapter.convert_from_paging_model_to_outbound_paging_model(results.paging)
+        outbound_paging: OutboundResultantPagingModel = self.common_adapter.convert_from_paging_model_to_outbound_paging_model(results.paging)
 
         return_result = OutboundItemListResponse(items=return_result_list, paging=outbound_paging)
 
@@ -102,9 +108,9 @@ class HistoricalSaleController:
         headers: dict[str,str]
     ) -> HistoricalSaleOutboundModel | None:
 
-        request_operators = common_adapter.convert_from_headers_to_operators(headers)
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
         
-        result = manager.delete_historical_sale(id, request_operators)
+        result = self.manager.delete_historical_sale(id, request_operators)
 
         if result is None:
             raise HTTPException(
@@ -112,6 +118,6 @@ class HistoricalSaleController:
                 detail=f'HistoricalSale with id {id} not found.',
             )
 
-        response_model: HistoricalSaleOutboundModel = adapter.convert_from_model_to_outbound_model(result)
+        response_model: HistoricalSaleOutboundModel =self.adapter.convert_from_model_to_outbound_model(result)
 
         return response_model

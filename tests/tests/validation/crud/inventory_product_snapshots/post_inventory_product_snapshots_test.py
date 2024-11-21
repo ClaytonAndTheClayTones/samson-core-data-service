@@ -1,8 +1,9 @@
 from typing import Any
 
-from tests.qdk.operators.inventory_product_snapshots import InventoryProductSnapshotCreateModel, create_inventory_product_snapshot
+from tests.qdk.operators.inventory_product_snapshots import InventoryProductSnapshotCreateModel, create_inventory_product_snapshot, inventory_product_snapshot_hydration_check
+from tests.qdk.operators.products import ProductCreateModel
 from tests.qdk.qa_requests import qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -117,5 +118,26 @@ def test_posts_valid_inventory_product_snapshot() -> None:
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
     create_inventory_product_snapshot(context)  
+  
+def test_posts_valid_inventory_product_snapshot() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    result = create_inventory_product_snapshot(
+        context, 
+        InventoryProductSnapshotCreateModel( 
+            create_inventory_intake_job_if_null= True,
+            product= ProductCreateModel(
+                create_vendor_if_null= True
+            )
+        ),
+        request_operators=RequestOperators(
+            hydration_properties=["retailer_location", "retailer", "inventory_intake_job", "product", "vendor"]
+        )
+    )
+    
+    inventory_product_snapshot_hydration_check(result)
  
  

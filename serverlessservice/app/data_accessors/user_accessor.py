@@ -88,6 +88,32 @@ class UserDataAccessor:
             results.items.append(result_model)
 
         return results
+ 
+    def update(
+        self,
+        id: UUID,
+        model: UserUpdateModel, 
+        request_operators: RequestOperators | None = None 
+    ) -> UserModel: 
+        
+        connection = get_global_configuration().pg_connection
+
+        db_model: dict[str, Any] = self.adapter.convert_from_update_model_to_database_model(
+                model)
+
+        db_result = connection.update(
+            'users',
+            id,
+            db_model,
+            request_operators
+        )
+
+        if db_result is None:
+            return None
+
+        result_model = self.adapter.convert_from_database_model_to_model(db_result)
+
+        return result_model
 
     def delete(
         self,

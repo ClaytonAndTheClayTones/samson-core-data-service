@@ -2,8 +2,7 @@ from typing import Any
 from uuid import UUID
 from adapters.historical_sale_adapters import HistoricalSaleDataAdapter
 from models.historical_sale_model import (
-    HistoricalSaleCreateModel,
-    HistoricalSaleDatabaseModel,
+    HistoricalSaleCreateModel, 
     HistoricalSaleModel,
     HistoricalSaleSearchModel, 
 )

@@ -1,9 +1,9 @@
 from time import sleep
 from typing import Any
 
-from tests.qdk.operators.products import ProductCreateModel, ProductModel, ProductSearchModel, create_product, get_product_by_id, get_products
+from tests.qdk.operators.products import ProductCreateModel, ProductModel, ProductSearchModel, create_product, get_product_by_id, get_products, product_hydration_check
 from tests.qdk.qa_requests import qa_get, qa_post
-from tests.qdk.types import PagedResponseItemList, TestContext
+from tests.qdk.types import PagedResponseItemList, RequestOperators, TestContext
 from tests.qdk.utils import assert_objects_are_equal, generate_random_string
 from urllib.parse import urlencode   
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
@@ -19,6 +19,24 @@ def test_gets_product_by_id() -> None:
 
     assert result is not None
     assert result.id == posted_object.id
+    
+def test_gets_product_by_id_with_hydration() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object = create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null= True,
+        create_referring_retailer_location_if_null= True,
+        create_vendor_if_null= True 
+    ))
+
+    result = get_product_by_id(context, posted_object.id, request_operators = RequestOperators(hydration_properties=["referring_retailer", "referring_retailer_location", "vendor", "confirmed_core_product"]))
+
+    assert result is not None
+    assert result.id == posted_object.id
+    
+    product_hydration_check(result)
 
 def test_gets_products_invalid_inputs() -> None:
      
@@ -131,6 +149,74 @@ def test_gets_products_with_ids_filter() -> None:
     posted_item_4: list[ProductModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4, ["referring_retailer_id", "referring_retailer"])
+    
+def test_gets_products_with_ids_filter() -> None:
+        
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object_1: ProductModel = create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null= True,
+        create_referring_retailer_location_if_null= True,
+        create_vendor_if_null= True 
+    ))
+    posted_object_2: ProductModel = create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null= True,
+        create_referring_retailer_location_if_null= True,
+        create_vendor_if_null= True 
+    ))
+    posted_object_3: ProductModel = create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null= True,
+        create_referring_retailer_location_if_null= True,
+        create_vendor_if_null= True 
+    ))
+    posted_object_4: ProductModel = create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null= True,
+        create_referring_retailer_location_if_null= True,
+        create_vendor_if_null= True 
+    ))
+
+    filters: ProductSearchModel = ProductSearchModel(
+        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}"
+    )
+    
+    result: PagedResponseItemList[ProductModel] = get_products(context, filters, request_operators = RequestOperators(hydration_properties=["referring_retailer", "referring_retailer_location", "vendor", "confirmed_core_product"]))
+
+    assert result is not None
+    assert result.items is not None
+    
+    assert result.paging is not None
+    assert result.paging.page == 1
+    assert result.paging.page_length == 25
+    assert result.paging.sort_by == 'created_at'
+    assert result.paging.is_sort_descending == False
+
+    assert len(result.items) == 4 
+    
+    posted_item_1: list[ProductModel] = [item for item in result.items if item.id == posted_object_1.id]
+    assert len(posted_item_1) == 1  
+    assert_objects_are_equal(posted_item_1[0], posted_object_1, ["referring_retailer", "vendor", "confirmed_core_product", "referring_retailer_location"])
+    
+    product_hydration_check(posted_item_1[0])
+
+    posted_item_2: list[ProductModel] = [item for item in result.items if item.id == posted_object_2.id]
+    assert len(posted_item_2) == 1 
+    assert_objects_are_equal(posted_item_2[0], posted_object_2, ["referring_retailer", "vendor", "confirmed_core_product", "referring_retailer_location"])
+    
+    product_hydration_check(posted_item_2[0])
+  
+    posted_item_3: list[ProductModel] = [item for item in result.items if item.id == posted_object_3.id]
+    assert len(posted_item_3) == 1 
+    assert_objects_are_equal(posted_item_3[0], posted_object_3, ["referring_retailer", "vendor", "confirmed_core_product", "referring_retailer_location"])
+    
+    product_hydration_check(posted_item_3[0])
+  
+    posted_item_4: list[ProductModel] = [item for item in result.items if item.id == posted_object_4.id]
+    assert len(posted_item_4) == 1 
+    assert_objects_are_equal(posted_item_4[0], posted_object_4, ["referring_retailer", "vendor", "confirmed_core_product", "referring_retailer_location"])
+    
+    product_hydration_check(posted_item_4[0])
 
 def test_gets_products_with_paging() -> None:
     populate_configuration_if_not_exists() 

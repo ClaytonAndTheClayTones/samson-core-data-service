@@ -1,8 +1,8 @@
 from typing import Any
 
-from tests.qdk.operators.sales_intake_jobs import SalesIntakeJobCreateModel, create_sales_intake_job
+from tests.qdk.operators.sales_intake_jobs import SalesIntakeJobCreateModel, create_sales_intake_job, sales_intake_job_hydration_check
 from tests.qdk.qa_requests import qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -90,5 +90,23 @@ def test_posts_valid_sales_intake_job_defaulted_values() -> None:
         context,
         SalesIntakeJobCreateModel(status=None, status_details=None)
     )  
+  
+def test_posts_valid_sales_intake_job_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL) 
  
+    created_sales_intake_job = create_sales_intake_job(
+        context,
+        SalesIntakeJobCreateModel(
+            create_parent_batch_job_if_null=True
+        ),
+        request_operators=RequestOperators(hydration_properties=["retailer", "retailer_location", "parent_batch_job"])
+    )
  
+    assert created_sales_intake_job.retailer is not None
+    assert created_sales_intake_job.retailer.id is not None
+    assert created_sales_intake_job.retailer.id == created_sales_intake_job.retailer_id
+    
+    sales_intake_job_hydration_check(created_sales_intake_job)

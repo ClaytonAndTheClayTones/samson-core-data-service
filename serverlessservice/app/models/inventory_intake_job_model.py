@@ -7,9 +7,9 @@ from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
 from pydantic_core import PydanticUndefined
 from enum import Enum
 
-from models.retailer_location_model import RetailerLocationOutboundModel
-from models.retailer_model import RetailerOutboundModel
-from models.sales_intake_batch_job_model import SalesIntakeBatchJobOutboundModel
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel
+from models.sales_intake_batch_job_model import SalesIntakeBatchJobModel, SalesIntakeBatchJobOutboundModel
 
 
 class InventoryIntakeJobStatuses(str, Enum):
@@ -147,9 +147,9 @@ class InventoryIntakeJobModel(CommonModel):
         status_details: dict[str,Any], 
         created_at: datetime, 
         parent_batch_job_id: UUID | None = None,
-        parent_batch_job: SalesIntakeBatchJobOutboundModel | None = None,
-        retailer: RetailerOutboundModel | None = None,
-        retailer_location: RetailerLocationOutboundModel | None = None, 
+        parent_batch_job: SalesIntakeBatchJobModel | None = None,
+        retailer: RetailerModel | None = None,
+        retailer_location: RetailerLocationModel | None = None,
         updated_at: datetime | None = None,
         
     ):

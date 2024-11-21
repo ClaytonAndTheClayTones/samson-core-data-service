@@ -9,15 +9,15 @@ from models.vendor_model import (
     VendorInboundUpdateModel,
     VendorOutboundModel,
 )
+
 from controllers.vendor_controller import VendorController
-from models.common_model import (
-    CommonOutboundResponseModel,
+
+from models.common_model import ( 
     OutboundItemListResponse,
 )
 from util.environment import Environment
 
-controller: VendorController = VendorController()
-
+controller: VendorController = VendorController() 
 
 def set_vendor_routes(app: FastAPI):
 

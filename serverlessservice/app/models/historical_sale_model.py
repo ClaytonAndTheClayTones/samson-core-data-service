@@ -15,6 +15,7 @@ from models.common_model import (
     CommonSearchModel,
     validate_ids,
 )
+
 from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
 from models.sales_intake_job_model import SalesIntakeJobModel, SalesIntakeJobOutboundModel
 from models.retailer_model import RetailerModel, RetailerOutboundModel 

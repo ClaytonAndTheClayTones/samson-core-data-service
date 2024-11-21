@@ -1,8 +1,8 @@
 from typing import Any
 
-from tests.qdk.operators.sales_intake_jobs import SalesIntakeJobCreateModel, SalesIntakeJobModel, SalesIntakeJobUpdateModel, create_sales_intake_job, update_sales_intake_job
+from tests.qdk.operators.sales_intake_jobs import SalesIntakeJobCreateModel, SalesIntakeJobModel, SalesIntakeJobUpdateModel, create_sales_intake_job, sales_intake_job_hydration_check, update_sales_intake_job
 from tests.qdk.qa_requests import qa_patch, qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -53,4 +53,25 @@ def test_patches_valid_sales_intake_job() -> None:
     )
 
     update_sales_intake_job(context, posted_object.id or "", update_object)
+    
+def test_patches_valid_sales_intake_job_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    random_string = generate_random_string(14)
+
+    posted_object: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(create_parent_batch_job_if_null= True))
+ 
+    update_object: SalesIntakeJobUpdateModel = SalesIntakeJobUpdateModel(
+        status = "Complete",
+        status_details = {
+            "another_key": "another_value"
+        }
+    )
+
+    updated = update_sales_intake_job(context, posted_object.id or "", update_object, request_operators=RequestOperators(hydration_properties=["retailer", "retailer_location", "parent_batch_job"]))
+    
+    sales_intake_job_hydration_check(updated)
  

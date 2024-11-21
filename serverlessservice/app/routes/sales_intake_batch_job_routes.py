@@ -40,7 +40,7 @@ def set_sales_intake_batch_job_routes(app: FastAPI):
         inbound_search_model: SalesIntakeBatchJobInboundSearchModel = Depends(),
     ) -> OutboundItemListResponse[SalesIntakeBatchJobOutboundModel]:
 
-        result = controller.search(inbound_search_model)
+        result = controller.search(inbound_search_model, request.headers)
 
         return result
 

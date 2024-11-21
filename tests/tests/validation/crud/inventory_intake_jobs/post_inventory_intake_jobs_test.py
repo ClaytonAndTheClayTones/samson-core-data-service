@@ -80,7 +80,7 @@ def test_posts_valid_inventory_intake_job() -> None:
 
     create_inventory_intake_job(context)  
 
-def test_posts_valid_inventory_intake_job() -> None:
+def test_posts_valid_inventory_intake_job_with_hydration() -> None:
      
     populate_configuration_if_not_exists() 
 

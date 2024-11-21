@@ -1,6 +1,6 @@
 from typing import Any
 
-from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, PosIntegrationModel, PosIntegrationUpdateModel, create_pos_integration, update_pos_integration
+from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, PosIntegrationModel, PosIntegrationUpdateModel, create_pos_integration, pos_integration_hydration_check, update_pos_integration
 from tests.qdk.qa_requests import qa_patch, qa_post
 from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
@@ -86,15 +86,5 @@ def test_patches_valid_pos_integration_with_hydration() -> None:
         request_operators=RequestOperators(hydration_properties=["retailer,retailer_location,retailer_location.retailer"])
     )
     
-    assert result.retailer is not None
-    assert result.retailer.id is not None
-    assert result.retailer.id == result.retailer_id
-    
-    assert result.retailer_location is not None
-    assert result.retailer_location.id is not None
-    assert result.retailer_location.id == result.retailer_location_id
-    
-    assert result.retailer_location.retailer is not None
-    assert result.retailer_location.retailer.id is not None
-    assert result.retailer_location.retailer.id == result.retailer_id
+    pos_integration_hydration_check(result)
  

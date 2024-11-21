@@ -1,9 +1,9 @@
 from time import sleep
 from typing import Any
 
-from tests.qdk.operators.pos_integration_calls import PosIntegrationCallCreateModel, PosIntegrationCallModel, PosIntegrationCallSearchModel, create_pos_integration_call, get_pos_integration_call_by_id, get_pos_integration_calls
+from tests.qdk.operators.pos_integration_calls import PosIntegrationCallCreateModel, PosIntegrationCallModel, PosIntegrationCallSearchModel, create_pos_integration_call, get_pos_integration_call_by_id, get_pos_integration_calls, pos_integration_call_hydration_check
 from tests.qdk.qa_requests import qa_get, qa_post
-from tests.qdk.types import PagedResponseItemList, TestContext
+from tests.qdk.types import PagedResponseItemList, RequestOperators, TestContext
 from tests.qdk.utils import assert_objects_are_equal, generate_random_string
 from urllib.parse import urlencode   
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
@@ -19,6 +19,20 @@ def test_gets_pos_integration_call_by_id() -> None:
 
     assert result is not None
     assert result.id == posted_object.id
+ 
+def test_gets_pos_integration_call_by_id() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object = create_pos_integration_call(context)
+
+    result = get_pos_integration_call_by_id(context, posted_object.id, request_operators = RequestOperators(hydration_properties=["retailer", "retailer_location", "pos_integration"]))
+
+    assert result is not None
+    assert result.id == posted_object.id
+    
+    pos_integration_call_hydration_check(result)
 
 def test_gets_pos_integration_calls_invalid_inputs() -> None:
      
@@ -97,7 +111,7 @@ def test_gets_pos_integration_calls_with_ids_filter() -> None:
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}"
     )
     
-    result: PagedResponseItemList[PosIntegrationCallModel] = get_pos_integration_calls(context, filters)
+    result: PagedResponseItemList[PosIntegrationCallModel] = get_pos_integration_calls(context, filters, request_operators = RequestOperators(hydration_properties=["retailer", "retailer_location", "pos_integration"]))
 
     assert result is not None
     assert result.items is not None
@@ -112,19 +126,27 @@ def test_gets_pos_integration_calls_with_ids_filter() -> None:
     
     posted_item_1: list[PosIntegrationCallModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1)
+    assert_objects_are_equal(posted_item_1[0], posted_object_1, ["retailer", "retailer_location", "pos_integration"])
+    
+    pos_integration_call_hydration_check(posted_item_1[0])
 
     posted_item_2: list[PosIntegrationCallModel] = [item for item in result.items if item.id == posted_object_2.id]
     assert len(posted_item_2) == 1 
-    assert_objects_are_equal(posted_item_2[0], posted_object_2)
+    assert_objects_are_equal(posted_item_2[0], posted_object_2, ["retailer", "retailer_location", "pos_integration"])
+    
+    pos_integration_call_hydration_check(posted_item_2[0])
   
     posted_item_3: list[PosIntegrationCallModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
+    assert_objects_are_equal(posted_item_3[0], posted_object_3, ["retailer", "retailer_location", "pos_integration"])
+    
+    pos_integration_call_hydration_check(posted_item_3[0])
   
     posted_item_4: list[PosIntegrationCallModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4)
+    assert_objects_are_equal(posted_item_4[0], posted_object_4, ["retailer", "retailer_location", "pos_integration"])
+    
+    pos_integration_call_hydration_check(posted_item_4[0])
     
 def test_gets_pos_integration_calls_with_retailer_ids_filter() -> None:
     populate_configuration_if_not_exists() 

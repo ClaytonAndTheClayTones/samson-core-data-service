@@ -207,7 +207,7 @@ def get_inventory_product_snapshot_by_id(
 
     url: str = f"{context.api_url}/inventory_product_snapshots/{id}"
     
-    result: Response = qa_get(url)
+    result: Response = qa_get(url, request_operators = request_operators)
      
     return_object = InventoryProductSnapshotModel(**result.json())
     
@@ -238,4 +238,25 @@ def get_inventory_product_snapshots(
     )
     
     return return_object 
+ 
+def inventory_product_snapshot_hydration_check(snapshot: InventoryProductSnapshotModel) -> None:
+    assert snapshot.retailer is not None
+    assert snapshot.retailer.id is not None
+    assert snapshot.retailer.id == snapshot.retailer_id
+     
+    assert snapshot.retailer_location is not None
+    assert snapshot.retailer_location.id is not None
+    assert snapshot.retailer_location.id == snapshot.retailer_location_id
+     
+    assert snapshot.inventory_intake_job is not None
+    assert snapshot.inventory_intake_job.id is not None
+    assert snapshot.inventory_intake_job.id == snapshot.inventory_intake_job_id
+     
+    assert snapshot.vendor is not None
+    assert snapshot.vendor.id is not None
+    assert snapshot.vendor.id == snapshot.vendor_id
+
+    assert snapshot.product is not None
+    assert snapshot.product.id is not None
+    assert snapshot.product.id == snapshot.product_id
  
