@@ -1,8 +1,10 @@
 from typing import Any
 
-from tests.qdk.operators.historical_sale_items import HistoricalSaleItemCreateModel, create_historical_sale_item
+from tests.qdk.operators.historical_sale_items import HistoricalSaleItemCreateModel, create_historical_sale_item, historical_sale_item_hydration_check
+from tests.qdk.operators.historical_sales import HistoricalSaleCreateModel
+from tests.qdk.operators.products import ProductCreateModel
 from tests.qdk.qa_requests import qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -173,5 +175,22 @@ def test_posts_valid_historical_sale_item() -> None:
     create_historical_sale_item(
         context=context
     )
- 
+  
+def test_posts_valid_historical_sale_item_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    result = create_historical_sale_item(
+        context=context,
+        overrides=HistoricalSaleItemCreateModel(
+            product=ProductCreateModel(create_vendor_if_null= True),
+            historical_sale=HistoricalSaleCreateModel(create_sales_intake_job_if_null= True),  
+        ),
+        
+        request_operators=RequestOperators(hydration_properties=["product", "product_vendor", "historical_sale", "retailer_location", "retailer", "sales_intake_job"])
+    )
+    
+    historical_sale_item_hydration_check(result)
  

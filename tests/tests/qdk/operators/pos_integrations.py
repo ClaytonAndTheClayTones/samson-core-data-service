@@ -9,14 +9,16 @@ from tests.qdk.utils import assert_object_was_updated, assert_objects_are_equal,
  
 class PosIntegrationCreateModel():  
 
-    def __init__(self, 
-                retailer_location_id: str | None = None,
-                retailer_location: RetailerLocationCreateModel | None = None,
-                name: str | None = None,
-                url: str | None = None,
-                key: str | None = None,
-                description: str | None = None,
-                pos_platform: str | None = None) -> None:
+    def __init__(
+        self, 
+        retailer_location_id: str | None = None,
+        retailer_location: RetailerLocationCreateModel | None = None,
+        name: str | None = None,
+        url: str | None = None,
+        key: str | None = None,
+        description: str | None = None,
+        pos_platform: str | None = None
+    ) -> None:
          
         self.retailer_location_id = retailer_location_id
         self.retailer_location = retailer_location
@@ -29,12 +31,14 @@ class PosIntegrationCreateModel():
         
 class PosIntegrationUpdateModel():  
 
-    def __init__(self, 
-            name: str | None = None,
-            url: str | None = None,
-            key: str | None = None,
-            description: str | None = None,
-            pos_platform: str | None = None) -> None:
+    def __init__(
+        self, 
+        name: str | None = None,
+        url: str | None = None,
+        key: str | None = None,
+        description: str | None = None,
+        pos_platform: str | None = None
+    ) -> None:
         
         self.name = name
         self.url = url
@@ -44,19 +48,21 @@ class PosIntegrationUpdateModel():
 
 class PosIntegrationModel():  
 
-    def __init__(self, 
-                id: str, 
-                retailer_id: str, 
-                retailer_location_id: str, 
-                name: str,
-                url: str,
-                key: str,
-                pos_platform: str,
-                created_at: datetime.datetime,
-                retailer_location: RetailerLocationModel | None = None, 
-                retailer: RetailerModel | None = None, 
-                description: str | None = None,  
-                updated_at: datetime.datetime | None = None) -> None:
+    def __init__(
+        self, 
+        id: str, 
+        retailer_id: str, 
+        retailer_location_id: str, 
+        name: str,
+        url: str,
+        key: str,
+        pos_platform: str,
+        created_at: datetime.datetime,
+        retailer_location: RetailerLocationModel | None = None, 
+        retailer: RetailerModel | None = None, 
+        description: str | None = None,  
+        updated_at: datetime.datetime | None = None
+    ) -> None:
         
         self.id = id
         self.retailer_id = retailer_id
@@ -64,8 +70,8 @@ class PosIntegrationModel():
         self.name = name
         self.url = url
         self.key = key
-        self.retailer = retailer
-        self.retailer_location = retailer_location
+        self.retailer = RetailerModel(**retailer) if retailer is not None else None
+        self.retailer_location = RetailerLocationModel(**retailer_location) if retailer_location is not None else None
         self.pos_platform = pos_platform
         self.description = description 
         self.created_at = created_at
@@ -73,17 +79,20 @@ class PosIntegrationModel():
         
 class PosIntegrationSearchModel(PagingRequestModel):  
 
-    def __init__(self, 
-                ids: str | None = None,  
-                retailer_ids: str | None = None,  
-                retailer_location_ids: str | None = None,  
-                name: str | None = None,
-                name_like: str | None = None,
-                pos_platform: str | None = None, 
-                page: int | None = None,
-                page_length: int | None = None,
-                is_sort_descending: bool | None = None,
-                sort_by: str | None = None) -> None:
+    def __init__(
+        self, 
+        ids: str | None = None,  
+        retailer_ids: str | None = None,  
+        retailer_location_ids: str | None = None,  
+        name: str | None = None,
+        name_like: str | None = None,
+        pos_platform: str | None = None, 
+        page: int | None = None,
+        page_length: int | None = None,
+        is_sort_descending: bool | None = None,
+        sort_by: str | None = None
+    ) -> None:
+        
         super().__init__(
             page = page,
             page_length = page_length,
@@ -161,7 +170,7 @@ def get_pos_integration_by_id(
 
     url: str = f"{context.api_url}/pos_integrations/{id}"
     
-    result: Response = qa_get(url)
+    result: Response = qa_get(url, request_operators = request_operators)
      
     return_object = PosIntegrationModel(**result.json())
     
@@ -210,10 +219,28 @@ def update_pos_integration(
  
         result_dict = result.json()
 
-        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["updated_at"])
+        assert_object_was_updated(
+            original_object.__dict__, 
+            update_model.__dict__, 
+            result_dict, 
+            ["updated_at", "retailer", "retailer_location"]
+        )
  
         assert result_dict['updated_at'] is not None
     
     return_object = PosIntegrationModel(**result.json())
     
     return return_object
+ 
+def pos_integration_hydration_check(pos_integration: PosIntegrationModel) -> None:
+    assert pos_integration.retailer is not None
+    assert pos_integration.retailer.id is not None
+    assert pos_integration.retailer.id == pos_integration.retailer_id
+    
+    assert pos_integration.retailer_location is not None
+    assert pos_integration.retailer_location.id is not None
+    assert pos_integration.retailer_location.id == pos_integration.retailer_location_id
+    
+    assert pos_integration.retailer_location.retailer is not None
+    assert pos_integration.retailer_location.retailer.id is not None
+    assert pos_integration.retailer_location.retailer.id == pos_integration.retailer_id

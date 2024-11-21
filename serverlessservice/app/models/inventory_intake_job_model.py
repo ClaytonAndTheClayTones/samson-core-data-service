@@ -7,6 +7,10 @@ from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
 from pydantic_core import PydanticUndefined
 from enum import Enum
 
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel
+from models.sales_intake_batch_job_model import SalesIntakeBatchJobModel, SalesIntakeBatchJobOutboundModel
+
 
 class InventoryIntakeJobStatuses(str, Enum):
     Requested = 'Requested'
@@ -107,31 +111,6 @@ class InventoryIntakeJobSearchModel(CommonSearchModel):
         self.status = status
 
 
-class InventoryIntakeJobModel(CommonModel):
-
-    def __init__(
-        self,
-        id: UUID,
-        retailer_id: UUID,
-        retailer_location_id: UUID,
-        snapshot_hour: datetime,
-        status: InventoryIntakeJobStatuses,
-        status_details: dict[str,Any], 
-        created_at: datetime, 
-        parent_batch_job_id: UUID | None = None,
-        updated_at: datetime | None = None,
-    ):
-
-        super().__init__(id, created_at, updated_at)
-
-        self.retailer_id = retailer_id
-        self.retailer_location_id = retailer_location_id        
-        self.parent_batch_job_id = parent_batch_job_id        
-        self.snapshot_hour = snapshot_hour
-        self.status = status
-        self.status_details = status_details
-
-
 class InventoryIntakeJobDatabaseModel(CommonDatabaseModel):
 
     def __init__(
@@ -154,7 +133,40 @@ class InventoryIntakeJobDatabaseModel(CommonDatabaseModel):
         self.parent_batch_job_id = parent_batch_job_id
         self.snapshot_hour = snapshot_hour
         self.status = status
+        self.status_details = status_details 
+
+class InventoryIntakeJobModel(CommonModel):
+
+    def __init__(
+        self,
+        id: UUID,
+        retailer_id: UUID,
+        retailer_location_id: UUID,
+        snapshot_hour: datetime,
+        status: InventoryIntakeJobStatuses,
+        status_details: dict[str,Any], 
+        created_at: datetime, 
+        parent_batch_job_id: UUID | None = None,
+        parent_batch_job: SalesIntakeBatchJobModel | None = None,
+        retailer: RetailerModel | None = None,
+        retailer_location: RetailerLocationModel | None = None,
+        updated_at: datetime | None = None,
+        
+    ):
+
+        super().__init__(id, created_at, updated_at)
+
+        self.retailer_id = retailer_id
+        self.retailer_location_id = retailer_location_id        
+        self.parent_batch_job_id = parent_batch_job_id        
+        self.snapshot_hour = snapshot_hour
+        self.status = status
+        
         self.status_details = status_details
+        
+        self.parent_batch_job = parent_batch_job
+        self.retailer = retailer
+        self.retailer_location = retailer_location
 
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -162,6 +174,9 @@ class InventoryIntakeJobOutboundModel(CommonOutboundResponseModel):
     retailer_id: UUID   
     retailer_location_id: UUID
     parent_batch_job_id: UUID | None = None
+    retailer: RetailerOutboundModel | None = None,
+    retailer_location: RetailerLocationOutboundModel | None = None,
+    parent_batch_job: SalesIntakeBatchJobOutboundModel | None = None,
     snapshot_hour: str
     status: InventoryIntakeJobStatuses 
     status_details: dict[str,Any] 

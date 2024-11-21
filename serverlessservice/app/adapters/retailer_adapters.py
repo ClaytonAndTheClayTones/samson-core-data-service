@@ -20,7 +20,13 @@ from util.database import (
 
 
 class RetailerDataAdapter:
-    common_utilities: CommonUtilities = CommonUtilities()
+
+    def __init__(
+        self,
+        common_utilities: CommonUtilities = CommonUtilities()
+    ) -> None:
+        
+        self.common_utilities = common_utilities
 
     def convert_from_inbound_create_model_to_create_model(
         self, 
@@ -77,9 +83,9 @@ class RetailerDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: RetailerSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: RetailerSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -107,9 +113,9 @@ class RetailerDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: RetailerCreateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: RetailerCreateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name,
@@ -123,9 +129,10 @@ class RetailerDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, 
-            model: RetailerUpdateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: RetailerUpdateModel
+    ) -> dict[str, Any]:
+        
         database_model: dict[str, Any] = {
             'name': model.name,
             'hq_state': model.hq_state,
@@ -138,9 +145,9 @@ class RetailerDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self,
-            database_model: dict[str, Any]
-        ) -> RetailerModel:
+        self,
+        database_model: dict[str, Any]
+    ) -> RetailerModel:
         
         model = RetailerModel(
             id=database_model['id'],
@@ -157,9 +164,9 @@ class RetailerDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: RetailerModel
-        ) -> RetailerOutboundModel:
+        self, 
+        model: RetailerModel
+    ) -> RetailerOutboundModel:
         
         outbound_model = RetailerOutboundModel(
             id=model.id,

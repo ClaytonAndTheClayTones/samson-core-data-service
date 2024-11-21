@@ -44,11 +44,11 @@ class PosIntegrationCallModel():
         
         self.id = id
         self.retailer_id = retailer_id
-        self.retailer = retailer
+        self.retailer = RetailerModel(**retailer) if retailer is not None else None
         self.retailer_location_id = retailer_location_id
-        self.retailer_location = retailer_location
+        self.retailer_location = RetailerLocationModel(**retailer_location) if retailer_location is not None else None
         self.pos_integration_id = pos_integration_id
-        self.pos_integration = pos_integration
+        self.pos_integration =  PosIntegrationModel(**pos_integration) if pos_integration is not None else None
         self.request = request
         self.response = response
         self.response_status_code = response_status_code
@@ -150,7 +150,7 @@ def get_pos_integration_call_by_id(
 
     url: str = f"{context.api_url}/pos_integration_calls/{id}"
     
-    result: Response = qa_get(url)
+    result: Response = qa_get(url, request_operators = request_operators)
      
     return_object = PosIntegrationCallModel(**result.json())
     
@@ -181,4 +181,18 @@ def get_pos_integration_calls(
     )
     
     return return_object 
+  
+def pos_integration_call_hydration_check(pos_integration_call: PosIntegrationCallModel) -> None:
+    assert pos_integration_call.retailer is not None
+    assert pos_integration_call.retailer.id is not None
+    assert pos_integration_call.retailer.id == pos_integration_call.retailer_id
+     
+    assert pos_integration_call.retailer_location is not None
+    assert pos_integration_call.retailer_location.id is not None
+    assert pos_integration_call.retailer_location.id == pos_integration_call.retailer_location_id
+     
+    assert pos_integration_call.pos_integration is not None
+    assert pos_integration_call.pos_integration.id is not None
+    assert pos_integration_call.pos_integration.id == pos_integration_call.pos_integration_id
+     
  

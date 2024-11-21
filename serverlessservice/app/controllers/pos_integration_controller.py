@@ -4,11 +4,10 @@ from uuid import UUID
 
 from fastapi import HTTPException
 from adapters.pos_integration_adapters import PosIntegrationDataAdapter
-from adapters.common_adapters import CommonAdapters
-from managers.pos_integration_manager import PosIntegrationManager
+from adapters.common_adapters import CommonAdapters 
+from managers.managers import Manager
 from models.pos_integration_model import (
-    PosIntegrationCreateModel,
-    PosIntegrationDatabaseModel,
+    PosIntegrationCreateModel, 
     PosIntegrationInboundCreateModel,
     PosIntegrationInboundSearchModel,
     PosIntegrationInboundUpdateModel,
@@ -23,34 +22,48 @@ from models.common_model import (
     OutboundResultantPagingModel,
 )
 from util.database import PagingModel
- 
-adapter: PosIntegrationDataAdapter = PosIntegrationDataAdapter()
-common_adapter: CommonAdapters = CommonAdapters()
-manager: PosIntegrationManager = PosIntegrationManager()
-
 
 class PosIntegrationController:
 
-    def create(
-        self, inbound_model: PosIntegrationInboundCreateModel
+    def __init__(
+        self, 
+        adapter: PosIntegrationDataAdapter = PosIntegrationDataAdapter(),
+        common_adapter: CommonAdapters = CommonAdapters(),
+        manager: Manager = Manager()
+    ) -> None:
+        
+        self.adapter = adapter
+        self.common_adapter = common_adapter
+        self.manager = manager
+    
+    def create( 
+        self, 
+        inbound_model: PosIntegrationInboundCreateModel,
+        headers: dict[str,str]
     ) -> PosIntegrationOutboundModel | None:
-        model: PosIntegrationCreateModel = (
-            adapter.convert_from_inbound_create_model_to_create_model(
-                inbound_model))
+        
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
+        
+        model: PosIntegrationCreateModel =self.adapter.convert_from_inbound_create_model_to_create_model(inbound_model)
 
-        result = manager.create(model)
+        result = self.manager.create_pos_integration(model, request_operators)
 
         if result is None:
             raise Exception('Received no model from create operation.')
 
-        response_model: PosIntegrationOutboundModel = (
-            adapter.convert_from_model_to_outbound_model(result))
+        response_model: PosIntegrationOutboundModel =self.adapter.convert_from_model_to_outbound_model(result)
 
         return response_model
 
-    def get_by_id(self, id: UUID) -> PosIntegrationOutboundModel | None:
+    def get_by_id(
+        self, 
+        id: UUID, 
+        headers: dict[str,str]
+    ) -> PosIntegrationOutboundModel | None:
 
-        result = manager.get_by_id(id)
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
+        
+        result = self.manager.get_pos_integration_by_id(id, request_operators)
 
         if result is None:
             raise HTTPException(
@@ -58,70 +71,76 @@ class PosIntegrationController:
                 detail=f'PosIntegration with id {id} not found.',
             )
 
-        response_model: PosIntegrationOutboundModel = (
-            adapter.convert_from_model_to_outbound_model(result))
+        response_model: PosIntegrationOutboundModel =self.adapter.convert_from_model_to_outbound_model(result)
 
         return response_model
 
     def search(
-        self, inbound_model: PosIntegrationInboundSearchModel
+        self, 
+        inbound_model: PosIntegrationInboundSearchModel, 
+        headers: dict[str,str]
     ) -> OutboundItemListResponse[PosIntegrationOutboundModel]:
 
-        paging_model: PagingModel = (
-            common_adapter.convert_from_paged_inbound_model_to_paging_model(
-                inbound_model))
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
+        paging_model: PagingModel = self.common_adapter.convert_from_paged_inbound_model_to_paging_model(inbound_model)
 
-        search_model: PosIntegrationSearchModel = (
-            adapter.convert_from_inbound_search_model_to_search_model(
-                inbound_model))
+        search_model: PosIntegrationSearchModel =self.adapter.convert_from_inbound_search_model_to_search_model(inbound_model)
 
-        results: ItemList[PosIntegrationModel] = manager.search(
-            search_model, paging_model)
+        results: ItemList[PosIntegrationModel] = self.manager.search_pos_integrations(
+            search_model, 
+            paging_model, 
+            request_operators
+        )
 
         return_result_list = list(
             map(
-                lambda x: adapter.convert_from_model_to_outbound_model(x),
+                lambda x:self.adapter.convert_from_model_to_outbound_model(x),
                 results.items,
-            ))
+            )
+        )
 
-        outbound_paging: OutboundResultantPagingModel = (
-            common_adapter.convert_from_paging_model_to_outbound_paging_model(
-                results.paging))
+        outbound_paging: OutboundResultantPagingModel = self.common_adapter.convert_from_paging_model_to_outbound_paging_model(results.paging)
 
-        return_result = OutboundItemListResponse(items=return_result_list,
-                                                 paging=outbound_paging)
+        return_result = OutboundItemListResponse(items=return_result_list, paging=outbound_paging)
 
         return return_result
 
     def update(
         self,
         id: UUID,
-        inbound_model: PosIntegrationInboundUpdateModel,
-        explicitNullSet: list[str] | None = None,
+        inbound_model: PosIntegrationInboundUpdateModel, 
+        headers: dict[str,str] | None = None
     ):
-
-        explicitNullSet = explicitNullSet or []
-
-        model: PosIntegrationUpdateModel = (
-            adapter.convert_from_inbound_update_model_to_create_model(
-                inbound_model))
-
-        result: None | PosIntegrationModel = manager.update(id, model)
-
+        
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
+        
+        model: PosIntegrationUpdateModel =self.adapter.convert_from_inbound_update_model_to_create_model(inbound_model)
+        
+        result: None | PosIntegrationModel = self.manager.update_pos_integration(
+            id, 
+            model, 
+            request_operators
+        )
+       
         if result is None:
             raise HTTPException(
                 status_code=404,
                 detail=f'PosIntegration with id {id} not found.',
             )
-
-        response_model: PosIntegrationOutboundModel = (
-            adapter.convert_from_model_to_outbound_model(result))
-
+       
+        response_model: PosIntegrationOutboundModel =self.adapter.convert_from_model_to_outbound_model(result)
+       
         return response_model
 
-    def delete(self, id: UUID):
+    def delete(
+        self, 
+        id: UUID, 
+        headers: dict[str,str]
+    ) -> PosIntegrationOutboundModel | None:
 
-        result = manager.delete(id)
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
+        
+        result = self.manager.delete_pos_integration(id, request_operators)
 
         if result is None:
             raise HTTPException(
@@ -129,7 +148,6 @@ class PosIntegrationController:
                 detail=f'PosIntegration with id {id} not found.',
             )
 
-        response_model: PosIntegrationOutboundModel = (
-            adapter.convert_from_model_to_outbound_model(result))
+        response_model: PosIntegrationOutboundModel =self.adapter.convert_from_model_to_outbound_model(result)
 
         return response_model

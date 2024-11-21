@@ -1,10 +1,10 @@
 from time import sleep
 from typing import Any
 
-from tests.qdk.operators.inventory_product_snapshots import InventoryProductSnapshotCreateModel, InventoryProductSnapshotModel, InventoryProductSnapshotSearchModel, create_inventory_product_snapshot, get_inventory_product_snapshot_by_id, get_inventory_product_snapshots
+from tests.qdk.operators.inventory_product_snapshots import InventoryProductSnapshotCreateModel, InventoryProductSnapshotModel, InventoryProductSnapshotSearchModel, create_inventory_product_snapshot, get_inventory_product_snapshot_by_id, get_inventory_product_snapshots, inventory_product_snapshot_hydration_check
 from tests.qdk.operators.products import ProductCreateModel
 from tests.qdk.qa_requests import qa_get, qa_post
-from tests.qdk.types import PagedResponseItemList, TestContext
+from tests.qdk.types import PagedResponseItemList, RequestOperators, TestContext
 from tests.qdk.utils import assert_objects_are_equal, generate_random_string
 from urllib.parse import urlencode   
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
@@ -20,6 +20,28 @@ def test_gets_inventory_product_snapshot_by_id() -> None:
 
     assert result is not None
     assert result.id == posted_object.id
+    
+def test_gets_inventory_product_snapshot_by_id_with_hydration() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object = create_inventory_product_snapshot(
+        context,
+        InventoryProductSnapshotCreateModel(
+            create_inventory_intake_job_if_null= True,
+            product= ProductCreateModel(
+                create_vendor_if_null= True
+            )
+        )
+    )
+
+    result = get_inventory_product_snapshot_by_id(context, posted_object.id, request_operators = RequestOperators(hydration_properties=["retailer_location", "retailer", "inventory_intake_job", "product", "vendor"]))
+
+    assert result is not None
+    assert result.id == posted_object.id
+    
+    inventory_product_snapshot_hydration_check(result)
 
 def test_gets_inventory_product_snapshots_invalid_inputs() -> None:
      
@@ -147,6 +169,89 @@ def test_gets_inventory_product_snapshots_with_ids_filter() -> None:
     posted_item_4: list[InventoryProductSnapshotModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
+     
+def test_gets_inventory_product_snapshots_with_ids_filter() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object_1: InventoryProductSnapshotModel = create_inventory_product_snapshot(
+        context,
+        InventoryProductSnapshotCreateModel(
+            create_inventory_intake_job_if_null= True,
+            product= ProductCreateModel(
+                create_vendor_if_null= True
+            )
+        )
+    )
+    posted_object_2: InventoryProductSnapshotModel = create_inventory_product_snapshot(
+        context,
+        InventoryProductSnapshotCreateModel(
+            create_inventory_intake_job_if_null= True,
+            product= ProductCreateModel(
+                create_vendor_if_null= True
+            )
+        )
+    )
+    posted_object_3: InventoryProductSnapshotModel = create_inventory_product_snapshot(
+        context,
+        InventoryProductSnapshotCreateModel(
+            create_inventory_intake_job_if_null= True,
+            product= ProductCreateModel(
+                create_vendor_if_null= True
+            )
+        )
+    )
+    posted_object_4: InventoryProductSnapshotModel = create_inventory_product_snapshot(
+        context,
+        InventoryProductSnapshotCreateModel(
+            create_inventory_intake_job_if_null= True,
+            product= ProductCreateModel(
+                create_vendor_if_null= True
+            )
+        )
+    )
+
+    filters: InventoryProductSnapshotSearchModel = InventoryProductSnapshotSearchModel(
+        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}"
+    )
+    
+    result: PagedResponseItemList[InventoryProductSnapshotModel] = get_inventory_product_snapshots(context, filters, request_operators = RequestOperators(hydration_properties=["retailer_location", "retailer", "inventory_intake_job", "product", "vendor"]))
+
+    assert result is not None
+    assert result.items is not None
+    
+    assert result.paging is not None
+    assert result.paging.page == 1
+    assert result.paging.page_length == 25
+    assert result.paging.sort_by == 'created_at'
+    assert result.paging.is_sort_descending == False
+
+    assert len(result.items) == 4 
+    
+    posted_item_1: list[InventoryProductSnapshotModel] = [item for item in result.items if item.id == posted_object_1.id]
+    assert len(posted_item_1) == 1  
+    assert_objects_are_equal(posted_item_1[0], posted_object_1, ["retailer_location", "retailer", "inventory_intake_job", "product", "vendor"])
+    
+    inventory_product_snapshot_hydration_check(posted_item_1[0])
+
+    posted_item_2: list[InventoryProductSnapshotModel] = [item for item in result.items if item.id == posted_object_2.id]
+    assert len(posted_item_2) == 1 
+    assert_objects_are_equal(posted_item_2[0], posted_object_2, ["retailer_location", "retailer", "inventory_intake_job", "product", "vendor"])
+    
+    inventory_product_snapshot_hydration_check(posted_item_2[0])
+  
+    posted_item_3: list[InventoryProductSnapshotModel] = [item for item in result.items if item.id == posted_object_3.id]
+    assert len(posted_item_3) == 1 
+    assert_objects_are_equal(posted_item_3[0], posted_object_3, ["retailer_location", "retailer", "inventory_intake_job", "product", "vendor"])
+    
+    inventory_product_snapshot_hydration_check(posted_item_3[0])
+  
+    posted_item_4: list[InventoryProductSnapshotModel] = [item for item in result.items if item.id == posted_object_4.id]
+    assert len(posted_item_4) == 1 
+    assert_objects_are_equal(posted_item_4[0], posted_object_4, ["retailer_location", "retailer", "inventory_intake_job", "product", "vendor"])
+    
+    inventory_product_snapshot_hydration_check(posted_item_4[0])
     
 def test_gets_inventory_product_snapshots_with_retailer_ids_filter() -> None:
     populate_configuration_if_not_exists() 

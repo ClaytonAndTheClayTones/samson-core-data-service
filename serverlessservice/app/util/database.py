@@ -148,21 +148,25 @@ class InListSearchTerm(SearchTerm, Generic[TListSearchable]):
         self,
         parameters: dict[str,Any]
     ):
-    
-        sqlstring = (f'LOWER({self.column_name}) IN (\n'
-                     if self.ignore_case else f'{self.column_name} IN (\n')
 
-        for i, value in enumerate(self.value_list):
-            column_string = self.column_name + "__" + str(i)
-            sqlstring += (f"\tLOWER(%({column_string})s)" if self.ignore_case else f"\t%({column_string})s")
-            sqlstring += ',' if i < len(self.value_list) - 1 else ''
-            sqlstring += '\n'
+        if(len(self.value_list) == 0):
+            sqlstring = f'{self.column_name} in (NULL)'
+        else: 
+            
+            sqlstring = (f'LOWER({self.column_name}) IN (\n'
+                        if self.ignore_case else f'{self.column_name} IN (\n')
 
-        sqlstring += ')'
+            for i, value in enumerate(self.value_list): 
+                column_string = self.column_name + "__" + str(i) 
+                sqlstring += (f"\tLOWER(%({column_string})s)" if self.ignore_case else f"\t%({column_string})s")
+                sqlstring += ',' if i < len(self.value_list) - 1 else ''
+                sqlstring += '\n'
 
-        # Parameters
-        for i, value in enumerate(self.value_list):
-            parameters[self.column_name + "__" + str(i)] = self.value_list[i]
+            sqlstring += ')'
+
+            # Parameters
+            for i, value in enumerate(self.value_list):
+                parameters[self.column_name + "__" + str(i)] = self.value_list[i]
         
         return sqlstring
 

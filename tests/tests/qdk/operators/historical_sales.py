@@ -76,9 +76,9 @@ class HistoricalSaleModel():
             self.tax = tax
             self.cost = cost
             self.sales_intake_job_id = sales_intake_job_id
-            self.retailer_location = retailer_location
-            self.retailer = retailer
-            self.sales_intake_job = sales_intake_job
+            self.retailer_location = RetailerLocationModel(**retailer_location) if retailer_location is not None else None
+            self.retailer = RetailerModel(**retailer) if retailer is not None else None
+            self.sales_intake_job = SalesIntakeJobModel(**sales_intake_job) if sales_intake_job is not None else None
             self.updated_at = updated_at
 
 class HistoricalSaleSearchModel(PagingRequestModel):  
@@ -196,7 +196,7 @@ def get_historical_sale_by_id(
 
     url: str = f"{context.api_url}/historical_sales/{id}"
     
-    result: Response = qa_get(url)
+    result: Response = qa_get(url, request_operators=request_operators)
      
     return_object = HistoricalSaleModel(**result.json())
     
@@ -228,3 +228,16 @@ def get_historical_sales(
     
     return return_object 
  
+def historical_sale_hydration_check(historical_sale: HistoricalSaleModel) -> None:
+  
+    assert historical_sale.retailer_location is not None
+    assert historical_sale.retailer_location.id is not None
+    assert historical_sale.retailer_location.id == historical_sale.retailer_location_id
+    
+    assert historical_sale.retailer is not None
+    assert historical_sale.retailer.id is not None
+    assert historical_sale.retailer.id == historical_sale.retailer_id
+    
+    assert historical_sale.sales_intake_job is not None
+    assert historical_sale.sales_intake_job.id is not None 
+    assert historical_sale.sales_intake_job.id == historical_sale.sales_intake_job_id         

@@ -5,6 +5,19 @@ from typing import Any, Generic, TypeVar
 from uuid import UUID
 import uuid
 
+
+class RequestOperators:
+    
+    def __init__(
+        self, 
+        hydration: list[str] | None = None,
+        skip_paging: bool = False,
+    ) -> None:
+        
+        self.hydration = hydration
+        self.skip_paging = skip_paging
+    
+
 T_in = TypeVar('T_in')
 T_out = TypeVar('T_out')
 TRangeSearchable = TypeVar('TRangeSearchable', str, int, float, datetime)

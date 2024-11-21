@@ -1,8 +1,8 @@
 from typing import Any
 
-from tests.qdk.operators.products import ProductCreateModel, create_product 
+from tests.qdk.operators.products import ProductCreateModel, create_product, product_hydration_check 
 from tests.qdk.qa_requests import qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -91,4 +91,36 @@ def test_posts_valid_product() -> None:
         create_vendor_if_null=True
         
     ))
+ 
+def test_posts_valid_product() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+ 
+    create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null=True,
+        create_referring_retailer_location_if_null=True,
+        create_vendor_if_null=True
+        
+    ))
+ 
+  
+def test_posts_valid_product_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+ 
+    result = create_product(
+        context, 
+        ProductCreateModel(
+            create_confirmed_core_product_if_null=True,
+            create_referring_retailer_location_if_null=True,
+            create_vendor_if_null=True 
+        ),
+        request_operators=RequestOperators(hydration_properties=["referring_retailer", "referring_retailer_location", "vendor", "confirmed_core_product"])
+    )
+    
+    product_hydration_check(result)
  

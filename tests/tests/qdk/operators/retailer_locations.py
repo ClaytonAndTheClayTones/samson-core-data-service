@@ -10,8 +10,7 @@ class RetailerLocationCreateModel():
 
     def __init__(self,
                 retailer_id: str | None = None,
-                retailer: RetailerCreateModel | None = None,   
-                create_pos_integration_if_null: bool | None = False,
+                retailer: RetailerCreateModel | None = None,    
                 contact_email: str | None = None,
                 contact_phone: str | None = None,
                 account_status: str | None = None,
@@ -23,8 +22,7 @@ class RetailerLocationCreateModel():
         
         self.retailer_id = retailer_id
         self.retailer = retailer  
-        self.account_status = account_status
-        self.create_pos_integration_if_null = create_pos_integration_if_null
+        self.account_status = account_status 
         
         self.contact_email = contact_email
         self.contact_phone = contact_phone
@@ -55,7 +53,7 @@ class RetailerLocationModel():
         self.created_at = created_at
         self.updated_at = updated_at
         self.retailer_id = retailer_id
-        self.retailer = retailer
+        self.retailer = RetailerModel(**retailer) if retailer is not None else None
         self.account_status = account_status 
         
         self.name = name
@@ -127,7 +125,7 @@ def mint_default_retailer_location(
 
     if(overrides.retailer_id is None):
 
-        new_retailer = create_retailer(context, overrides.retailer, request_operators = request_operators)
+        new_retailer = create_retailer(context, overrides.retailer)
         overrides.retailer_id = new_retailer.id
 
         del overrides.retailer
@@ -153,7 +151,7 @@ def create_retailer_location(
         overrides: RetailerLocationCreateModel | None = None, 
         request_operators: RequestOperators | None = None,
         allow_failures: bool = False
-        ):
+    ):
     
     post_object = mint_default_retailer_location(context = context, overrides = overrides, request_operators = request_operators)
 
@@ -162,18 +160,18 @@ def create_retailer_location(
     if(allow_failures == False):
         assert result.status_code == 201
  
-        result_dict = result.json()
+        result_dict = result.json() 
 
-        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "retailer_location", "created_at", "updated_at"])
+        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "retailer_id", "retailer", "created_at", "updated_at"])
 
         assert result_dict['id'] is not None
         assert result_dict['created_at'] is not None
         assert result_dict['updated_at'] is None
      
-    return_object = RetailerLocationModel(**result.json())
+    return_object = RetailerLocationModel(**result.json()) 
     
     return return_object 
-
+  
 def get_retailer_location_by_id(
         context: TestContext, 
         id: str,
@@ -183,7 +181,7 @@ def get_retailer_location_by_id(
 
     url = f"{context.api_url}/retailer_locations/{id}"
     
-    result = qa_get(url)
+    result = qa_get(url, request_operators = request_operators)
  
     return_object = RetailerLocationModel(**result.json())
     
@@ -233,7 +231,7 @@ def update_retailer_location(
  
         result_dict = result.json()
 
-        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["updated_at"])
+        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["retailer", "updated_at"])
  
         assert result_dict['updated_at'] is not None
     
@@ -241,5 +239,7 @@ def update_retailer_location(
     
     return return_object 
     
-
-    
+def retailer_location_hydration_check(retailer_location: RetailerLocationModel) -> None:
+    assert retailer_location.retailer is not None
+    assert retailer_location.retailer.id is not None
+    assert retailer_location.retailer.id == retailer_location.retailer_id

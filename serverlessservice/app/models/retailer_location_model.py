@@ -14,6 +14,7 @@ from models.common_model import (
     DicsPhoneNumber,
     validate_ids,
 )
+from models.retailer_model import RetailerModel, RetailerOutboundModel
 
 class RetailerLocationAccountStatuses(Enum):
     Unregistered = 'Unregistered'
@@ -166,6 +167,7 @@ class RetailerLocationModel(CommonModel):
         name: str,
         account_status: RetailerLocationAccountStatuses,
         created_at: datetime, 
+        retailer: RetailerModel | None = None,
         location_city: str | None = None,
         location_state: str | None = None,
         location_country: str | None = None,
@@ -177,7 +179,8 @@ class RetailerLocationModel(CommonModel):
         super().__init__(id, created_at, updated_at)
 
         self.name = name
-        self.retailer_id = retailer_id
+        self.retailer_id = retailer_id  
+        self.retailer = retailer
         self.contact_email = contact_email
         self.contact_phone = contact_phone
         self.location_city = location_city
@@ -191,6 +194,7 @@ class RetailerLocationOutboundModel(CommonOutboundResponseModel):
     name: str
     retailer_id: UUID
     account_status: RetailerLocationAccountStatuses 
+    retailer: RetailerOutboundModel | None = None
     location_city: str | None = None
     location_state: str | None = None
     location_country: str | None = None

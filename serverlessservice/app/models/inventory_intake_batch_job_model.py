@@ -6,8 +6,7 @@ from fastapi import Query
 from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
 from pydantic_core import PydanticUndefined
 from enum import Enum
-
-
+ 
 class InventoryIntakeBatchJobStatuses(str, Enum):
     Requested = 'Requested'
     Processing = 'Processing'
@@ -22,8 +21,7 @@ from models.common_model import (
     CommonSearchModel,
     validate_ids,
 )
-
-
+ 
 # Pydantic causes these class variables to safely be instance variables.
 class InventoryIntakeBatchJobInboundCreateModel(BaseModel):   
     start_time: datetime = Field(...)  

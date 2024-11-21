@@ -1,8 +1,8 @@
 from typing import Any
 
-from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, create_pos_integration
+from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, create_pos_integration, pos_integration_hydration_check
 from tests.qdk.qa_requests import qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -94,4 +94,20 @@ def test_posts_valid_pos_integration() -> None:
 
     create_pos_integration(context)  
  
+def test_posts_valid_retailer_location_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL) 
  
+    created_entity = create_pos_integration(
+        context,
+        None,
+        request_operators=RequestOperators(hydration_properties=[
+            "retailer",
+            "retailer_location",
+            "retailer_location.retailer"
+        ])
+    )
+
+    pos_integration_hydration_check(created_entity)

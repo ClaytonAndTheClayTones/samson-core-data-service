@@ -1,8 +1,8 @@
 from typing import Any
 
-from tests.qdk.operators.inventory_intake_jobs import InventoryIntakeJobCreateModel, InventoryIntakeJobModel, InventoryIntakeJobUpdateModel, create_inventory_intake_job, update_inventory_intake_job
+from tests.qdk.operators.inventory_intake_jobs import InventoryIntakeJobCreateModel, InventoryIntakeJobModel, InventoryIntakeJobUpdateModel, create_inventory_intake_job, inventory_intake_job_hydration_check, update_inventory_intake_job
 from tests.qdk.qa_requests import qa_patch, qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -53,4 +53,24 @@ def test_patches_valid_inventory_intake_job() -> None:
     )
 
     update_inventory_intake_job(context, posted_object.id or "", update_object)
+     
+def test_patches_valid_inventory_intake_job_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    random_string = generate_random_string(14)
+
+    posted_object: InventoryIntakeJobModel = create_inventory_intake_job(context,   InventoryIntakeJobCreateModel(create_parent_batch_job_if_null= True))
  
+    update_object: InventoryIntakeJobUpdateModel = InventoryIntakeJobUpdateModel(
+        status = "Complete",
+        status_details = {
+            "another_key": "another_value"
+        }
+    )
+
+    result = update_inventory_intake_job(context, posted_object.id or "", update_object, request_operators = RequestOperators(hydration_properties=["retailer_location", "retailer", "parent_batch_job"]))
+    
+    inventory_intake_job_hydration_check(result)

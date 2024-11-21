@@ -1,10 +1,10 @@
 from typing import Any
 
 from tests.qdk.operators.pos_integrations import PosIntegrationCreateModel, create_pos_integration
-from tests.qdk.operators.products import ProductCreateModel, ProductModel, ProductUpdateModel, create_product, update_product
+from tests.qdk.operators.products import ProductCreateModel, ProductModel, ProductUpdateModel, create_product, product_hydration_check, update_product
 from tests.qdk.operators.vendors import VendorModel, create_vendor
 from tests.qdk.qa_requests import qa_patch, qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -85,4 +85,41 @@ def test_patches_valid_product() -> None:
     )
 
     update_product(context, posted_object.id or "", update_object)
+ 
+ 
+def test_patches_valid_product_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    random_string = generate_random_string(14)
+
+    posted_object: ProductModel = create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null= True,
+        create_referring_retailer_location_if_null= True,
+        create_vendor_if_null= True 
+    ))
+    
+    # new vendor id
+    posted_vendor: VendorModel = create_vendor(context)
+    
+    # new confirmed_product id
+    posted_product: ProductModel = create_product(context, ProductCreateModel(
+        create_confirmed_core_product_if_null= True,
+        create_referring_retailer_location_if_null= True,
+        create_vendor_if_null= True 
+    ))
+       
+    update_object: ProductUpdateModel = ProductUpdateModel( 
+        name = random_string + '_name', 
+        vendor_sku = random_string + '_vendor_sku',
+        vendor_confirmation_status = 'ConfirmedByVendor',
+        confirmed_core_product_id = posted_product.id,
+        vendor_id = posted_vendor.id
+    )
+
+    updated_object = update_product(context, posted_object.id or "", update_object, request_operators=RequestOperators(hydration_properties=["referring_retailer", "referring_retailer_location", "vendor", "confirmed_core_product"]))
+    
+    product_hydration_check(updated_object)
  

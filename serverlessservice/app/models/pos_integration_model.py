@@ -7,6 +7,9 @@ from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
 from pydantic_core import PydanticUndefined
 from enum import Enum
 
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel
+
 
 class PosPlatforms(str, Enum):
     Posabit = 'Posabit'
@@ -66,10 +69,13 @@ class PosIntegrationCreateModel:
         url: str,
         key: str,
         pos_platform: PosPlatforms, 
+        retailer_id: UUID | None = None,
         description: str | None = None,
     ) -> None:
  
         self.retailer_location_id = retailer_location_id
+        
+        self.retailer_id = retailer_id
         self.name = name
         self.url = url
         self.key = key
@@ -115,31 +121,7 @@ class PosIntegrationSearchModel(CommonSearchModel):
         self.pos_platform = pos_platform
 
 
-class PosIntegrationModel(CommonModel):
 
-    def __init__(
-        self,
-        id: UUID,
-        retailer_id: UUID,
-        retailer_location_id: UUID,
-        name: str,
-        url: str,
-        key: str,
-        pos_platform: PosPlatforms,
-        created_at: datetime,
-        description: str | None = None,
-        updated_at: datetime | None = None,
-    ):
-
-        super().__init__(id, created_at, updated_at)
-
-        self.retailer_id = retailer_id
-        self.retailer_location_id = retailer_location_id
-        self.name = name
-        self.url = url
-        self.key = key
-        self.pos_platform = pos_platform
-        self.description = description
 
 
 class PosIntegrationDatabaseModel(CommonDatabaseModel):
@@ -153,7 +135,35 @@ class PosIntegrationDatabaseModel(CommonDatabaseModel):
         url: str,
         key: str,
         pos_platform: PosPlatforms,
+        created_at: datetime, 
+        description: str | None = None,
+        updated_at: datetime | None = None,
+    ):
+
+        super().__init__(id, created_at, updated_at)
+
+        self.retailer_id = retailer_id
+        self.retailer_location_id = retailer_location_id 
+        self.name = name
+        self.url = url
+        self.key = key
+        self.pos_platform = pos_platform
+        self.description = description
+
+class PosIntegrationModel(CommonModel):
+
+    def __init__(
+        self,
+        id: UUID,
+        retailer_id: UUID,
+        retailer_location_id: UUID,
+        name: str,
+        url: str,
+        key: str,
+        pos_platform: PosPlatforms,
         created_at: datetime,
+        retailer: RetailerModel | None = None,
+        retailer_location: RetailerLocationModel | None = None,
         description: str | None = None,
         updated_at: datetime | None = None,
     ):
@@ -162,6 +172,8 @@ class PosIntegrationDatabaseModel(CommonDatabaseModel):
 
         self.retailer_id = retailer_id
         self.retailer_location_id = retailer_location_id
+        self.retailer = retailer
+        self.retailer_location = retailer_location
         self.name = name
         self.url = url
         self.key = key
@@ -176,5 +188,7 @@ class PosIntegrationOutboundModel(CommonOutboundResponseModel):
     name: str
     url: str
     key: str
+    retailer: RetailerOutboundModel | None = None
+    retailer_location: RetailerLocationOutboundModel | None = None
     pos_platform: PosPlatforms | None = None
     description: str | None = None

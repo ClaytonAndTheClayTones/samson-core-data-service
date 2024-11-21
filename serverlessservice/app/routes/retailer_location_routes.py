@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import UUID4
 import uvicorn
 
@@ -25,9 +25,12 @@ def set_retailer_location_routes(app: FastAPI):
         response_model=RetailerLocationOutboundModel,
         status_code=201,
     )
-    def post_retailerlocation(
-        inbound_create_model: RetailerLocationInboundCreateModel, ):
-        result = controller.create(inbound_create_model)
+    def post_retailerlocation( 
+        inbound_create_model: RetailerLocationInboundCreateModel, 
+        request: Request
+    ) -> RetailerLocationOutboundModel | None:
+         
+        result = controller.create(inbound_create_model, request.headers)
 
         return result
 
@@ -35,11 +38,12 @@ def set_retailer_location_routes(app: FastAPI):
         '/retailer_locations',
         response_model=OutboundItemListResponse[RetailerLocationOutboundModel],
     )
-    def get_retailer_locations(
-        inbound_search_model: RetailerLocationInboundSearchModel = Depends(),
+    def get_retailer_locations(  
+        request: Request,
+        inbound_search_model: RetailerLocationInboundSearchModel = Depends(), 
     ) -> OutboundItemListResponse[RetailerLocationOutboundModel]:
-
-        result = controller.search(inbound_search_model)
+       
+        result = controller.search(inbound_search_model, request.headers)
 
         return result
 
@@ -47,9 +51,9 @@ def set_retailer_location_routes(app: FastAPI):
         '/retailer_locations/{id}',
         response_model=RetailerLocationOutboundModel,
     )
-    def get_retailerlocation_by_id(id: UUID4):
+    def get_retailerlocation_by_id(request: Request, id: UUID4) -> RetailerLocationOutboundModel | None:
 
-        result = controller.get_by_id(id)
+        result = controller.get_by_id(id, request.headers)
 
         return result
 
@@ -59,17 +63,22 @@ def set_retailer_location_routes(app: FastAPI):
     )
     def patch_retailerlocation(
             id: UUID4,
-            inbound_update_model: RetailerLocationInboundUpdateModel):
-        result = controller.update(id, inbound_update_model)
+            inbound_update_model: RetailerLocationInboundUpdateModel,
+            request: Request
+    ) -> RetailerLocationOutboundModel | None:
+        result = controller.update(id, inbound_update_model, request.headers)
 
         return result
 
     @app.delete(
         '/retailer_locations/{id}',
         response_model=RetailerLocationOutboundModel,
-    )
-    def delete_retailerlocation(id: UUID4):
+    ) 
+    def delete_retailerlocation(
+        id: UUID4, 
+        request: Request
+    ) -> RetailerLocationOutboundModel | None:
 
-        result = controller.delete(id)
+        result = controller.delete(id, request.headers)
 
         return result

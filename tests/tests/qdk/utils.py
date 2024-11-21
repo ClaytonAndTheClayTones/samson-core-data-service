@@ -37,12 +37,11 @@ def copy_object_when_appropriate(target_object: T, incoming_object: T, explicit_
 def transform_operators_to_headers(request_operators: RequestOperators):
    headers: dict[str,str] = {}
 
-   
    if(request_operators.token is not None):
       headers['Authorization'] = f"Bearer {request_operators.token}"
 
    if(request_operators.hydration_properties is not None):
-      headers['M3T-Hydration'] = String.join(request_operators.hydration_properties)
+      headers['Samson-Hydration'] = ",".join(request_operators.hydration_properties)
    
    if(request_operators.added_headers is not None):
       for key in request_operators.added_headers:

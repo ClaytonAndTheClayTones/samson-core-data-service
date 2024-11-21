@@ -18,9 +18,15 @@ from util.database import (
     SearchTerm,
 )
  
-class VendorDataAdapter:
-    common_utilities: CommonUtilities = CommonUtilities()
+class VendorDataAdapter: 
 
+    def __init__(
+        self,
+        common_utilities: CommonUtilities = CommonUtilities()
+    ) -> None:
+        
+        self.common_utilities = common_utilities
+        
     def convert_from_inbound_create_model_to_create_model(
         self,
         inbound_create_model: VendorInboundCreateModel,
@@ -59,8 +65,8 @@ class VendorDataAdapter:
         return model
 
     def convert_from_inbound_search_model_to_search_model(
-            self, 
-            inbound_search_model: VendorInboundSearchModel
+        self, 
+        inbound_search_model: VendorInboundSearchModel
     ) -> VendorSearchModel:
         
         model = VendorSearchModel(
@@ -88,9 +94,9 @@ class VendorDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: VendorSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: VendorSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -131,9 +137,9 @@ class VendorDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: VendorCreateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: VendorCreateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name,
@@ -150,9 +156,9 @@ class VendorDataAdapter:
         return database_model
 
     def convert_from_update_model_to_database_model(
-            self, 
-            model: VendorUpdateModel
-        ) -> dict[str, Any]:
+        self, 
+        model: VendorUpdateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name,
@@ -168,9 +174,9 @@ class VendorDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> VendorModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> VendorModel:
         
         model = VendorModel(
             id=database_model['id'],
@@ -190,9 +196,9 @@ class VendorDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: VendorModel
-        ) -> VendorOutboundModel:
+        self, 
+        model: VendorModel
+    ) -> VendorOutboundModel:
         
         outbound_model = VendorOutboundModel(
             id=model.id,

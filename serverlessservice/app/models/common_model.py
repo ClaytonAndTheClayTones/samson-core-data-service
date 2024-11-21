@@ -24,11 +24,13 @@ def validate_ids(value: str | list[str] | None):
         results: dict[int, str] | None = common_utilities.validate_comma_delimited_ids(value)
 
         if results is not None:
-            message = (common_utilities.
-                       generate_invalid_comma_delimited_ids_message(results))
+            message = (common_utilities.generate_invalid_comma_delimited_ids_message(results))
 
-            raise PydanticCustomError('invalid_id_list', '{message}',
-                                      dict(message=message))
+            raise PydanticCustomError(
+                'invalid_id_list', 
+                '{message}', 
+                dict(message=message)
+            )
 
         return value
 
@@ -48,8 +50,12 @@ class CommonSearchModel:
 
 class CommonDatabaseModel:
 
-    def __init__(self, id: UUID, created_at: datetime,
-                 updated_at: datetime | None) -> None:
+    def __init__(
+        self, 
+        id: UUID, 
+        created_at: datetime,
+        updated_at: datetime | None
+    ) -> None:
 
         self.id = id
         self.created_at = created_at
@@ -62,7 +68,8 @@ class CommonModel:
         self, 
         id: UUID, 
         created_at: datetime,
-        updated_at: datetime | None) -> None:
+        updated_at: datetime | None
+    ) -> None:
 
         self.id = id
         self.created_at = created_at
@@ -89,9 +96,12 @@ class CommonInboundSearchModel(CommonInboundPagedModel):
 
 class ItemList(Generic[T]):
 
-    def __init__(self,
-                 paging: ResultantPagingModel,
-                 items: list[T] | None = None) -> None:
+    def __init__(
+        self,
+        paging: ResultantPagingModel,
+        items: list[T] | None = None
+    ) -> None:
+        
         super().__init__()
 
         self.items = items or []

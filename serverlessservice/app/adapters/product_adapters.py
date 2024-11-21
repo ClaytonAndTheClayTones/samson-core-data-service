@@ -1,4 +1,7 @@
 from typing import Any
+from adapters.retailer_adapters import RetailerDataAdapter
+from adapters.retailer_location_adapters import RetailerLocationDataAdapter
+from adapters.vendor_adapters import VendorDataAdapter
 from models.product_model import (
     ProductCreateModel,
     ProductInboundCreateModel,
@@ -19,9 +22,22 @@ from util.database import (
 )
 
 
-class ProductDataAdapter:
-    common_utilities: CommonUtilities = CommonUtilities()
+class ProductDataAdapter: 
+    
+    def __init__(
+        self,
+        common_utilities: CommonUtilities = CommonUtilities(), 
+        retailer_adapter: RetailerDataAdapter = RetailerDataAdapter(),
+        retailer_location_adapter: RetailerLocationDataAdapter = RetailerLocationDataAdapter(),
+        vendor_adapter: VendorDataAdapter = VendorDataAdapter(),
+    ) -> None:
+        
+        self.common_utilities = common_utilities
+        self.retailer_adapter = retailer_adapter
+        self.retailer_location_adapter = retailer_location_adapter
+        self.vendor_adapter = vendor_adapter
 
+        
     def convert_from_inbound_create_model_to_create_model(
         self,
         inbound_create_model: ProductInboundCreateModel
@@ -100,9 +116,9 @@ class ProductDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: ProductSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: ProductSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -135,7 +151,10 @@ class ProductDataAdapter:
 
         return search_terms
 
-    def convert_from_create_model_to_database_model(self, model: ProductCreateModel) -> dict[str, Any]:
+    def convert_from_create_model_to_database_model(
+        self, 
+        model: ProductCreateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name,
@@ -149,7 +168,10 @@ class ProductDataAdapter:
 
         return database_model
 
-    def convert_from_update_model_to_database_model(self, model: ProductUpdateModel) -> dict[str, Any]:
+    def convert_from_update_model_to_database_model(
+        self, 
+        model: ProductUpdateModel
+    ) -> dict[str, Any]:
         
         database_model: dict[str, Any] = {
             'name': model.name, 
@@ -162,9 +184,9 @@ class ProductDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> ProductModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> ProductModel:
             
         model = ProductModel(
             id=database_model['id'],
@@ -184,18 +206,22 @@ class ProductDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self,
-            model: ProductModel
-        ) -> ProductOutboundModel:
-        
+        self,
+        model: ProductModel
+    ) -> ProductOutboundModel:
+    
         outbound_model = ProductOutboundModel(
             id=model.id,
             name=model.name, 
             
-            referring_retailer_id=model.referring_retailer_id, 
+            referring_retailer_id=model.referring_retailer_id,  
+            referring_retailer = self.retailer_adapter.convert_from_model_to_outbound_model(model.referring_retailer) if model.referring_retailer is not None else None,
             referring_retailer_location_id=model.referring_retailer_location_id,
+            referring_retailer_location = self.retailer_location_adapter.convert_from_model_to_outbound_model(model.referring_retailer_location) if model.referring_retailer_location is not None else None,
             vendor_id=model.vendor_id, 
+            vendor = self.vendor_adapter.convert_from_model_to_outbound_model(model.vendor) if model.vendor is not None else None,
             confirmed_core_product_id=model.confirmed_core_product_id,
+            confirmed_core_product = self.convert_from_model_to_outbound_model(model.confirmed_core_product) if model.confirmed_core_product is not None else None,
             vendor_confirmation_status=model.vendor_confirmation_status,
             vendor_sku=model.vendor_sku,
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),

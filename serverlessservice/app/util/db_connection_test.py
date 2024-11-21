@@ -1,5 +1,6 @@
 from typing import Any
-from util.database import (
+
+from database import (
     ExactMatchSearchTerm,
     InListSearchTerm,
     LikeComparatorModes,
@@ -8,7 +9,7 @@ from util.database import (
     RangeSearchTerm,
     SearchTerm,
 )
-from util.db_connection import PGConnection
+from db_connection import PGConnection
 
 
 def test_build_insert_query_handles_all_types():

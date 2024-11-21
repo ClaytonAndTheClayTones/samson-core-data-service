@@ -1,8 +1,8 @@
 from typing import Any
 
-from tests.qdk.operators.inventory_intake_jobs import InventoryIntakeJobCreateModel, create_inventory_intake_job
+from tests.qdk.operators.inventory_intake_jobs import InventoryIntakeJobCreateModel, create_inventory_intake_job, inventory_intake_job_hydration_check
 from tests.qdk.qa_requests import qa_post
-from tests.qdk.types import TestContext
+from tests.qdk.types import RequestOperators, TestContext
 from tests.qdk.utils import generate_random_string
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
 
@@ -79,6 +79,24 @@ def test_posts_valid_inventory_intake_job() -> None:
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
     create_inventory_intake_job(context)  
+
+def test_posts_valid_inventory_intake_job_with_hydration() -> None:
+     
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    result = create_inventory_intake_job(
+        context,
+        InventoryIntakeJobCreateModel(
+            create_parent_batch_job_if_null=True
+        ),
+        request_operators=RequestOperators(
+            hydration_properties=["retailer_location", "retailer", "parent_batch_job"]
+        )
+    )  
+    
+    inventory_intake_job_hydration_check(result)
     
 def test_posts_valid_inventory_intake_job_defaulted_values() -> None:
      

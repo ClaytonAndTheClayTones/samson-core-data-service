@@ -1,5 +1,8 @@
 from typing import Any
 from adapters.inventory_intake_job_adapters import RangeSearchTerm
+from adapters.retailer_adapters import RetailerDataAdapter
+from adapters.retailer_location_adapters import RetailerLocationDataAdapter
+from adapters.sales_intake_job_adapters import SalesIntakeJobDataAdapter
 from models.historical_sale_model import (
     HistoricalSaleCreateModel,
     HistoricalSaleInboundCreateModel,
@@ -9,16 +12,28 @@ from models.historical_sale_model import (
     HistoricalSaleSearchModel, 
 )
 from util.common import CommonUtilities
-from util.database import (
-    ExactMatchSearchTerm,
+from util.database import ( 
     InListSearchTerm, 
     SearchTerm,
 )
 
 
 class HistoricalSaleDataAdapter:
-    common_utilities: CommonUtilities = CommonUtilities()
+    
+    def __init__(
+        self,
+        retailer_adapter: RetailerDataAdapter = RetailerDataAdapter(),
+        retailer_location_adapter: RetailerLocationDataAdapter = RetailerLocationDataAdapter(),
+        sales_intake_job_adapter: SalesIntakeJobDataAdapter = SalesIntakeJobDataAdapter(),
+        common_utilities: CommonUtilities = CommonUtilities(),
+    ) -> None:
 
+        self.retailer_adapter = retailer_adapter
+        self.retailer_location_adapter = retailer_location_adapter
+        self.sales_intake_job_adapter = sales_intake_job_adapter
+        
+        self.common_utilities = common_utilities
+        
     def convert_from_inbound_create_model_to_create_model(
         self, 
         inbound_create_model: HistoricalSaleInboundCreateModel
@@ -81,9 +96,9 @@ class HistoricalSaleDataAdapter:
         return model
 
     def convert_from_search_model_to_search_terms(
-            self, 
-            model: HistoricalSaleSearchModel
-        ) -> list[SearchTerm]:
+        self, 
+        model: HistoricalSaleSearchModel
+    ) -> list[SearchTerm]:
         
         search_terms: list[SearchTerm] = []
 
@@ -108,10 +123,10 @@ class HistoricalSaleDataAdapter:
         return search_terms
 
     def convert_from_create_model_to_database_model(
-            self, 
-            model: HistoricalSaleCreateModel
-        ) -> dict[str, Any]:
-       
+        self, 
+        model: HistoricalSaleCreateModel
+    ) -> dict[str, Any]:
+    
         database_model: dict[str, Any] = {  
             'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
             'retailer_location_id': str(model.retailer_location_id) if model.retailer_location_id is not None else None ,
@@ -128,9 +143,9 @@ class HistoricalSaleDataAdapter:
         return database_model
 
     def convert_from_database_model_to_model(
-            self, 
-            database_model: dict[str, Any]
-        ) -> HistoricalSaleModel:
+        self, 
+        database_model: dict[str, Any]
+    ) -> HistoricalSaleModel:
         
         model = HistoricalSaleModel(
             id=database_model['id'], 
@@ -150,15 +165,18 @@ class HistoricalSaleDataAdapter:
         return model
 
     def convert_from_model_to_outbound_model(
-            self, 
-            model: HistoricalSaleModel
-        ) -> HistoricalSaleOutboundModel:
+        self, 
+        model: HistoricalSaleModel
+    ) -> HistoricalSaleOutboundModel:
         
         outbound_model = HistoricalSaleOutboundModel(
             id=model.id,
             retailer_id=model.retailer_id,
+            retailer = self.retailer_adapter.convert_from_model_to_outbound_model(model.retailer) if model.retailer is not None else None,
             retailer_location_id=model.retailer_location_id,
+            retailer_location = self.retailer_location_adapter.convert_from_model_to_outbound_model(model.retailer_location) if model.retailer_location is not None else None,
             pos_sale_id=model.pos_sale_id,
+             
             sale_timestamp=model.sale_timestamp.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             total=model.total,
             sub_total=model.sub_total,
@@ -166,6 +184,8 @@ class HistoricalSaleDataAdapter:
             tax=model.tax,
             cost=model.cost,
             sales_intake_job_id=model.sales_intake_job_id,
+            sales_intake_job = self.sales_intake_job_adapter.convert_from_model_to_outbound_model(model.sales_intake_job) if model.sales_intake_job is not None else None,
+           
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             updated_at=model.updated_at.isoformat(timespec='milliseconds').replace('+00:00','Z') if model.updated_at is not None else None,
         )

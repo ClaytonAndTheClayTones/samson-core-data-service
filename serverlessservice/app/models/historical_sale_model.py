@@ -14,7 +14,11 @@ from models.common_model import (
     CommonOutboundResponseModel,
     CommonSearchModel,
     validate_ids,
-) 
+)
+
+from models.retailer_location_model import RetailerLocationModel, RetailerLocationOutboundModel
+from models.sales_intake_job_model import SalesIntakeJobModel, SalesIntakeJobOutboundModel
+from models.retailer_model import RetailerModel, RetailerOutboundModel 
 
 # Pydantic causes these class variables to safely be instance variables.
 class HistoricalSaleInboundCreateModel(BaseModel):  
@@ -90,41 +94,7 @@ class HistoricalSaleSearchModel(CommonSearchModel):
         self.sale_timestamp_min = sale_timestamp_min
         self.sale_timestamp_max = sale_timestamp_max
 
-
-class HistoricalSaleModel(CommonModel):
-
-    def __init__(
-        self,
-        id: UUID,
-        retailer_id: UUID,
-        retailer_location_id: UUID,
-        pos_sale_id: str,
-        sale_timestamp: datetime,
-        total: int,
-        created_at: datetime, 
-        sub_total: int | None = None,
-        discount: int | None = None,
-        tax: int | None = None,
-        cost : int | None = None,
-        
-        sales_intake_job_id: UUID | None = None,  
-        updated_at: datetime | None = None,
-    ):
-
-        super().__init__(id, created_at, updated_at)
-        
-        self.retailer_location_id = retailer_location_id
-        self.retailer_id = retailer_id
-        self.pos_sale_id = pos_sale_id
-        self.sale_timestamp = sale_timestamp
-        self.total = total
-        self.sub_total = sub_total
-        self.discount = discount
-        self.tax = tax
-        self.cost = cost
-        self.sales_intake_job_id = sales_intake_job_id
-        
-
+ 
 class HistoricalSaleDatabaseModel(CommonDatabaseModel):
 
     def __init__(
@@ -148,6 +118,7 @@ class HistoricalSaleDatabaseModel(CommonDatabaseModel):
         super().__init__(id, created_at, updated_at)
  
         self.retailer_location_id = retailer_location_id 
+        self.retailer_id = retailer_id
         self.sales_intake_job_id = sales_intake_job_id
         self.pos_sale_id = pos_sale_id
         self.sale_timestamp = sale_timestamp
@@ -156,19 +127,60 @@ class HistoricalSaleDatabaseModel(CommonDatabaseModel):
         self.discount = discount
         self.tax = tax
         self.cost = cost
+          
+class HistoricalSaleModel(CommonModel):
 
+    def __init__(
+        self,
+        id: UUID,
+        retailer_id: UUID,
+        retailer_location_id: UUID,
+        pos_sale_id: str,
+        sale_timestamp: datetime,
+        total: int,
+        created_at: datetime, 
+        sub_total: int | None = None,
+        discount: int | None = None,
+        tax: int | None = None,
+        cost : int | None = None, 
+        retailer: RetailerModel | None = None,
+        retailer_location: RetailerLocationModel | None = None, 
+        sales_intake_job: SalesIntakeJobModel | None = None,
+        sales_intake_job_id: UUID | None = None,  
+        updated_at: datetime | None = None,
+    ):
+
+        super().__init__(id, created_at, updated_at)
+        
+        self.retailer_location_id = retailer_location_id
+        self.retailer_id = retailer_id
+        self.pos_sale_id = pos_sale_id
+        self.sale_timestamp = sale_timestamp
+        self.total = total
+        self.sub_total = sub_total
+        self.discount = discount
+        self.tax = tax
+        self.cost = cost
+        self.sales_intake_job_id = sales_intake_job_id
+
+        self.retailer = retailer
+        self.retailer_location = retailer_location
+        self.sales_intake_job = sales_intake_job
+        
+        
 # Pydantic causes these class variables to safely be instance variables.
 class HistoricalSaleOutboundModel(CommonOutboundResponseModel):
      
     retailer_id: UUID
     retailer_location_id: UUID 
-    sales_intake_job_id: UUID | None = None
     pos_sale_id: str
     sale_timestamp: str
     total: int
     sub_total: int | None = None
     discount: int | None = None
     tax: int | None = None
-    cost : int | None = None 
-  
-    sales_intake_job_id: UUID | None = None   
+    cost : int | None = None  
+    sales_intake_job_id: UUID | None = None    
+    retailer: RetailerOutboundModel | None = None,
+    retailer_location: RetailerLocationOutboundModel | None = None, 
+    sales_intake_job: SalesIntakeJobOutboundModel | None = None,

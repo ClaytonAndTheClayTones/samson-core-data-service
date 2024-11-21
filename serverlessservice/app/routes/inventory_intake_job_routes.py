@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import UUID4
 import uvicorn
 
@@ -24,8 +24,11 @@ def set_inventory_intake_job_routes(app: FastAPI):
         status_code=201,
     )
     def post_retailerlocation(
-        inbound_create_model: InventoryIntakeJobInboundCreateModel, ):
-        result = controller.create(inbound_create_model)
+        inbound_create_model: InventoryIntakeJobInboundCreateModel,
+        request: Request
+    ) -> InventoryIntakeJobOutboundModel | None:
+        
+        result = controller.create(inbound_create_model, request.headers)
 
         return result
 
@@ -34,41 +37,51 @@ def set_inventory_intake_job_routes(app: FastAPI):
         response_model=OutboundItemListResponse[InventoryIntakeJobOutboundModel],
     )
     def get_inventory_intake_jobs(
+        request: Request,
         inbound_search_model: InventoryIntakeJobInboundSearchModel = Depends(),
     ) -> OutboundItemListResponse[InventoryIntakeJobOutboundModel]:
 
-        result = controller.search(inbound_search_model)
+        result = controller.search(inbound_search_model, request.headers)
 
         return result
 
-    @app.get('/inventory_intake_jobs/{id}',
-             response_model=InventoryIntakeJobOutboundModel)
-    def get_inventory_intake_job_by_id(id: UUID4):
+    @app.get(
+        '/inventory_intake_jobs/{id}',
+        response_model=InventoryIntakeJobOutboundModel
+    )
+    def get_inventory_intake_job_by_id(id: UUID4, request: Request):
 
-        result = controller.get_by_id(id)
+        result = controller.get_by_id(id, request.headers)
 
         return result
     
-    @app.post('/inventory_intake_jobs/{id}/run',
-             response_model=InventoryIntakeJobOutboundModel)
-    def run_inventory_intake_job (id: UUID4):
+    @app.post(
+        '/inventory_intake_jobs/{id}/run',
+        response_model=InventoryIntakeJobOutboundModel
+    )
+    def run_inventory_intake_job (id: UUID4, request: Request):
 
-        result = controller.run(id)
+        result = controller.run(id, request.headers)
 
         return result
 
-    @app.patch('/inventory_intake_jobs/{id}',
-               response_model=InventoryIntakeJobOutboundModel)
+    @app.patch(
+        '/inventory_intake_jobs/{id}',
+        response_model=InventoryIntakeJobOutboundModel
+    )
     def patch_inventory_intake_job(
-            id: UUID4, inbound_update_model: InventoryIntakeJobInboundUpdateModel):
-        result = controller.update(id, inbound_update_model)
+            id: UUID4, inbound_update_model: InventoryIntakeJobInboundUpdateModel,
+            request: Request
+        ) -> InventoryIntakeJobOutboundModel | None:
+        
+        result = controller.update(id, inbound_update_model, request.headers)
 
         return result
 
     @app.delete('/inventory_intake_jobs/{id}',
                 response_model=InventoryIntakeJobOutboundModel)
-    def delete_inventory_intake_job(id: UUID4):
+    def delete_inventory_intake_job(id: UUID4, request: Request):
 
-        result = controller.delete(id)
+        result = controller.delete(id, request.headers)
 
         return result

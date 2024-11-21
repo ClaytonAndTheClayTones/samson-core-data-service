@@ -4,14 +4,11 @@ import json
 from uuid import UUID
 
 import requests
-
  
-from managers.retailer_location_manager import RetailerLocationManager
 from models.inventory_intake_job_model import InventoryIntakeJobModel
 from models.inventory_product_snapshot_model import InventoryProductSnapshotCreateModel, InventoryProductSnapshotModel, InventoryProductSnapshotSearchModel
 from models.pos_integration_model import PosIntegrationModel
-from managers.inventory_product_snapshot_manager import InventoryProductSnapshotManager
-from managers.product_manager import ProductManager
+ 
 from models.product_model import ProductCreateModel, ProductModel, ProductVendorConfirmationStatuses
 from models.retailer_location_model import RetailerLocationModel 
 
@@ -107,17 +104,14 @@ class PosabitInventoryResponse:
         self.inventory = inventory
         
 class PosabitIntegration:
-
-    inventory_productsnapshot_manager: InventoryProductSnapshotManager = InventoryProductSnapshotManager()
-    product_manager: ProductManager = ProductManager()
-    retailer_location_manager: RetailerLocationManager = RetailerLocationManager()
-    
+  
     def get_all_pages_of_inventory_items(
         self,
         pos_integration_key: str, 
         start_date : datetime,
         end_date : datetime
     ) -> list[PosabitInventoryObject]:
+        
         running_list_of_inventory_items: list[PosabitInventoryObject] = []
  
         url = f"https://app.posabit.com/api/v2/venue/inventories?q[updated_at_gt]={start_date.isoformat(timespec='milliseconds').replace('+00:00','Z')}&q[updated_at_lt]={end_date.isoformat(timespec='milliseconds').replace('+00:00','Z')}"
@@ -161,11 +155,10 @@ class PosabitIntegration:
     def get_inventory_snapshot(
         self, 
         job: InventoryIntakeJobModel, 
+        retailer_location: RetailerLocationModel,
         pos_integration: PosIntegrationModel
     ) -> list[InventoryProductSnapshotCreateModel] | None:
-        return_list: list[InventoryProductSnapshotCreateModel] = []
-        
-        retailer_location = self.retailer_location_manager.get_by_id(job.retailer_location_id)
+        return_list: list[InventoryProductSnapshotCreateModel] = [] 
         
         start_date : datetime = datetime(
             year=job.snapshot_hour.year,
@@ -194,58 +187,7 @@ class PosabitIntegration:
             
             return_list.append(samson_inventory_snapshot_item)
         
-        return return_list
-        
-    def process_inventory_snapshot(
-        self, 
-        job: InventoryIntakeJobModel,
-        pos_integration: PosIntegrationModel
-    ) -> list[InventoryProductSnapshotModel]:
-        inventory_snapshot_rows: list[InventoryProductSnapshotModel] = []
-        
-        # get inventory snapshot
-        inventory_snapshot = self.get_inventory_snapshot(job, pos_integration)
-        
-        print(f"Found {len(inventory_snapshot)} inventory snapshot items")
-
-        # insert inventory snapshot rows
-        for inventory_snapshot_item in inventory_snapshot:
-            
-            try: 
-                # detect existing inventory snapshots
-                existing_snapshot_item_search_model = InventoryProductSnapshotSearchModel(
-                    retailer_location_ids = [inventory_snapshot_item.retailer_location_id],
-                    snapshot_hour_min= inventory_snapshot_item.snapshot_hour,
-                    snapshot_hour_max= inventory_snapshot_item.snapshot_hour,
-                ) 
-                
-                existing_snapshot_ids : list[UUID] = []
-                existing_snapshot_item = self.inventory_productsnapshot_manager.search(existing_snapshot_item_search_model)
-                
-                if(existing_snapshot_item is not None and len(existing_snapshot_item.items) > 0):
-                   
-                    for existing_snapshot_item in existing_snapshot_item.items:
-                        
-                        print(f"Discovered existing inventory snapshot {existing_snapshot_item.id} for retailer location {existing_snapshot_item.retailer_location_id} and snapshot_hour {existing_snapshot_item.snapshot_hour}, will delete after successful new insert")  
-                        existing_snapshot_ids.append(existing_snapshot_item.id) 
-                
-                # create new snapshot    
-                inserted_snapshot_item = self.inventory_productsnapshot_manager.create(inventory_snapshot_item)
-                  
-                print(f"Created new existing inventory snapshot {inserted_snapshot_item.id} for retailer location {inserted_snapshot_item.retailer_location_id} and snapshot_hour {inserted_snapshot_item.snapshot_hour}")  
-                        
-                inventory_snapshot_rows.append(inserted_snapshot_item)
-                
-                # delete existing snapshots
-                if(len(existing_snapshot_ids) > 0):
-                    for existing_snapshot_id in existing_snapshot_ids: 
-                        self.inventory_productsnapshot_manager.delete(existing_snapshot_ids) 
-                        print(f"Deleted existing inventory snapshot {existing_snapshot_id}")
-                      
-            except Exception as e:
-                print(f"Failed to insert inventory snapshot for sku {inventory_snapshot_item.sku} at retailer_location {inventory_snapshot_item.retailer_location_id} with error {e}")
-                
-        return inventory_snapshot_rows
+        return return_list 
 
     def convert_from_posabit_inventory_object_to_inventory_product_snapshot_create_model(
         self, 
@@ -265,39 +207,4 @@ class PosabitIntegration:
             price = posabit_inventory_object.price, 
             vendor_id = product_model.vendor_id,
             retailer_id= retailer_location.retailer_id
-        )
-        
-    def check_for_recognized_product_and_add_if_none(
-        self, 
-        inventory_item: PosabitInventoryObject,
-        retailer_location: RetailerLocationModel
-    ) -> ProductModel:
-        inventory_product_snapshot_search_model = InventoryProductSnapshotSearchModel(retailer_location_ids = [retailer_location.id], sku = inventory_item.sku)
-       
-        existing_product = self.inventory_productsnapshot_manager.search(inventory_product_snapshot_search_model)
-        
-        if(existing_product is None or len(existing_product.items) == 0):
-            
-            product_create_model = ProductCreateModel( 
-                confirmed_core_product_id= None,
-                vendor_id = None,
-                vendor_confirmation_status=ProductVendorConfirmationStatuses.Candidate,
-                referring_retailer_location_id= retailer_location.id,
-                referring_retailer_id=retailer_location.retailer_id,    
-                name = inventory_item.name,  
-            ) 
-            
-            product = self.product_manager.create(product_create_model)
-            
-            print(f"Created product {product.id} for retailer_location {retailer_location.id} and sku {inventory_item.sku}")
-            return product
-            
-        else:
-            product = self.product_manager.get_by_id(existing_product.items[0].product_id)
-          
-            print(f"Found existing product {product.id} for retailer_location {retailer_location.id} and sku {inventory_item.sku}")
-            return product
-        
-            
-            
-             
+        ) 

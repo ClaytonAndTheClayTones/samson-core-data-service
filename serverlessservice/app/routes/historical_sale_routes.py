@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, Response
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from pydantic import UUID4
 import uvicorn
 
@@ -23,8 +23,11 @@ def set_historical_sale_routes(app: FastAPI):
         status_code=201,
     )
     def post_retailerlocation(
-        inbound_create_model: HistoricalSaleInboundCreateModel, ):
-        result = controller.create(inbound_create_model)
+        inbound_create_model: HistoricalSaleInboundCreateModel,  
+        request: Request
+    ) -> HistoricalSaleOutboundModel | None:
+        
+        result = controller.create(inbound_create_model, request.headers)
 
         return result
 
@@ -33,25 +36,36 @@ def set_historical_sale_routes(app: FastAPI):
         response_model=OutboundItemListResponse[HistoricalSaleOutboundModel],
     )
     def get_retailer_locations(
+        request: Request,
         inbound_search_model: HistoricalSaleInboundSearchModel = Depends(),
     ) -> OutboundItemListResponse[HistoricalSaleOutboundModel]:
 
-        result = controller.search(inbound_search_model)
+        result = controller.search(inbound_search_model , request.headers)
 
         return result
 
-    @app.get('/historical_sales/{id}',
-             response_model=HistoricalSaleOutboundModel)
-    def get_retailerlocation_by_id(id: UUID4):
+    @app.get(
+        '/historical_sales/{id}',
+        response_model=HistoricalSaleOutboundModel
+    )
+    def get_retailerlocation_by_id(
+        id: UUID4,    
+        request: Request
+    ):
 
-        result = controller.get_by_id(id)
+        result = controller.get_by_id(id, request.headers)
 
         return result
  
-    @app.delete('/historical_sales/{id}',
-                response_model=HistoricalSaleOutboundModel)
-    def delete_retailerlocation(id: UUID4):
+    @app.delete(
+        '/historical_sales/{id}',
+        response_model=HistoricalSaleOutboundModel
+    )
+    def delete_retailerlocation(
+        id: UUID4,
+        request: Request
+    ):
 
-        result = controller.delete(id)
+        result = controller.delete(id, request.headers)
 
         return result

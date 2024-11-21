@@ -1,11 +1,11 @@
 from time import sleep
 from typing import Any
 
-from tests.qdk.operators.historical_sale_items import HistoricalSaleItemCreateModel, HistoricalSaleItemModel, HistoricalSaleItemSearchModel, create_historical_sale_item, get_historical_sale_item_by_id, get_historical_sale_items
+from tests.qdk.operators.historical_sale_items import HistoricalSaleItemCreateModel, HistoricalSaleItemModel, HistoricalSaleItemSearchModel, create_historical_sale_item, get_historical_sale_item_by_id, get_historical_sale_items, historical_sale_item_hydration_check
 from tests.qdk.operators.historical_sales import HistoricalSaleCreateModel
 from tests.qdk.operators.products import ProductCreateModel
 from tests.qdk.qa_requests import qa_get, qa_post
-from tests.qdk.types import PagedResponseItemList, TestContext
+from tests.qdk.types import PagedResponseItemList, RequestOperators, TestContext
 from tests.qdk.utils import assert_objects_are_equal, generate_random_string
 from urllib.parse import urlencode   
 from util.configuration import get_global_configuration, populate_configuration_if_not_exists 
@@ -21,6 +21,36 @@ def test_gets_historical_sale_item_by_id() -> None:
 
     assert result is not None
     assert result.id == posted_object.id
+    
+def test_gets_historical_sale_item_by_id_with_hydration() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object = create_historical_sale_item(
+        context, 
+        overrides=HistoricalSaleItemCreateModel(
+            product= ProductCreateModel(
+                create_vendor_if_null= True, 
+            ),
+            historical_sale= HistoricalSaleCreateModel(
+                create_sales_intake_job_if_null= True
+            )
+        )
+    )
+    
+    result = get_historical_sale_item_by_id(
+        context,
+        posted_object.id,
+        request_operators=RequestOperators(
+            hydration_properties=["product", "product_vendor", "historical_sale", "retailer_location", "retailer", "sales_intake_job"]
+        )
+    )
+
+    assert result is not None
+    assert result.id == posted_object.id
+    
+    historical_sale_item_hydration_check(result)
 
 def test_gets_historical_sale_items_invalid_inputs() -> None:
      
@@ -152,7 +182,100 @@ def test_gets_historical_sale_items_with_ids_filter() -> None:
     posted_item_4: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
+
+def test_gets_historical_sale_items_with_ids_filter_with_hydration() -> None:
+    populate_configuration_if_not_exists() 
+
+    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
+
+    posted_object_1: HistoricalSaleItemModel = create_historical_sale_item(
+        context, 
+        overrides=HistoricalSaleItemCreateModel(
+            product= ProductCreateModel(
+                create_vendor_if_null= True, 
+            ),
+            historical_sale= HistoricalSaleCreateModel(
+                create_sales_intake_job_if_null= True
+            )
+        )
+    )
+        
+    posted_object_2: HistoricalSaleItemModel = create_historical_sale_item(
+        context, 
+        overrides=HistoricalSaleItemCreateModel(
+            product= ProductCreateModel(
+                create_vendor_if_null= True, 
+            ),
+            historical_sale= HistoricalSaleCreateModel(
+                create_sales_intake_job_if_null= True
+            )
+        )
+    )
+    posted_object_3: HistoricalSaleItemModel = create_historical_sale_item(
+        context, 
+        overrides=HistoricalSaleItemCreateModel(
+            product= ProductCreateModel(
+                create_vendor_if_null= True, 
+            ),
+            historical_sale= HistoricalSaleCreateModel(
+                create_sales_intake_job_if_null= True
+            )
+        )
+    )
     
+    posted_object_4: HistoricalSaleItemModel = create_historical_sale_item(
+        context, 
+        overrides=HistoricalSaleItemCreateModel(
+            product= ProductCreateModel(
+                create_vendor_if_null= True, 
+            ),
+            historical_sale= HistoricalSaleCreateModel(
+                create_sales_intake_job_if_null= True
+            )
+        )
+    )
+
+    filters: HistoricalSaleItemSearchModel = HistoricalSaleItemSearchModel(
+        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}"
+    )
+    
+    result: PagedResponseItemList[HistoricalSaleItemModel] = get_historical_sale_items(context, filters, request_operators=RequestOperators(hydration_properties=["product", "product_vendor", "historical_sale", "retailer_location", "retailer", "sales_intake_job"]))
+
+    assert result is not None
+    assert result.items is not None
+    
+    assert result.paging is not None
+    assert result.paging.page == 1
+    assert result.paging.page_length == 25
+    assert result.paging.sort_by == 'created_at'
+    assert result.paging.is_sort_descending == False
+
+    assert len(result.items) == 4 
+    
+    posted_item_1: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_1.id]
+    assert len(posted_item_1) == 1  
+    assert_objects_are_equal(posted_item_1[0], posted_object_1, exempt_properties=["product", "product_vendor", "historical_sale", "retailer_location", "retailer", "sales_intake_job"])
+
+    historical_sale_item_hydration_check(posted_item_1[0])
+
+    posted_item_2: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_2.id]
+    assert len(posted_item_2) == 1 
+    assert_objects_are_equal(posted_item_2[0], posted_object_2, exempt_properties=["product", "product_vendor", "historical_sale", "retailer_location", "retailer", "sales_intake_job"])
+    
+    historical_sale_item_hydration_check(posted_item_2[0])
+  
+    posted_item_3: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_3.id]
+    assert len(posted_item_3) == 1 
+    assert_objects_are_equal(posted_item_3[0], posted_object_3, exempt_properties=["product", "product_vendor", "historical_sale", "retailer_location", "retailer", "sales_intake_job"])
+    
+    historical_sale_item_hydration_check(posted_item_3[0])
+  
+    posted_item_4: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_4.id]
+    assert len(posted_item_4) == 1 
+    assert_objects_are_equal(posted_item_4[0], posted_object_4, exempt_properties=["product", "product_vendor", "historical_sale", "retailer_location", "retailer", "sales_intake_job"])
+    
+    historical_sale_item_hydration_check(posted_item_4[0])
+      
 def test_gets_historical_sale_items_with_retailer_ids_filter() -> None:
     populate_configuration_if_not_exists() 
 
@@ -177,11 +300,11 @@ def test_gets_historical_sale_items_with_retailer_ids_filter() -> None:
     
     posted_item_1: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
+    assert_objects_are_equal(posted_item_1[0], posted_object_1)  
   
     posted_item_3: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
+    assert_objects_are_equal(posted_item_3[0], posted_object_3) 
 
     posted_item_4: list[HistoricalSaleItemModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 

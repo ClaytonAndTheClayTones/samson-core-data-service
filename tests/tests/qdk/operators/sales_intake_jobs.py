@@ -69,10 +69,10 @@ class SalesIntakeJobModel():
         self.retailer_id = retailer_id
         self.snapshot_hour = snapshot_hour
         self.status = status
-        self.parent_batch_job = parent_batch_job
         self.parent_batch_job_id = parent_batch_job_id
-        self.retailer = retailer
-        self.retailer_location = retailer_location
+        self.retailer = RetailerModel(**retailer) if retailer is not None else None
+        self.retailer_location = RetailerLocationModel(**retailer_location) if retailer_location is not None else None
+        self.parent_batch_job = SalesIntakeBatchJobModel(**parent_batch_job) if parent_batch_job is not None else None
         self.status_details = status_details
         self.created_at = created_at
         self.updated_at = updated_at
@@ -191,7 +191,7 @@ def get_sales_intake_job_by_id(
 
     url: str = f"{context.api_url}/sales_intake_jobs/{id}"
     
-    result: Response = qa_get(url)
+    result: Response = qa_get(url, request_operators = request_operators)
      
     return_object = SalesIntakeJobModel(**result.json())
     
@@ -240,10 +240,24 @@ def update_sales_intake_job(
  
         result_dict = result.json()
 
-        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["updated_at"])
+        assert_object_was_updated(original_object.__dict__, update_model.__dict__, result_dict, ["updated_at", "parent_batch_job", "retailer", "retailer_location"])
  
         assert result_dict['updated_at'] is not None
     
     return_object = SalesIntakeJobModel(**result.json())
     
     return return_object
+
+def sales_intake_job_hydration_check(sales_intake_job: SalesIntakeJobModel) -> None:
+
+    assert sales_intake_job.retailer_location is not None
+    assert sales_intake_job.retailer_location.id is not None
+    assert sales_intake_job.retailer_location.id == sales_intake_job.retailer_location_id
+    
+    assert sales_intake_job.retailer is not None
+    assert sales_intake_job.retailer.id is not None
+    assert sales_intake_job.retailer.id == sales_intake_job.retailer_id
+    
+    assert sales_intake_job.parent_batch_job is not None
+    assert sales_intake_job.parent_batch_job.id is not None
+    assert sales_intake_job.parent_batch_job.id == sales_intake_job.parent_batch_job_id

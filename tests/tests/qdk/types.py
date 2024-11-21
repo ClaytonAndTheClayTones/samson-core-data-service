@@ -8,10 +8,12 @@ class TestContext:
         self.api_url = api_url
 
 class RequestOperators:
-    def __init__(self, 
-                hydration_properties: list[str] | None = None,
-                added_headers: dict[str,str] | None = None, 
-                token: str | None = None) -> None:
+    def __init__(
+        self, 
+        hydration_properties: list[str] | None = None,
+        added_headers: dict[str,str] | None = None, 
+        token: str | None = None
+    ) -> None:
     
         self.hydration_properties = hydration_properties or []
         self.added_headers = added_headers or {}

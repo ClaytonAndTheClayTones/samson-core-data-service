@@ -5,20 +5,23 @@ from typing import Any, Type, TypeVar
 from tests.qdk.types import RequestOperators
 from tests.qdk.utils import transform_operators_to_headers
 
-def qa_post(url: str, body: object, request_operators: RequestOperators | None = None):
+def qa_post(
+   url: str,
+   body: object, 
+   request_operators: RequestOperators | None = None,
+):
    request_body: dict[str, Any]
 
    if(not isinstance(body, dict)):
       request_body = body.__dict__
    else:
       request_body = body
-
-
+ 
    response: requests.Response
 
    if(request_operators is not None):
       headers: dict[str, str] = transform_operators_to_headers(request_operators)
-      response = requests.post(url = url, data = request_body, headers = headers)
+      response = requests.post(url = url, json = request_body, headers = headers)
    else:
       response = requests.post(url = url, json = request_body)
 
@@ -36,7 +39,7 @@ def qa_patch(url: str, body: object, request_operators: RequestOperators | None 
 
    if(request_operators is not None):
       headers: dict[str, str] = transform_operators_to_headers(request_operators)
-      response = requests.patch(url = url, data = request_body, headers = headers)
+      response = requests.patch(url = url, json = request_body, headers = headers)
    else:
       response = requests.patch(url = url, json = request_body)
 
