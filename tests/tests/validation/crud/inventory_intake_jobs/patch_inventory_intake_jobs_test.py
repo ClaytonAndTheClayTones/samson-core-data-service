@@ -59,10 +59,14 @@ def test_patches_valid_inventory_intake_job_with_hydration() -> None:
     populate_configuration_if_not_exists() 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    random_string = generate_random_string(14)
-
-    posted_object: InventoryIntakeJobModel = create_inventory_intake_job(context,   InventoryIntakeJobCreateModel(create_parent_batch_job_if_null= True))
+    
+    posted_object: InventoryIntakeJobModel = create_inventory_intake_job(
+        context,   
+        InventoryIntakeJobCreateModel(
+            create_parent_batch_job_if_null = True,
+            create_simulator_response_if_null = True
+        )
+    )
  
     update_object: InventoryIntakeJobUpdateModel = InventoryIntakeJobUpdateModel(
         status = "Complete",
@@ -71,6 +75,6 @@ def test_patches_valid_inventory_intake_job_with_hydration() -> None:
         }
     )
 
-    result = update_inventory_intake_job(context, posted_object.id or "", update_object, request_operators = RequestOperators(hydration_properties=["retailer_location", "retailer", "parent_batch_job"]))
+    result = update_inventory_intake_job(context, posted_object.id or "", update_object, request_operators = RequestOperators(hydration_properties=["retailer_location", "retailer", "parent_batch_job", "simulator_response"]))
     
     inventory_intake_job_hydration_check(result)

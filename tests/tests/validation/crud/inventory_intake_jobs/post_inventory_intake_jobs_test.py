@@ -89,10 +89,11 @@ def test_posts_valid_inventory_intake_job_with_hydration() -> None:
     result = create_inventory_intake_job(
         context,
         InventoryIntakeJobCreateModel(
-            create_parent_batch_job_if_null=True
+            create_parent_batch_job_if_null=True,
+            create_simulator_response_if_null=True
         ),
         request_operators=RequestOperators(
-            hydration_properties=["retailer_location", "retailer", "parent_batch_job"]
+            hydration_properties=["retailer_location", "retailer", "parent_batch_job", "simulator_response"]
         )
     )  
     

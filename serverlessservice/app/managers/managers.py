@@ -690,6 +690,16 @@ class Manager:
             request_operators.hydration if request_operators is not None else None
         ) 
  
+  
+        # hydrate parent batch job
+        self.hydrator.hydrate_target(
+            "simulator_response",
+            result_list, 
+            PosSimulatorResponseSearchModel(),
+            self.search_pos_simulator_responses,
+            request_operators.hydration if request_operators is not None else None
+        ) 
+ 
     def create_inventory_product_snapshot(
         
         self, 
@@ -1324,9 +1334,7 @@ class Manager:
         id: UUID, 
         request_operators: RequestOperators | None = None
     ) -> RetailerModel | None:
-
-        self.posabit_integration.testerfunc(id)
-        
+ 
         result = self.retailer_accessor.select_by_id(
             id = id,
             request_operators = request_operators

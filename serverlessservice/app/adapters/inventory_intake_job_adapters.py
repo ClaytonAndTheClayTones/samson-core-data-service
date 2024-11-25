@@ -1,5 +1,6 @@
 import json
 from typing import Any
+from adapters.pos_simulator_response_adapters import PosSimulatorResponseDataAdapter
 from adapters.retailer_adapters import RetailerDataAdapter
 from adapters.retailer_location_adapters import RetailerLocationDataAdapter
 from adapters.sales_intake_batch_job_adapters import SalesIntakeBatchJobDataAdapter
@@ -28,11 +29,13 @@ class InventoryIntakeJobDataAdapter:
         retailer_adapter : RetailerDataAdapter = RetailerDataAdapter(),
         retailer_location_adapter : RetailerLocationDataAdapter = RetailerLocationDataAdapter(),
         sales_intake_batch_job_adapter : SalesIntakeBatchJobDataAdapter = SalesIntakeBatchJobDataAdapter(),
+        pos_simulator_response_adapter : PosSimulatorResponseDataAdapter = PosSimulatorResponseDataAdapter(),
         common_utilities: CommonUtilities = CommonUtilities()
     ) -> None:
         
         self.retailer_adapter = retailer_adapter
         self.retailer_location_adapter = retailer_location_adapter
+        self.pos_simulator_response_adapter = pos_simulator_response_adapter
         self.sales_intake_batch_job_adapter = sales_intake_batch_job_adapter
         self.common_utilities = common_utilities
         
@@ -44,6 +47,7 @@ class InventoryIntakeJobDataAdapter:
         model = InventoryIntakeJobCreateModel( 
             retailer_id=None,
             retailer_location_id=inbound_create_model.retailer_location_id,
+            simulator_response_id=inbound_create_model.simulator_response_id,
             parent_batch_job_id=inbound_create_model.parent_batch_job_id,
             snapshot_hour=inbound_create_model.snapshot_hour,
             status=inbound_create_model.status,
@@ -137,6 +141,7 @@ class InventoryIntakeJobDataAdapter:
             'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
             'retailer_location_id': str(model.retailer_location_id) if model.retailer_location_id is not None else None ,
             'parent_batch_job_id': str(model.parent_batch_job_id) if model.parent_batch_job_id is not None else None ,
+            'simulator_response_id': str(model.simulator_response_id) if model.simulator_response_id is not None else None ,
             'snapshot_hour': model.snapshot_hour,
             'status': model.status.value if model.status is not None else None, 
             'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
@@ -167,6 +172,7 @@ class InventoryIntakeJobDataAdapter:
             retailer_id=database_model['retailer_id'],
             retailer_location_id=database_model['retailer_location_id'],
             parent_batch_job_id=database_model['parent_batch_job_id'],
+            simulator_response_id=database_model['simulator_response_id'],
             snapshot_hour=database_model['snapshot_hour'],
             status=database_model['status'],
             status_details=database_model['status_details'],
@@ -189,6 +195,8 @@ class InventoryIntakeJobDataAdapter:
             retailer_location=self.retailer_location_adapter.convert_from_model_to_outbound_model(model.retailer_location) if model.retailer_location is not None else None,
             parent_batch_job_id=model.parent_batch_job_id,
             parent_batch_job=self.sales_intake_batch_job_adapter.convert_from_model_to_outbound_model(model.parent_batch_job) if model.parent_batch_job is not None else None,
+            simulator_response_id=model.simulator_response_id,
+            simulator_response=self.pos_simulator_response_adapter.convert_from_model_to_outbound_model(model.simulator_response) if model.simulator_response is not None else None,
             snapshot_hour=model.snapshot_hour.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             status=model.status,
             status_details=model.status_details,

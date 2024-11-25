@@ -12,7 +12,7 @@ CREATE INDEX IF NOT EXISTS idx_pos_simulator_responses_created_at ON public.pos_
  
 -- Enums
   
-ALTER TABLE public.pos_simulator_responses DROP CONSTRAINT IF EXISTS enum_pos_simulator_responses_pos_platform;
+ALTER TABLE public.pos_simulator_responses DROP CONSTRAINT IF EXISTS enum_pos_simulator_responses_action_type;
   
 ALTER TABLE public.pos_simulator_responses  
    ADD CONSTRAINT enum_pos_simulator_responses_action_type

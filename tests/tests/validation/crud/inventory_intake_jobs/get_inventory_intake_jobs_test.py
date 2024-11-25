@@ -18,16 +18,28 @@ def test_gets_inventory_intake_job_by_id() -> None:
 
     assert result is not None
     assert result.id == posted_object.id
-    
-    
+
 def test_gets_inventory_intake_job_by_id_with_hydration() -> None:
-    populate_configuration_if_not_exists() 
+
+    populate_configuration_if_not_exists(
+
+    ) 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(create_parent_batch_job_if_null= True))
+    posted_object = create_inventory_intake_job(
+        context, 
+        InventoryIntakeJobCreateModel(
+            create_parent_batch_job_if_null = True,
+            create_simulator_response_if_null= True
+        )
+    )
 
-    result = get_inventory_intake_job_by_id(context, posted_object.id, request_operators = RequestOperators(hydration_properties=["retailer_location", "retailer", "parent_batch_job"]))
+    result = get_inventory_intake_job_by_id(context, posted_object.id, request_operators = RequestOperators(hydration_properties=[
+        "retailer_location",
+         "retailer",
+          "parent_batch_job"
+          , "simulator_response"]))
 
     assert result is not None
     assert result.id == posted_object.id
@@ -147,20 +159,61 @@ def test_gets_inventory_intake_jobs_with_ids_filter() -> None:
     assert_objects_are_equal(posted_item_4[0], posted_object_4)
 
 def test_gets_inventory_intake_jobs_with_ids_filter_with_hydration() -> None:
-    populate_configuration_if_not_exists() 
+
+    populate_configuration_if_not_exists(
+
+    ) 
 
     context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
 
-    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(create_parent_batch_job_if_null= True))
-    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(create_parent_batch_job_if_null= True))
-    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(create_parent_batch_job_if_null= True))
-    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(context, InventoryIntakeJobCreateModel(create_parent_batch_job_if_null= True))
+    posted_object_1: InventoryIntakeJobModel = create_inventory_intake_job(
+        context,
+        InventoryIntakeJobCreateModel(
+            create_parent_batch_job_if_null = True,
+            create_simulator_response_if_null= True
+        )
+    )
+    
+    posted_object_2: InventoryIntakeJobModel = create_inventory_intake_job(
+        context,
+        InventoryIntakeJobCreateModel(
+            create_parent_batch_job_if_null = True,
+            create_simulator_response_if_null=True
+        )
+    )
+    
+    posted_object_3: InventoryIntakeJobModel = create_inventory_intake_job(
+        context,
+        InventoryIntakeJobCreateModel(
+            create_parent_batch_job_if_null = True,
+            create_simulator_response_if_null=True
+        )
+    )
+    
+    posted_object_4: InventoryIntakeJobModel = create_inventory_intake_job(
+        context,
+        InventoryIntakeJobCreateModel(
+            create_parent_batch_job_if_null = True,
+            create_simulator_response_if_null=True
+        )
+    )
 
     filters: InventoryIntakeJobSearchModel = InventoryIntakeJobSearchModel(
         ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}"
     )
     
-    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(context, filters, request_operators = RequestOperators(hydration_properties=["retailer_location", "retailer", "parent_batch_job"]))
+    result: PagedResponseItemList[InventoryIntakeJobModel] = get_inventory_intake_jobs(
+        context,
+        filters,
+        request_operators = RequestOperators(
+            hydration_properties=[
+                "retailer_location",
+                "retailer",
+                "parent_batch_job",
+                "simulator_response"
+            ]
+        )
+    )
 
     assert result is not None
     assert result.items is not None
@@ -175,27 +228,28 @@ def test_gets_inventory_intake_jobs_with_ids_filter_with_hydration() -> None:
     
     posted_item_1: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
     assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1, ['retailer_location', 'retailer', 'parent_batch_job'])
+    assert_objects_are_equal(posted_item_1[0], posted_object_1, ['retailer_location', 'retailer', 'parent_batch_job', 'simulator_response'])
     
     inventory_intake_job_hydration_check(posted_item_1[0])
 
     posted_item_2: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_2.id]
     assert len(posted_item_2) == 1 
-    assert_objects_are_equal(posted_item_2[0], posted_object_2, ['retailer_location', 'retailer', 'parent_batch_job'])
+    assert_objects_are_equal(posted_item_2[0], posted_object_2, ['retailer_location', 'retailer', 'parent_batch_job', 'simulator_response'])
     
     inventory_intake_job_hydration_check(posted_item_2[0])
-  
+
     posted_item_3: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
     assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3, ['retailer_location', 'retailer', 'parent_batch_job'])
+    assert_objects_are_equal(posted_item_3[0], posted_object_3, ['retailer_location', 'retailer', 'parent_batch_job', 'simulator_response'])
     
     inventory_intake_job_hydration_check(posted_item_3[0])
   
-    posted_item_4: list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
+    posted_item_4:list[InventoryIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
     assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4, ['retailer_location', 'retailer', 'parent_batch_job'])
+    assert_objects_are_equal(posted_item_4[0], posted_object_4, ['retailer_location', 'retailer', 'parent_batch_job', 'simulator_response'])
     
     inventory_intake_job_hydration_check(posted_item_4[0])
+
 
 def test_gets_inventory_intake_jobs_with_paging() -> None:
     populate_configuration_if_not_exists() 
