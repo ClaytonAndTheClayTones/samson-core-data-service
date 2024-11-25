@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Any, Generic, Optional, TypeVar
+from typing import Annotated, Generic, Optional, TypeVar
 from uuid import UUID
 
 from fastapi import Query

@@ -8,6 +8,7 @@ from data_accessors.inventory_intake_job_accessor import InventoryIntakeJobDataA
 from data_accessors.inventory_product_snapshot_accessor import InventoryProductSnapshotDataAccessor
 from data_accessors.pos_integration_accessor import PosIntegrationDataAccessor
 from data_accessors.pos_integration_call_accessor import PosIntegrationCallDataAccessor
+from data_accessors.pos_simulator_response_accessor import PosSimulatorResponseDataAccessor
 from data_accessors.product_accessor import ProductDataAccessor
 from data_accessors.retailer_accessor import RetailerDataAccessor
 from data_accessors.retailer_location_accessor import RetailerLocationDataAccessor
@@ -57,6 +58,7 @@ from models.pos_integration_model import (
     PosIntegrationUpdateModel, 
     PosPlatforms
 )
+from models.pos_simulator_response_model import PosSimulatorResponseCreateModel, PosSimulatorResponseModel, PosSimulatorResponseSearchModel
 from models.product_model import (   
     ProductCreateModel, 
     ProductModel, 
@@ -150,6 +152,7 @@ class Manager:
         historical_sales_accessor: HistoricalSaleDataAccessor = HistoricalSaleDataAccessor(),   
         pos_integration_accessor: PosIntegrationDataAccessor = PosIntegrationDataAccessor(),
         pos_integration_call_accessor: PosIntegrationCallDataAccessor = PosIntegrationCallDataAccessor(),
+        pos_simulator_response_accessor: PosSimulatorResponseDataAccessor = PosSimulatorResponseDataAccessor(),
         posabit_integration: PosabitIntegration = PosabitIntegration(),
         inventory_intake_batch_job_accessor: InventoryIntakeBatchJobDataAccessor = InventoryIntakeBatchJobDataAccessor(),
         inventory_intake_job_accessor: InventoryIntakeJobDataAccessor = InventoryIntakeJobDataAccessor(),
@@ -170,6 +173,7 @@ class Manager:
         self.historical_sales_accessor = historical_sales_accessor
         self.pos_integration_accessor = pos_integration_accessor
         self.pos_integration_call_accessor = pos_integration_call_accessor
+        self.pos_simulator_response_accessor = pos_simulator_response_accessor
         self.posabit_integration = posabit_integration
         self.inventory_intake_batch_job_accessor = inventory_intake_batch_job_accessor
         self.inventory_intake_job_accessor = inventory_intake_job_accessor
@@ -1018,6 +1022,73 @@ class Manager:
             request_operators.hydration if request_operators is not None else None
         )
      
+    def create_pos_simulator_response(
+        self, 
+        inbound_model: PosSimulatorResponseCreateModel,
+        request_operators: RequestOperators | None = None
+    ) -> PosSimulatorResponseModel | None:
+  
+        result = self.pos_simulator_response_accessor.insert(
+            model = inbound_model,
+            request_operators = request_operators
+        )
+        
+        self.hydrate_pos_simulator_responses([result], request_operators)
+
+        return result
+
+    def get_pos_simulator_response_by_id(
+        self, 
+        id: UUID,
+        request_operators: RequestOperators | None = None
+    ) -> PosSimulatorResponseModel | None:
+
+        result = self.pos_simulator_response_accessor.select_by_id(
+            id = id,
+            request_operators = request_operators
+        )
+
+        self.hydrate_pos_simulator_responses([result], request_operators)
+        
+        return result
+
+    def search_pos_simulator_responses(
+        self,
+        model: PosSimulatorResponseSearchModel,
+        paging_model: PagingModel | None = None,
+        request_operators: RequestOperators | None = None
+    ) -> ItemList[PosSimulatorResponseModel]:
+
+        result = self.pos_simulator_response_accessor.select(
+            model = model,
+            paging_model = paging_model,
+            request_operators = request_operators
+        )
+        
+        self.hydrate_pos_simulator_responses(result.items, request_operators)
+        
+        return result
+
+    def delete_pos_simulator_response(
+        self, 
+        id: UUID,
+        request_operators: RequestOperators | None = None
+    ) -> PosSimulatorResponseModel | None:
+
+        result: None | PosSimulatorResponseModel = self.pos_simulator_response_accessor.delete(
+            id = id,
+            request_operators = request_operators
+        )
+
+        return result
+
+    def hydrate_pos_simulator_responses(
+        self,
+        result_list: list[PosSimulatorResponseModel],
+        request_operators: RequestOperators | None = None
+    ) -> None:
+        pass
+    
     def create_product(
         self, 
         inbound_model: ProductCreateModel, 
@@ -1254,6 +1325,8 @@ class Manager:
         request_operators: RequestOperators | None = None
     ) -> RetailerModel | None:
 
+        self.posabit_integration.testerfunc(id)
+        
         result = self.retailer_accessor.select_by_id(
             id = id,
             request_operators = request_operators
@@ -1780,54 +1853,3 @@ class Manager:
         request_operators: RequestOperators | None = None
     ): 
         return
-    
-    def process_inventory_snapshot(
-        self, 
-        job: InventoryIntakeJobModel,
-        pos_integration: PosIntegrationModel
-    ) -> list[InventoryProductSnapshotModel]:
-        inventory_snapshot_rows: list[InventoryProductSnapshotModel] = []
-        
-        # get inventory snapshot
-        inventory_snapshot = self.posabit_integration.get_inventory_snapshot(job, pos_integration)
-        
-        print(f"Found {len(inventory_snapshot)} inventory snapshot items")
-
-        # insert inventory snapshot rows
-        for inventory_snapshot_item in inventory_snapshot:
-            
-            try: 
-                # detect existing inventory snapshots
-                existing_snapshot_item_search_model = InventoryProductSnapshotSearchModel(
-                    retailer_location_ids = [inventory_snapshot_item.retailer_location_id],
-                    snapshot_hour_min= inventory_snapshot_item.snapshot_hour,
-                    snapshot_hour_max= inventory_snapshot_item.snapshot_hour,
-                ) 
-                
-                existing_snapshot_ids : list[UUID] = []
-                existing_snapshot_item = self.search_inventory_product_snapshots(existing_snapshot_item_search_model)
-                
-                if(existing_snapshot_item is not None and len(existing_snapshot_item.items) > 0):
-                   
-                    for existing_snapshot_item in existing_snapshot_item.items:
-                        
-                        print(f"Discovered existing inventory snapshot {existing_snapshot_item.id} for retailer location {existing_snapshot_item.retailer_location_id} and snapshot_hour {existing_snapshot_item.snapshot_hour}, will delete after successful new insert")  
-                        existing_snapshot_ids.append(existing_snapshot_item.id) 
-                
-                # create new snapshot    
-                inserted_snapshot_item = self.create_inventory_product_snapshot(inventory_snapshot_item)
-                  
-                print(f"Created new existing inventory snapshot {inserted_snapshot_item.id} for retailer location {inserted_snapshot_item.retailer_location_id} and snapshot_hour {inserted_snapshot_item.snapshot_hour}")  
-                        
-                inventory_snapshot_rows.append(inserted_snapshot_item)
-                
-                # delete existing snapshots
-                if(len(existing_snapshot_ids) > 0):
-                    for existing_snapshot_id in existing_snapshot_ids: 
-                        self.delete_inventory_product_snapshot(existing_snapshot_id) 
-                        print(f"Deleted existing inventory snapshot {existing_snapshot_id}")
-                      
-            except Exception as e:
-                print(f"Failed to insert inventory snapshot for sku {inventory_snapshot_item.sku} at retailer_location {inventory_snapshot_item.retailer_location_id} with error {e}")
-                
-        return inventory_snapshot_rows

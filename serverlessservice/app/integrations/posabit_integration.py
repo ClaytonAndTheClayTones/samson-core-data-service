@@ -5,12 +5,19 @@ from uuid import UUID
 
 import requests
  
+from integrations.types import GenericInventoryObject
 from models.inventory_intake_job_model import InventoryIntakeJobModel
 from models.inventory_product_snapshot_model import InventoryProductSnapshotCreateModel, InventoryProductSnapshotModel, InventoryProductSnapshotSearchModel
 from models.pos_integration_model import PosIntegrationModel
  
 from models.product_model import ProductCreateModel, ProductModel, ProductVendorConfirmationStatuses
 from models.retailer_location_model import RetailerLocationModel 
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from managers.managers import Manager
+
 
 class PosabitInventoryObject:
     def __init__(self, 
@@ -152,7 +159,7 @@ class PosabitIntegration:
             
         return running_list_of_inventory_items
         
-    def get_inventory_snapshot(
+    def get_inventory_snapshots(
         self, 
         job: InventoryIntakeJobModel, 
         retailer_location: RetailerLocationModel,
@@ -175,36 +182,23 @@ class PosabitIntegration:
         inventory_items = self.get_all_pages_of_inventory_items(pos_integration.key, start_date, end_date)
          
         for inventory_item in inventory_items:
-            
-            connected_samson_product = self.check_for_recognized_product_and_add_if_none(inventory_item=inventory_item, retailer_location=retailer_location)
-            
-            samson_inventory_snapshot_item = self.convert_from_posabit_inventory_object_to_inventory_product_snapshot_create_model(
-                job= job,
-                posabit_inventory_object= inventory_item, 
-                retailer_location=retailer_location,
-                product_model=connected_samson_product
+              
+            samson_inventory_snapshot_item = self.convert_from_posabit_inventory_object_to_generic_inventory_object( 
+                posabit_inventory_object= inventory_item
             )
             
             return_list.append(samson_inventory_snapshot_item)
         
         return return_list 
 
-    def convert_from_posabit_inventory_object_to_inventory_product_snapshot_create_model(
-        self, 
-        job: InventoryIntakeJobModel,
-        posabit_inventory_object: PosabitInventoryObject,
-        retailer_location: RetailerLocationModel,
-        product_model: ProductModel,
+    def convert_from_posabit_inventory_object_to_generic_inventory_object(
+        self,  
+        posabit_inventory_object: PosabitInventoryObject, 
  
-    ) -> InventoryProductSnapshotCreateModel:
-        return InventoryProductSnapshotCreateModel(
-            inventory_intake_job_id= job.id,
-            product_id= product_model.id,
-            retailer_location_id = retailer_location.id, 
-            snapshot_hour = job.snapshot_hour,
+    ) -> GenericInventoryObject:
+        return GenericInventoryObject( 
             sku = posabit_inventory_object.sku,
             stock_on_hand= posabit_inventory_object.quantity_on_hand,
-            price = posabit_inventory_object.price, 
-            vendor_id = product_model.vendor_id,
-            retailer_id= retailer_location.retailer_id
-        ) 
+            price = posabit_inventory_object.price,  
+        )  
+    

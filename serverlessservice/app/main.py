@@ -12,6 +12,7 @@ from routes.inventory_intake_job_routes import set_inventory_intake_job_routes
 from routes.inventory_intake_batch_job_routes import set_inventory_intake_batch_job_routes
 from routes.inventory_product_snapshot_routes import set_inventory_product_snapshot_routes
 from routes.pos_integration_call_routes import set_pos_integration_call_routes
+from routes.pos_simulator_response_routes import set_pos_simulator_response_routes
 from routes.product_routes import set_product_routes
 from routes.user_routes import set_user_routes
 from routes.utility_routes import set_utility_routes
@@ -56,7 +57,9 @@ set_retailer_location_routes(app)
 set_user_routes(app)
 set_vendor_routes(app)
 set_pos_integration_routes(app)
-set_pos_integration_call_routes(app)
+set_pos_integration_call_routes(app)    
+set_pos_simulator_response_routes(app)
+
 set_product_routes(app)
 set_inventory_intake_job_routes(app)
 set_inventory_intake_batch_job_routes(app)
@@ -65,6 +68,7 @@ set_sales_intake_batch_job_routes(app)
 set_inventory_product_snapshot_routes(app)
 set_historical_sale_routes(app)
 set_historical_sale_item_routes(app)
+
 
 if __name__ == '__main__' and enviroment.configuration.STAGE == 'local':
     uvicorn.run(app, host='0.0.0.0', port=8001)

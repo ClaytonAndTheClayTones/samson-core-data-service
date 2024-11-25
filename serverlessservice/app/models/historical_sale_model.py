@@ -1,11 +1,8 @@
-from datetime import datetime
-from enum import Enum
-from typing import Annotated, Any, Optional
+from datetime import datetime 
+from typing import Annotated, Optional
 from uuid import UUID
 from fastapi import Query
-from pydantic import UUID4, BaseModel, BeforeValidator, EmailStr, Field, Strict
-from pydantic_core import PydanticUndefined
-from enum import Enum
+from pydantic import UUID4, BaseModel, BeforeValidator, Field, Strict  
 
 from models.common_model import (
     CommonDatabaseModel,
