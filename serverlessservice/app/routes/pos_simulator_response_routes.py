@@ -1,3 +1,4 @@
+from typing import Any
 from fastapi import Depends, FastAPI, Request
 from pydantic import UUID4 
 
@@ -21,7 +22,7 @@ def set_pos_simulator_response_routes(app: FastAPI):
         response_model=PosSimulatorResponseOutboundModel,
         status_code=201,
     )
-    def post_retailerlocation(
+    def post_pos_simulator_response(
         inbound_create_model: PosSimulatorResponseInboundCreateModel,
         request: Request
     ):
@@ -44,15 +45,24 @@ def set_pos_simulator_response_routes(app: FastAPI):
 
     @app.get('/pos_simulator_responses/{id}',
              response_model=PosSimulatorResponseOutboundModel)
-    def get_retailerlocation_by_id(id: UUID4, request: Request):
+    def get_pos_simulator_response_by_id(id: UUID4, request: Request):
 
         result = controller.get_by_id(id, request.headers)
+
+        return result
+    
+    
+    @app.get('/pos_simulator_responses/{id}/call',
+             response_model=dict[str, Any | None])
+    def call_pos_simulator_response(id: UUID4, request: Request):
+
+        result = controller.call(id, request.headers)
 
         return result
   
     @app.delete('/pos_simulator_responses/{id}',
                 response_model=PosSimulatorResponseOutboundModel)
-    def delete_retailerlocation(id: UUID4, request: Request):
+    def delete_pos_simulator_response(id: UUID4, request: Request):
 
         result = controller.delete(id, request.headers)
 

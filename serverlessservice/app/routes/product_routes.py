@@ -25,7 +25,7 @@ def set_product_routes(app: FastAPI):
         response_model=ProductOutboundModel,
         status_code=201,
     )
-    def post_retailerlocation(
+    def post_product(
         inbound_create_model: ProductInboundCreateModel, 
         request: Request
     ):
@@ -50,7 +50,7 @@ def set_product_routes(app: FastAPI):
         '/products/{id}',
         response_model=ProductOutboundModel,
     )
-    def get_retailerlocation_by_id(
+    def get_product_by_id(
         id: UUID4, 
         request: Request
     ):
@@ -63,7 +63,7 @@ def set_product_routes(app: FastAPI):
         '/products/{id}',
         response_model=ProductOutboundModel,
     )
-    def patch_retailerlocation(
+    def patch_product(
         id: UUID4,
         inbound_update_model: ProductInboundUpdateModel,
         request: Request
@@ -76,7 +76,7 @@ def set_product_routes(app: FastAPI):
         '/products/{id}',
         response_model=ProductOutboundModel,
     )
-    def delete_retailerlocation(id: UUID4, request: Request):
+    def delete_product(id: UUID4, request: Request):
 
         result = controller.delete(id, request.headers)
 

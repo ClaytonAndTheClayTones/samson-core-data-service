@@ -115,7 +115,7 @@ class IngestInventorySnapshotsProcess:
                             retailer_id = None,
                             retailer_location_id = None,
                             confirmed_core_product_id = None,
-                            name = inventory_snapshot_item.sku,
+                            name = inventory_snapshot_item.product_name,
                         )
                         
                         product = self.manager.create_product(

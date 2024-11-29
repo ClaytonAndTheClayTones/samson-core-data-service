@@ -22,7 +22,7 @@ def set_historical_sale_routes(app: FastAPI):
         response_model=HistoricalSaleOutboundModel,
         status_code=201,
     )
-    def post_retailerlocation(
+    def post_historical_sale(
         inbound_create_model: HistoricalSaleInboundCreateModel,  
         request: Request
     ) -> HistoricalSaleOutboundModel | None:
@@ -48,7 +48,7 @@ def set_historical_sale_routes(app: FastAPI):
         '/historical_sales/{id}',
         response_model=HistoricalSaleOutboundModel
     )
-    def get_retailerlocation_by_id(
+    def get_historical_sale_by_id(
         id: UUID4,    
         request: Request
     ):
@@ -61,7 +61,7 @@ def set_historical_sale_routes(app: FastAPI):
         '/historical_sales/{id}',
         response_model=HistoricalSaleOutboundModel
     )
-    def delete_retailerlocation(
+    def delete_historical_sale(
         id: UUID4,
         request: Request
     ):

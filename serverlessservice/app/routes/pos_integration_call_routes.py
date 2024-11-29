@@ -22,7 +22,7 @@ def set_pos_integration_call_routes(app: FastAPI):
         response_model=PosIntegrationCallOutboundModel,
         status_code=201,
     )
-    def post_retailerlocation(
+    def post_pos_integration_call(
         inbound_create_model: PosIntegrationCallInboundCreateModel,
         request: Request
     ):
@@ -45,7 +45,7 @@ def set_pos_integration_call_routes(app: FastAPI):
 
     @app.get('/pos_integration_calls/{id}',
              response_model=PosIntegrationCallOutboundModel)
-    def get_retailerlocation_by_id(id: UUID4, request: Request):
+    def get_pos_integration_call_by_id(id: UUID4, request: Request):
 
         result = controller.get_by_id(id, request.headers)
 
@@ -53,7 +53,7 @@ def set_pos_integration_call_routes(app: FastAPI):
   
     @app.delete('/pos_integration_calls/{id}',
                 response_model=PosIntegrationCallOutboundModel)
-    def delete_retailerlocation(id: UUID4, request: Request):
+    def delete_pos_integration_call(id: UUID4, request: Request):
 
         result = controller.delete(id, request.headers)
 

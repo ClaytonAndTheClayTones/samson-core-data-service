@@ -215,6 +215,21 @@ def create_inventory_intake_job(
     
     return return_object 
  
+def run_inventory_intake_job(
+        context: TestContext, 
+        id: str,
+        request_operators: RequestOperators | None = None,
+        allow_failures: bool = False
+        ) -> InventoryIntakeJobModel:
+
+    url: str = f"{context.api_url}/inventory_intake_jobs/run/{id}"
+    
+    result: Response = qa_get(url, request_operators=request_operators)
+     
+    return_object = InventoryIntakeJobModel(**result.json())
+    
+    return return_object
+
 def get_inventory_intake_job_by_id(
         context: TestContext, 
         id: str,

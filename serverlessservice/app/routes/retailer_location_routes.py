@@ -25,7 +25,7 @@ def set_retailer_location_routes(app: FastAPI):
         response_model=RetailerLocationOutboundModel,
         status_code=201,
     )
-    def post_retailerlocation( 
+    def post_retailer_location( 
         inbound_create_model: RetailerLocationInboundCreateModel, 
         request: Request
     ) -> RetailerLocationOutboundModel | None:
@@ -51,7 +51,7 @@ def set_retailer_location_routes(app: FastAPI):
         '/retailer_locations/{id}',
         response_model=RetailerLocationOutboundModel,
     )
-    def get_retailerlocation_by_id(request: Request, id: UUID4) -> RetailerLocationOutboundModel | None:
+    def get_retailer_location_by_id(request: Request, id: UUID4) -> RetailerLocationOutboundModel | None:
 
         result = controller.get_by_id(id, request.headers)
 
@@ -61,7 +61,7 @@ def set_retailer_location_routes(app: FastAPI):
         '/retailer_locations/{id}',
         response_model=RetailerLocationOutboundModel,
     )
-    def patch_retailerlocation(
+    def patch_retailer_location(
             id: UUID4,
             inbound_update_model: RetailerLocationInboundUpdateModel,
             request: Request
@@ -74,7 +74,7 @@ def set_retailer_location_routes(app: FastAPI):
         '/retailer_locations/{id}',
         response_model=RetailerLocationOutboundModel,
     ) 
-    def delete_retailerlocation(
+    def delete_retailer_location(
         id: UUID4, 
         request: Request
     ) -> RetailerLocationOutboundModel | None:

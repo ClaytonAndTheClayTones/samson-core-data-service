@@ -70,6 +70,9 @@ class ProductCreateModel:
         vendor_id: UUID | None = None,
         confirmed_core_product_id: UUID | None = None,  
         vendor_confirmation_status: ProductVendorConfirmationStatuses | None = None,
+        proposed_vendor_name: str | None = None,
+        proposed_category: str | None = None,
+        proposed_brand: str | None = None,
     ) -> None:
 
         self.name = name
@@ -79,7 +82,10 @@ class ProductCreateModel:
         self.vendor_id = vendor_id
             
         self.confirmed_core_product_id = confirmed_core_product_id
-        self.vendor_confirmation_status = vendor_confirmation_status 
+        self.vendor_confirmation_status = vendor_confirmation_status
+        self.proposed_vendor_name = proposed_vendor_name
+        self.proposed_category = proposed_category
+        self.proposed_brand = proposed_brand
 
 
 class ProductUpdateModel:

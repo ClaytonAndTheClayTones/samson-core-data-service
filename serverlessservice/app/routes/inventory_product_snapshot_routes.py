@@ -22,7 +22,7 @@ def set_inventory_product_snapshot_routes(app: FastAPI):
         response_model=InventoryProductSnapshotOutboundModel,
         status_code=201,
     )
-    def post_retailerlocation(
+    def post_inventory_product_snapshot(
         inbound_create_model: InventoryProductSnapshotInboundCreateModel,
         request: Request):
         
@@ -47,7 +47,7 @@ def set_inventory_product_snapshot_routes(app: FastAPI):
         '/inventory_product_snapshots/{id}',
         response_model=InventoryProductSnapshotOutboundModel
     )
-    def get_retailerlocation_by_id(id: UUID4, request: Request):
+    def get_inventory_product_snapshot_by_id(id: UUID4, request: Request):
 
         result = controller.get_by_id(id, request.headers)
 
@@ -55,7 +55,7 @@ def set_inventory_product_snapshot_routes(app: FastAPI):
  
     @app.delete('/inventory_product_snapshots/{id}',
                 response_model=InventoryProductSnapshotOutboundModel)
-    def delete_retailerlocation(id: UUID4, request: Request):
+    def delete_inventory_product_snapshot(id: UUID4, request: Request):
 
         result = controller.delete(id, request.headers)
 

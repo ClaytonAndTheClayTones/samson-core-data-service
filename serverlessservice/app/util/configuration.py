@@ -22,6 +22,8 @@ class Configuration:
     DATABASE_PASSWORD: str
     DATABASE_NAME: str
     
+    BASE_URL: str
+    
     STAGE: str
 
     def populate_configuration(self, config_path: str | None = None) -> None:
@@ -35,6 +37,7 @@ class Configuration:
             print(f"DATABASE_USERNAME={os.getenv('DATABASE_USERNAME')}")
             print(f"DATABASE_PASSWORD={os.getenv('DATABASE_PASSWORD')}")
             print(f"DATABASE_NAME={os.getenv('DATABASE_NAME')}")
+            print(f"BASE_URL={os.getenv('BASE_URL')}")
              
             print(f"STAGE={os.getenv('STAGE')}")
         else:
@@ -54,6 +57,7 @@ class Configuration:
             'DATABASE_USERNAME',
             'DATABASE_PASSWORD',
             'DATABASE_NAME',
+            'BASE_URL',
             'STAGE',
         ]
 
@@ -80,6 +84,7 @@ class Configuration:
         # Load
 
         self.DATABASE_HOST = os.getenv('DATABASE_HOST') or ''
+        self.BASE_URL = os.getenv('BASE_URL') or ''
         self.DATABASE_PORT = os.getenv('DATABASE_PORT') or ''
         self.DATABASE_USERNAME = os.getenv('DATABASE_USERNAME') or ''
         self.DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD') or ''

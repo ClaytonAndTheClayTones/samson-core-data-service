@@ -5,6 +5,7 @@ from uuid import UUID
 
 import requests
  
+from integrations.common import ServiceCaller
 from integrations.types import GenericInventoryObject
 from models.inventory_intake_job_model import InventoryIntakeJobModel
 from models.inventory_product_snapshot_model import InventoryProductSnapshotCreateModel, InventoryProductSnapshotModel, InventoryProductSnapshotSearchModel
@@ -12,11 +13,6 @@ from models.pos_integration_model import PosIntegrationModel
  
 from models.product_model import ProductCreateModel, ProductModel, ProductVendorConfirmationStatuses
 from models.retailer_location_model import RetailerLocationModel 
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from managers.managers import Manager
 
 
 class PosabitInventoryObject:
@@ -112,11 +108,19 @@ class PosabitInventoryResponse:
         
 class PosabitIntegration:
   
+    def __init__(
+        self,
+        service_caller: ServiceCaller = ServiceCaller()
+    ) -> None:
+        self.service_caller = service_caller
+            
+            
     def get_all_pages_of_inventory_items(
         self,
         pos_integration_key: str, 
         start_date : datetime,
-        end_date : datetime
+        end_date : datetime,
+        simulator_response_id : UUID | None = None,
     ) -> list[PosabitInventoryObject]:
         
         running_list_of_inventory_items: list[PosabitInventoryObject] = []
@@ -125,7 +129,7 @@ class PosabitIntegration:
         
         print("Posabit integration calling url: " + url)
         
-        posabit_results = requests.get(
+        posabit_results = self.service_caller.get(
             url,
             headers = {
                 "Authorization": f"Bearer {pos_integration_key}"
@@ -136,7 +140,7 @@ class PosabitIntegration:
         
         running_list_of_inventory_items += [PosabitInventoryObject(**item) for item in posabit_inventories.inventory]
         
-        total_pages = posabit_inventories.total_pages
+        total_pages = posabit_inventories.total_pages or 1
         current_page = 2
         
         while current_page <= total_pages:
@@ -161,17 +165,17 @@ class PosabitIntegration:
         
     def get_inventory_snapshots(
         self, 
-        job: InventoryIntakeJobModel, 
-        retailer_location: RetailerLocationModel,
-        pos_integration: PosIntegrationModel
-    ) -> list[InventoryProductSnapshotCreateModel] | None:
-        return_list: list[InventoryProductSnapshotCreateModel] = [] 
+        snapshot_hour: datetime, 
+        integration_key: str,
+        simulated: bool | None = False
+    ) -> list[GenericInventoryObject] | None:
+        return_list: list[GenericInventoryObject] = [] 
         
         start_date : datetime = datetime(
-            year=job.snapshot_hour.year,
-            month=job.snapshot_hour.month,
-            day=job.snapshot_hour.day,
-            hour=job.snapshot_hour.hour,
+            year=snapshot_hour.year,
+            month=snapshot_hour.month,
+            day=snapshot_hour.day,
+            hour=snapshot_hour.hour,
             minute=0,
             second=0,
             microsecond=0,
@@ -179,7 +183,7 @@ class PosabitIntegration:
         
         end_date : datetime = start_date + timedelta(hours=1,milliseconds= -1)
          
-        inventory_items = self.get_all_pages_of_inventory_items(pos_integration.key, start_date, end_date)
+        inventory_items = self.get_all_pages_of_inventory_items(integration_key, start_date, end_date)
          
         for inventory_item in inventory_items:
               
@@ -200,5 +204,9 @@ class PosabitIntegration:
             sku = posabit_inventory_object.sku,
             stock_on_hand= posabit_inventory_object.quantity_on_hand,
             price = posabit_inventory_object.price,  
+            product_name= posabit_inventory_object.name,
+            listed_vendor = posabit_inventory_object.vendor,
+            listed_brand = posabit_inventory_object.brand,
+            listed_category = posabit_inventory_object.category,
         )  
     

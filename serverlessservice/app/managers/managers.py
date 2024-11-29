@@ -1,4 +1,5 @@
 import json
+from typing import TYPE_CHECKING, Any
 from uuid import UUID 
 
 from data_accessors.historical_sale_accessor import HistoricalSaleDataAccessor 
@@ -16,6 +17,7 @@ from data_accessors.sales_intake_batch_job_accessor import SalesIntakeBatchJobDa
 from data_accessors.sales_intake_job_accessor import SalesIntakeJobDataAccessor   
 from data_accessors.vendor_accessor import VendorDataAccessor   
 from data_accessors.user_accessor import UserDataAccessor
+
    
 from integrations.posabit_integration import PosabitIntegration
  
@@ -138,6 +140,11 @@ from models.vendor_model import (
 from util.database import PagingModel  
 from util.common import RequestOperators
 from util.hydration import Hydrator
+
+if TYPE_CHECKING:
+    from processes.ingest_inventory_snapshots import IngestInventorySnapshotsProcess
+else:
+    IngestInventorySnapshotsProcess = object
  
 class Manager:
 
@@ -161,6 +168,8 @@ class Manager:
         inventory_product_snapshot_accessor: InventoryProductSnapshotDataAccessor = InventoryProductSnapshotDataAccessor(), 
         user_accessor: UserDataAccessor = UserDataAccessor(),
         vendor_accessor: VendorDataAccessor = VendorDataAccessor(),
+        ingest_inventory_snapshots_process: IngestInventorySnapshotsProcess = IngestInventorySnapshotsProcess(),
+        
     ) -> None: 
         
         self.hydrator = hydrator
@@ -182,6 +191,7 @@ class Manager:
         self.inventory_product_snapshot_accessor = inventory_product_snapshot_accessor
         self.user_accessor = user_accessor
         self.vendor_accessor = vendor_accessor
+        self.ingest_inventory_snapshots_process = ingest_inventory_snapshots_process
          
         
     def create_historical_sale_item(
@@ -533,6 +543,9 @@ class Manager:
         
         referenced_retailer_location = self.get_retailer_location_by_id(inbound_model.retailer_location_id)
         
+        if(referenced_retailer_location is None):
+            raise Exception(f"Retailer Location with id {inbound_model.retailer_location_id} not found.")
+        
         inbound_model.retailer_id = referenced_retailer_location.retailer_id
 
         result = self.inventory_intake_job_accessor.insert(
@@ -618,44 +631,10 @@ class Manager:
         
         if(job_to_run == None):
             return None
-        # set job to processing
         
-        job_to_run.status = InventoryIntakeJobStatuses.Processing
-        
-        self.inventory_intake_job_accessor.update(id, job_to_run)
-        
-        pos_integration_search_model: PosIntegrationSearchModel = PosIntegrationSearchModel(
-            retailer_location_ids=[job_to_run.retailer_location_id]
-        )
-        
-        pos_integrations = self.search_pos_integrations(pos_integration_search_model)
-        
-        print("Found the following pos integrations:" + json.dumps([{ "id" : x.id, "name" : x.name} for x in pos_integrations.items], indent=4))
-        
-        for pos_integration in pos_integrations.items:
-            try:
-            
-                if(pos_integration.pos_platform == PosPlatforms.Posabit):
-                    self.posabit_integration.process_inventory_snapshot(job_to_run, pos_integration)
-                    
-                    job_to_run.status = InventoryIntakeJobStatuses.Complete
-                    
-                    self.inventory_intake_job_accessor.update(id, job_to_run)
-                else:
-                    raise Exception(f"Pos Integration Platform {pos_integration.pos_platform} not supported")
+        result = self.ingest_inventory_snapshots_process.run_process(job_to_run.id)
 
-            except Exception as e:
-                
-                info = {"id" : pos_integration.id, "name" : pos_integration.name}
-                
-                print(f"Pos Integration {json.dumps(info)} failed with error: {e}")
-                
-                job_to_run.status = InventoryIntakeJobStatuses.Failed
-                
-                self.inventory_intake_job_accessor.update(id, job_to_run)
-                
-                return
-
+        return result
 
     def hydrate_inventory_intake_job(
         self,
@@ -1061,7 +1040,20 @@ class Manager:
         self.hydrate_pos_simulator_responses([result], request_operators)
         
         return result
+    
+    def call_pos_simulator_response(
+        self, 
+        id: UUID,
+        request_operators: RequestOperators | None = None
+    ) -> dict[str, Any | None]:
 
+        result = self.pos_simulator_response_accessor.select_by_id(
+            id = id,
+            request_operators = request_operators
+        )
+     
+        return result.response_body
+    
     def search_pos_simulator_responses(
         self,
         model: PosSimulatorResponseSearchModel,

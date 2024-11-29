@@ -75,9 +75,13 @@ class InventoryIntakeJobController:
 
         return response_model
     
-    def run(self, id: UUID) -> InventoryIntakeJobOutboundModel | None:
+    def run(
+        self, 
+        id: UUID,
+        headers: dict[str,str]
+    ) -> InventoryIntakeJobOutboundModel | None:
 
-        result = self.manager.run(id)
+        result = self.manager.run_inventory_intake_job(id)
 
         if result is None:
             raise HTTPException(

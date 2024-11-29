@@ -1,5 +1,6 @@
 from copy import copy
 from datetime import datetime
+from typing import Any
 from uuid import UUID
 
 from fastapi import HTTPException
@@ -73,6 +74,25 @@ class PosSimulatorResponseController:
 
         return response_model
 
+    def call(
+        self, 
+        id: UUID,
+        headers: dict[str,str]
+    ) -> dict[str, Any | None]:
+        
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
+        
+        result = self.manager.call_pos_simulator_response(id, request_operators)
+
+        if result is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f'Product with id {id} not found.',
+            )
+        
+        response_model: dict[str, Any | None] = result
+        
+        return response_model
     def search(
         self, 
         inbound_model: PosSimulatorResponseInboundSearchModel, 

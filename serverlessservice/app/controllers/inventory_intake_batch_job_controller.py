@@ -30,7 +30,7 @@ class InventoryIntakeBatchJobController:
         self, 
         adapter: InventoryIntakeBatchJobDataAdapter = InventoryIntakeBatchJobDataAdapter(),
         common_adapter: CommonAdapters = CommonAdapters(),
-        manager: Manager = Manager()
+        manager: Manager = Manager
     ) -> None:
         
         self.adapter = adapter
