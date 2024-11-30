@@ -30,7 +30,7 @@ class InventoryIntakeBatchJobController:
         self, 
         adapter: InventoryIntakeBatchJobDataAdapter = InventoryIntakeBatchJobDataAdapter(),
         common_adapter: CommonAdapters = CommonAdapters(),
-        manager: Manager = Manager
+        manager: Manager = Manager()
     ) -> None:
         
         self.adapter = adapter
@@ -46,7 +46,7 @@ class InventoryIntakeBatchJobController:
         request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
         model: InventoryIntakeBatchJobCreateModel =self.adapter.convert_from_inbound_create_model_to_create_model(inbound_model)
 
-        result = self.manager.create_inventory_intake_batch_job(model)
+        result = self.manager.create_inventory_intake_batch_job(model, request_operators)
 
         if result is None:
             raise Exception('Received no model from create operation.')
