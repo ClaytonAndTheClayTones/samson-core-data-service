@@ -1,5 +1,6 @@
 import json
-from typing import TYPE_CHECKING, Any
+from typing import Any 
+ 
 from uuid import UUID 
 
 from data_accessors.historical_sale_accessor import HistoricalSaleDataAccessor 
@@ -16,11 +17,8 @@ from data_accessors.retailer_location_accessor import RetailerLocationDataAccess
 from data_accessors.sales_intake_batch_job_accessor import SalesIntakeBatchJobDataAccessor
 from data_accessors.sales_intake_job_accessor import SalesIntakeJobDataAccessor   
 from data_accessors.vendor_accessor import VendorDataAccessor   
-from data_accessors.user_accessor import UserDataAccessor
+from data_accessors.user_accessor import UserDataAccessor 
 
-   
-from integrations.posabit_integration import PosabitIntegration
- 
 from models.historical_sale_item_model import (
     HistoricalSaleItemCreateModel,
     HistoricalSaleItemModel,
@@ -139,12 +137,9 @@ from models.vendor_model import (
 
 from util.database import PagingModel  
 from util.common import RequestOperators
-from util.hydration import Hydrator
-
-if TYPE_CHECKING:
-    from processes.ingest_inventory_snapshots import IngestInventorySnapshotsProcess
-else:
-    IngestInventorySnapshotsProcess = object
+from util.hydration import Hydrator 
+ 
+ 
  
 class Manager:
 
@@ -159,16 +154,14 @@ class Manager:
         historical_sales_accessor: HistoricalSaleDataAccessor = HistoricalSaleDataAccessor(),   
         pos_integration_accessor: PosIntegrationDataAccessor = PosIntegrationDataAccessor(),
         pos_integration_call_accessor: PosIntegrationCallDataAccessor = PosIntegrationCallDataAccessor(),
-        pos_simulator_response_accessor: PosSimulatorResponseDataAccessor = PosSimulatorResponseDataAccessor(),
-        posabit_integration: PosabitIntegration = PosabitIntegration(),
+        pos_simulator_response_accessor: PosSimulatorResponseDataAccessor = PosSimulatorResponseDataAccessor(), 
         inventory_intake_batch_job_accessor: InventoryIntakeBatchJobDataAccessor = InventoryIntakeBatchJobDataAccessor(),
         inventory_intake_job_accessor: InventoryIntakeJobDataAccessor = InventoryIntakeJobDataAccessor(),
         sales_intake_job_accessor: SalesIntakeJobDataAccessor = SalesIntakeJobDataAccessor(),
         sales_intake_batch_job_accessor: SalesIntakeBatchJobDataAccessor = SalesIntakeBatchJobDataAccessor(),
         inventory_product_snapshot_accessor: InventoryProductSnapshotDataAccessor = InventoryProductSnapshotDataAccessor(), 
         user_accessor: UserDataAccessor = UserDataAccessor(),
-        vendor_accessor: VendorDataAccessor = VendorDataAccessor(),
-        ingest_inventory_snapshots_process: IngestInventorySnapshotsProcess = IngestInventorySnapshotsProcess(),
+        vendor_accessor: VendorDataAccessor = VendorDataAccessor(), 
         
     ) -> None: 
         
@@ -182,16 +175,14 @@ class Manager:
         self.historical_sales_accessor = historical_sales_accessor
         self.pos_integration_accessor = pos_integration_accessor
         self.pos_integration_call_accessor = pos_integration_call_accessor
-        self.pos_simulator_response_accessor = pos_simulator_response_accessor
-        self.posabit_integration = posabit_integration
+        self.pos_simulator_response_accessor = pos_simulator_response_accessor 
         self.inventory_intake_batch_job_accessor = inventory_intake_batch_job_accessor
         self.inventory_intake_job_accessor = inventory_intake_job_accessor
         self.sales_intake_job_accessor = sales_intake_job_accessor
         self.sales_intake_batch_job_accessor = sales_intake_batch_job_accessor
         self.inventory_product_snapshot_accessor = inventory_product_snapshot_accessor
         self.user_accessor = user_accessor
-        self.vendor_accessor = vendor_accessor
-        self.ingest_inventory_snapshots_process = ingest_inventory_snapshots_process
+        self.vendor_accessor = vendor_accessor 
          
         
     def create_historical_sale_item(
@@ -502,30 +493,7 @@ class Manager:
         )
 
         return result
-    
-    def run_inventory_intake_batch_job(
-        self, 
-        id: UUID, 
-        request_operators: RequestOperators | None = None
-    ) -> InventoryIntakeBatchJobModel | None:
-        job_to_run: InventoryIntakeBatchJobModel = self.inventory_intake_batch_job_accessor.select_by_id(
-            id = id
-        )
-        
-        if(job_to_run == None):
-            return None
-        # set job to processing
-        
-        job_to_run.status = InventoryIntakeBatchJobStatuses.Processing
-        
-        self.inventory_intake_batch_job_accessor.update(id, job_to_run)
-        
-        retailer_location_search_model: RetailerLocationSearchModel = RetailerLocationSearchModel()
-        
-        if(job_to_run.restricted_retailer_location_ids is not None):
-            retailer_location_search_model.ids = job_to_run.restricted_retailer_location_ids
-            
-    
+     
     def hydrate_inventory_intake_batch_jobs(
         self,
         result_list: list[InventoryIntakeBatchJobModel],
@@ -618,24 +586,7 @@ class Manager:
         )
 
         return result
-    
-    def run_inventory_intake_job(
-        self, 
-        id: UUID,
-        request_operators: RequestOperators | None = None
-    ) -> InventoryIntakeJobModel | None:
-        job_to_run: InventoryIntakeJobModel = self.inventory_intake_job_accessor.select_by_id(
-            id = id,
-            request_operators = request_operators
-        )
-        
-        if(job_to_run == None):
-            return None
-        
-        result = self.ingest_inventory_snapshots_process.run_process(job_to_run.id)
-
-        return result
-
+     
     def hydrate_inventory_intake_job(
         self,
         result_list: list[InventoryIntakeJobModel],
@@ -1464,33 +1415,7 @@ class Manager:
         )
 
         return result
-    
-    def run_sales_intake_batch_job(
-        self, 
-        id: UUID,
-        request_operators: RequestOperators | None = None
-    ) -> SalesIntakeBatchJobModel | None:
-        job_to_run: SalesIntakeBatchJobModel = self.sales_intake_batch_job_accessor.select_by_id(
-            id = id,
-            request_operators = request_operators
-        )
-        
-        if(job_to_run == None):
-            return None
-        # set job to processing
-        
-        job_to_run.status = SalesIntakeBatchJobStatuses.Processing
-        
-        self.sales_intake_job_accessor.update(id, job_to_run)
      
-        try:
-        
-            print("This job isn't implemented.")
-
-        except Exception as e:
-                
-            print(f"This job failed.")
-                 
     def hydrate_sales_intake_batch_jobs(
         self,
         result_list: list[SalesIntakeBatchJobModel],
@@ -1577,56 +1502,7 @@ class Manager:
         )
 
         return result
-    
-    def run_sales_intake_job(
-        self, 
-        id: UUID,
-        request_operators: RequestOperators | None = None
-    ) -> SalesIntakeJobModel | None:
-        job_to_run: SalesIntakeJobModel = self.sales_intake_job_accessor.select_by_id(
-            id = id,
-            request_operators = request_operators
-        )
-        
-        if(job_to_run == None):
-            return None
-        # set job to processing
-        
-        job_to_run.status = SalesIntakeJobStatuses.Processing
-        
-        self.sales_intake_job_accessor.update(id, job_to_run)
-        
-        pos_integration_search_model: PosIntegrationSearchModel = PosIntegrationSearchModel(
-            retailer_location_ids=[job_to_run.retailer_location_id]
-        )
-        
-        pos_integrations = self.search_pos_integrations(pos_integration_search_model)
-        
-        print("Found the following pos integrations:" + json.dumps([{ "id" : x.id, "name" : x.name} for x in pos_integrations.items], indent=4))
-        
-        for pos_integration in pos_integrations.items:
-            try:
-            
-                if(pos_integration.pos_platform == PosPlatforms.Posabit):
-                    self.process_sales_snapshot(job_to_run, pos_integration)
-                    
-                    job_to_run.status = SalesIntakeJobStatuses.Complete
-                    
-                    self.sales_intake_job_accessor.update(id, job_to_run)
-                else:
-                    raise Exception(f"Pos Integration Platform {pos_integration.pos_platform} not supported")
-
-            except Exception as e:
-                
-                info = {"id" : pos_integration.id, "name" : pos_integration.name}
-                
-                print(f"Pos Integration {json.dumps(info)} failed with error: {e}")
-                
-                job_to_run.status = SalesIntakeJobStatuses.Failed
-                
-                self.sales_intake_job_accessor.update(id, job_to_run)
-                
-                return
+     
 
     def hydrate_sales_intake_jobs(
         self,

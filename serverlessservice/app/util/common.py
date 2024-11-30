@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from datetime import datetime
 from enum import Enum
+import secrets
+import string
 from typing import Any, Generic, TypeVar
 from uuid import UUID
 import uuid
@@ -87,3 +89,15 @@ class CommonUtilities:
     def convert_uuid_list_to_string_list(self, uuids: list[UUID]):
         resultlist = [str(x) for x in uuids]
         return resultlist
+    
+        
+    def generate_random_string(
+        self,
+        len: int = 12, 
+        charset: str | None = None
+    ) -> str:
+        charset = charset or string.ascii_letters + string.digits
+
+        result = ''.join(secrets.choice(charset) for i in range(len))
+
+        return result

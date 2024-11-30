@@ -117,73 +117,54 @@ class PosabitIntegration:
             
     def get_all_pages_of_inventory_items(
         self,
-        pos_integration_key: str, 
-        start_date : datetime,
-        end_date : datetime,
+        pos_integration_key: str,  
         simulator_response_id : UUID | None = None,
     ) -> list[PosabitInventoryObject]:
         
         running_list_of_inventory_items: list[PosabitInventoryObject] = []
- 
-        url = f"https://app.posabit.com/api/v2/venue/inventories?q[updated_at_gt]={start_date.isoformat(timespec='milliseconds').replace('+00:00','Z')}&q[updated_at_lt]={end_date.isoformat(timespec='milliseconds').replace('+00:00','Z')}"
+    
+        # note that if we want to restrict the date range, we need to add the following to the url:
+        # q[updated_at_gt]={start_date.isoformat(timespec='milliseconds').replace('+00:00','Z')}&q[updated_at_lt]={end_date.isoformat(timespec='milliseconds').replace('+00:00','Z')}
+         
+        print("Posabit integration retrieving inventory data")
         
-        print("Posabit integration calling url: " + url)
-        
-        posabit_results = self.service_caller.get(
-            url,
-            headers = {
-                "Authorization": f"Bearer {pos_integration_key}"
-            }
-        )
+        results = self.service_caller.get(
+            url = f"https://app.posabit.com/api/v2/venue/inventories", 
+            headers = {"Authorization": f"Bearer {pos_integration_key}"},
+            simulator_response_id = simulator_response_id
+        ) 
        
-        posabit_inventories =  PosabitInventoryResponse(**posabit_results.json())
+        var = results.json()
+        posabit_inventories =  PosabitInventoryResponse(**results.json())
         
         running_list_of_inventory_items += [PosabitInventoryObject(**item) for item in posabit_inventories.inventory]
         
         total_pages = posabit_inventories.total_pages or 1
         current_page = 2
         
-        while current_page <= total_pages:
+        while current_page <= total_pages and simulator_response_id is None:
              
-            url = f"https://app.posabit.com/api/v2/venue/inventories?q[updated_at_gt]={start_date.isoformat()}&q[updated_at_lt]={end_date.isoformat()}&page={current_page}"
-            
-            print("Posabit integration calling url: " + url)
+            next_page_of_results = self.service_caller.get(
+                url = f"https://app.posabit.com/api/v2/venue/inventories", 
+                headers = {"Authorization": f"Bearer {pos_integration_key}"},
+                simulator_response_id = simulator_response_id
+            ) 
                 
-            next_page_of_results = requests.get(
-                url, 
-                headers = {
-                    "Authorization": f"Bearer {pos_integration_key}"
-                }
-            )  
-            
             next_page_of_posabit_inventories =  PosabitInventoryResponse(**next_page_of_results.json())
             running_list_of_inventory_items += next_page_of_posabit_inventories.inventory
             current_page = next_page_of_posabit_inventories.current_page + 1
             total_pages = next_page_of_posabit_inventories.total_pages
-            
+                
         return running_list_of_inventory_items
         
     def get_inventory_snapshots(
-        self, 
-        snapshot_hour: datetime, 
+        self,  
         integration_key: str,
-        simulated: bool | None = False
+        simulator_response_id: UUID | None = None
     ) -> list[GenericInventoryObject] | None:
         return_list: list[GenericInventoryObject] = [] 
         
-        start_date : datetime = datetime(
-            year=snapshot_hour.year,
-            month=snapshot_hour.month,
-            day=snapshot_hour.day,
-            hour=snapshot_hour.hour,
-            minute=0,
-            second=0,
-            microsecond=0,
-        )
-        
-        end_date : datetime = start_date + timedelta(hours=1,milliseconds= -1)
-         
-        inventory_items = self.get_all_pages_of_inventory_items(integration_key, start_date, end_date)
+        inventory_items = self.get_all_pages_of_inventory_items(integration_key, simulator_response_id = simulator_response_id)
          
         for inventory_item in inventory_items:
               

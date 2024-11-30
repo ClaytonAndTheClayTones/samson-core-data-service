@@ -222,9 +222,9 @@ def run_inventory_intake_job(
         allow_failures: bool = False
         ) -> InventoryIntakeJobModel:
 
-    url: str = f"{context.api_url}/inventory_intake_jobs/run/{id}"
+    url: str = f"{context.api_url}/inventory_intake_jobs/{id}/run"
     
-    result: Response = qa_get(url, request_operators=request_operators)
+    result: Response = qa_post(url, {}, request_operators=request_operators)
      
     return_object = InventoryIntakeJobModel(**result.json())
     

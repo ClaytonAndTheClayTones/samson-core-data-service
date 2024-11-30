@@ -22,6 +22,7 @@ from models.common_model import (
     OutboundResultantPagingModel,
 )
 from util.database import PagingModel
+from managers.process_managers import ProcessManager
 
 class InventoryIntakeJobController:
     
@@ -29,12 +30,14 @@ class InventoryIntakeJobController:
         self, 
         adapter: InventoryIntakeJobDataAdapter = InventoryIntakeJobDataAdapter(),
         common_adapter: CommonAdapters = CommonAdapters(),
-        manager: Manager = Manager()
+        manager: Manager = Manager(), 
+        process_manager: ProcessManager = ProcessManager()
     ) -> None:
         
         self.adapter = adapter
         self.common_adapter = common_adapter
         self.manager = manager
+        self.process_manager = process_manager
     
     def create(
         self, 
@@ -81,7 +84,7 @@ class InventoryIntakeJobController:
         headers: dict[str,str]
     ) -> InventoryIntakeJobOutboundModel | None:
 
-        result = self.manager.run_inventory_intake_job(id)
+        result = self.process_manager.run_inventory_intake_job(id)
 
         if result is None:
             raise HTTPException(
