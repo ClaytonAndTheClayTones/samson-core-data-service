@@ -110,7 +110,7 @@ class ProcessManager:
         request_operators: RequestOperators | None = None
     ) -> SalesIntakeJobModel | None:
         
-        job_to_run: SalesIntakeJobModel = self.sales_intake_job_accessor.select_by_id(
+        job_to_run: InventoryIntakeJobModel = self.inventory_intake_job_accessor.select_by_id(
             id = id,
             request_operators = request_operators
         )
@@ -118,4 +118,13 @@ class ProcessManager:
         if(job_to_run == None):
             return None
         
-        return None
+        
+        result = self.ingest_inventory_snapshots_process.run_process(
+            job_to_run.id, 
+            self.common_utilities.generate_random_string(
+                len = 20,
+                charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+            )
+        )
+
+        return result

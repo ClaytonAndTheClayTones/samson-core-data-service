@@ -29,8 +29,7 @@ from models.common_model import (
 # Pydantic causes these class variables to safely be instance variables.
 class SalesIntakeJobInboundCreateModel(BaseModel):  
     retailer_location_id: Annotated[UUID4, Strict(False)] = Field(...)
-    parent_batch_job_id: Annotated[Optional[UUID4], Strict(False)] = Field(default=None)
-    snapshot_hour: datetime = Field(...)  
+    parent_batch_job_id: Annotated[Optional[UUID4], Strict(False)] = Field(default=None) 
     status: Optional[SalesIntakeJobStatuses] = Field(default=None)
     status_details: Optional[dict[str,Any]] = Field(default=None)
 
@@ -43,9 +42,7 @@ class SalesIntakeJobInboundUpdateModel(BaseModel):
 
 
 # Pydantic causes these class variables to safely be instance variables.
-class SalesIntakeJobInboundSearchModel(CommonInboundSearchModel): 
-    snapshot_hour_min: Optional[datetime] = Query(default=None)
-    snapshot_hour_max: Optional[datetime] = Query(default=None)
+class SalesIntakeJobInboundSearchModel(CommonInboundSearchModel):  
     status: Optional[SalesIntakeJobStatuses] = Query(default=None)
     retailer_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
     retailer_location_ids: Annotated[Optional[str], BeforeValidator(validate_ids)] = Query(default=None) 
