@@ -131,7 +131,7 @@ class InventoryIntakeBatchJobController:
         
         request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
   
-        model: InventoryIntakeBatchJobUpdateModel =self.adapter.convert_from_inbound_update_model_to_create_model(inbound_model)
+        model: InventoryIntakeBatchJobUpdateModel =self.adapter.convert_from_inbound_update_model_to_update_model(inbound_model)
 
         result: None | InventoryIntakeBatchJobModel = self.manager.update_inventory_intake_batch_job(id, model, request_operators)
 

@@ -154,7 +154,7 @@ def mint_default_inventory_intake_job(
         del overrides.simulator_response
         
     default_inventory_intake_job: InventoryIntakeJobCreateModel = InventoryIntakeJobCreateModel(
-        snapshot_hour = '2024-11-01T11:00:00.000Z',
+        snapshot_hour = '2024-11-01T11:00:00.111Z',
         status = 'Requested',
         status_details = {
             "key": "value"

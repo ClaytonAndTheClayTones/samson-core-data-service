@@ -11,16 +11,12 @@ from tests.qdk.utils import assert_object_was_updated, assert_objects_are_equal,
 class SalesIntakeBatchJobCreateModel():  
 
     def __init__(
-        self,  
-        start_time: str | None = None,
-        end_time: str | None = None,
+        self,   
         status: str | None = None,
         restricted_retailer_location_ids: str | None = None,
         status_details: dict[str,Any] | None = None,
     ) -> None:
         self.restricted_retailer_location_ids = restricted_retailer_location_ids
-        self.start_time = start_time
-        self.end_time = end_time
         self.status = status
         self.status_details = status_details
          
@@ -40,9 +36,7 @@ class SalesIntakeBatchJobModel():
 
     def __init__(
         self, 
-        id: str, 
-        start_time: str,
-        end_time: str,
+        id: str,  
         status: str,
         created_at: datetime.datetime,
         restricted_retailer_location_ids : list[str] | None = None,
@@ -54,8 +48,6 @@ class SalesIntakeBatchJobModel():
 
         self.id = id 
         self.restricted_retailer_location_ids = restricted_retailer_location_ids
-        self.start_time = start_time
-        self.end_time = end_time 
         self.status = status
         self.retailer = retailer
         self.retailer_location = retailer_location
@@ -67,10 +59,6 @@ class SalesIntakeBatchJobSearchModel(PagingRequestModel):
 
     def __init__(self, 
         ids: str | None = None,   
-        start_time_min: str | None = None,
-        start_time_max: str | None = None,
-        end_time_min: str | None = None,
-        end_time_max: str | None = None,
         status: str | None = None,
         page: int | None = None,
         page_length: int | None = None,
@@ -86,10 +74,6 @@ class SalesIntakeBatchJobSearchModel(PagingRequestModel):
         )
         
         self.ids = ids 
-        self.start_time_min = start_time_min
-        self.start_time_max = start_time_max
-        self.end_time_min = end_time_min
-        self.end_time_max = end_time_max
         self.status = status
  
  
@@ -103,8 +87,6 @@ def mint_default_sales_intake_batch_job(
     overrides = overrides or SalesIntakeBatchJobCreateModel()
     
     default_sales_intake_batch_job: SalesIntakeBatchJobCreateModel = SalesIntakeBatchJobCreateModel(
-        start_time= '2024-11-01T11:00:00.000Z',
-        end_time= '2024-11-02T11:00:00.000Z',
         restricted_retailer_location_ids = ['00000000-0000-0000-0000-000000000000','00000000-0000-0000-0000-111111111111','00000000-0000-0000-0000-222222222222'],
         status = 'Requested',
         status_details = {
@@ -132,7 +114,7 @@ def create_sales_intake_batch_job(
  
         result_dict = result.json()
 
-        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "end_time", "status", "status_details"])
+        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "status", "status_details"])
 
         assert result_dict['id'] is not None
         assert result_dict['created_at'] is not None
@@ -147,11 +129,7 @@ def create_sales_intake_batch_job(
             assert result_dict['status_details'] == {}
         else:
             assert result_dict['status_details'] == post_object.status_details
-            
-        if(post_object.end_time is None):
-            assert result_dict['end_time'] is not None
-        else:
-            assert result_dict['end_time'] == post_object.end_time
+
    
     return_object = SalesIntakeBatchJobModel(**result.json())
     

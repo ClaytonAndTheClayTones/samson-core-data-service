@@ -56,7 +56,7 @@ class InventoryIntakeJobDataAdapter:
 
         return model
 
-    def convert_from_inbound_update_model_to_create_model(
+    def convert_from_inbound_update_model_to_update_model(
         self, 
         inbound_update_model: InventoryIntakeJobInboundUpdateModel
     ) -> InventoryIntakeJobUpdateModel:

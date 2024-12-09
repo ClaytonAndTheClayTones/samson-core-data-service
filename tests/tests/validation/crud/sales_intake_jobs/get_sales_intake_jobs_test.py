@@ -44,9 +44,7 @@ def test_gets_sales_intake_jobs_invalid_inputs() -> None:
         'ids': 'not an id,also not an id', 
         'retailer_ids': 'not valid,at all,cmon man',  
         'retailer_location_ids': 'invalid,id,jamboree', 
-        'status' : 'not a valid status',
-        'snapshot_hour_min' : 'not a valid time',
-        'snapshot_hour_max' : 'not a valid time',
+        'status' : 'not a valid status', 
         'page' : 'not a page num',
         'page_length' : 'not a length num',
         'is_sort_descending' : 'not a bool'
@@ -56,7 +54,7 @@ def test_gets_sales_intake_jobs_invalid_inputs() -> None:
 
     errors = result.json()
 
-    assert len(errors['detail']) == 9
+    assert len(errors['detail']) == 7
     
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'ids' in error['loc']]
     assert len(error) == 1
@@ -72,17 +70,7 @@ def test_gets_sales_intake_jobs_invalid_inputs() -> None:
     assert len(error) == 1
     assert error[0]['type'] == 'invalid_id_list'
     assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: invalid,\n\t1: id,\n\t2: jamboree\n].'
-        
-    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'snapshot_hour_min' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'datetime_from_date_parsing'
-    assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
-
-    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'snapshot_hour_max' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'datetime_from_date_parsing'
-    assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
-    
+  
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'status' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'enum'
@@ -364,95 +352,4 @@ def test_gets_sales_intake_jobs_with_status_filter() -> None:
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
     
-    
-def test_gets_sales_intake_jobs_with_snapshot_hour_filter_min_only() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        snapshot_hour_min = "2023-03-03T03:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-    
-    posted_item_2: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_2.id]
-    assert len(posted_item_2) == 1  
-    assert_objects_are_equal(posted_item_2[0], posted_object_2) 
-  
-    posted_item_4: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4)
-
-def test_gets_sales_intake_jobs_with_snapshot_hour_filter_max_only() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        snapshot_hour_max = "2022-02-02T02:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-    
-    posted_item_1: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_1.id]
-    assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
-  
-    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-    
-
-def test_gets_sales_intake_jobs_with_status_filter_max_only() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeJobModel = create_sales_intake_job(context, SalesIntakeJobCreateModel(snapshot_hour = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeJobSearchModel = SalesIntakeJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        snapshot_hour_min = "2022-02-02T02:00:00.000Z",
-        snapshot_hour_max = "2023-03-03T03:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeJobModel] = get_sales_intake_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-  
-    posted_item_3: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-        
-    posted_item_4: list[SalesIntakeJobModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1  
-    assert_objects_are_equal(posted_item_4[0], posted_object_4) 
+     

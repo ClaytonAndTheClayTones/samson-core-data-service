@@ -46,6 +46,7 @@ class IngestHistoricalSalesProcess:
         try:
                 
             integration: PosIntegrationModel | None = None
+            
             historic_sales_objects: list[GenericHistoricalSaleObject] | None = None  
             
             job: SalesIntakeJobModel | None = None
@@ -71,6 +72,7 @@ class IngestHistoricalSalesProcess:
                     raise ProcessException(self.process_name, process_trace_id, "Arrange", f"Unhandled Exception occured: {e}")
             
             # Step: Arrange 
+            
             try: 
                         
                 integration = self.get_pos_integration_and_retailer_info(job.retailer_location_id)
@@ -234,21 +236,22 @@ class IngestHistoricalSalesProcess:
     
     def retrieve_sales(
         self,
-        job: InventoryIntakeJobModel,
+        job: SalesIntakeJobModel,
         integration: PosIntegrationModel,
-    )   -> list[GenericInventoryObject]: 
+    )   -> list[GenericHistoricalSaleObject]: 
         
         
         match(integration.pos_platform):
             case PosPlatforms.Posabit:
-                return self.posabit_integration.get_sales ( 
+                return self.posabit_integration.get_historical_sales ( 
                     integration_key = integration.key,
-                    simulator_response_id = job.simulator_response_id
+                    start_time=job.start_time,
+                    simulator_response_id = job.sim
                 )
             case _:
                 raise Exception(f"Pos Integration Platform {integration.pos_platform} not supported for action retrieve_inventory_snapshots")
   
-    def retrieve_existing_snapshot(
+    def retrieve_existing_sale(
         self,
         retailer_location_id: UUID,
         sku: str

@@ -34,9 +34,7 @@ class InventoryIntakeBatchJobDataAdapter:
         inbound_create_model: InventoryIntakeBatchJobInboundCreateModel
     ) -> InventoryIntakeBatchJobCreateModel:
         
-        model = InventoryIntakeBatchJobCreateModel(  
-            start_time = inbound_create_model.start_time,
-            end_time = inbound_create_model.end_time,
+        model = InventoryIntakeBatchJobCreateModel(   
             restricted_retailer_location_ids = self.common_utilities.convert_comma_delimited_ids_to_uuid_list(inbound_create_model.restricted_retailer_location_ids),
             status=inbound_create_model.status,
             status_details=inbound_create_model.status_details,
@@ -44,7 +42,7 @@ class InventoryIntakeBatchJobDataAdapter:
 
         return model
 
-    def convert_from_inbound_update_model_to_create_model(
+    def convert_from_inbound_update_model_to_update_model(
         self, 
         inbound_update_model: InventoryIntakeBatchJobInboundUpdateModel
     ) -> InventoryIntakeBatchJobUpdateModel:
@@ -67,11 +65,7 @@ class InventoryIntakeBatchJobDataAdapter:
                 if inbound_search_model.ids is not None 
                 else 
                     None
-            ),
-            start_time_min=inbound_search_model.start_time_min,
-            start_time_max=inbound_search_model.start_time_max,
-            end_time_min=inbound_search_model.end_time_min,
-            end_time_max=inbound_search_model.end_time_max,
+            ), 
             status=inbound_search_model.status,
         )
 
@@ -86,13 +80,7 @@ class InventoryIntakeBatchJobDataAdapter:
 
         if model.ids is not None:
             search_terms.append(InListSearchTerm('id', self.common_utilities.convert_uuid_list_to_string_list(model.ids)))
- 
-        if model.start_time_min is not None or model.start_time_max is not None:
-            search_terms.append(RangeSearchTerm('start_time', model.start_time_min, model.start_time_max))
-            
-        if model.end_time_min is not None or model.end_time_max is not None:
-            search_terms.append(RangeSearchTerm('end_time', model.end_time_min, model.end_time_max))
-     
+  
         if model.status is not None:
             search_terms.append(ExactMatchSearchTerm('status', model.status.value, True))
   
@@ -103,9 +91,7 @@ class InventoryIntakeBatchJobDataAdapter:
         model: InventoryIntakeBatchJobCreateModel
     ) -> dict[str, Any]:
     
-        database_model: dict[str, Any] = { 
-            'start_time': model.start_time,
-            'end_time': model.end_time,
+        database_model: dict[str, Any] = {  
             'restricted_retailer_location_ids': ",".join(str(x) for x in model.restricted_retailer_location_ids) if model.restricted_retailer_location_ids is not None else None,
             'status': model.status.value if model.status is not None else None, 
             'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
@@ -132,9 +118,7 @@ class InventoryIntakeBatchJobDataAdapter:
     ) -> InventoryIntakeBatchJobModel:
         
         model = InventoryIntakeBatchJobModel(
-            id=database_model['id'],  
-            start_time=database_model['start_time'],
-            end_time=database_model['end_time'],
+            id=database_model['id'],   
             status=database_model['status'],
             status_details=database_model['status_details'],
             
@@ -151,9 +135,7 @@ class InventoryIntakeBatchJobDataAdapter:
     ) -> InventoryIntakeBatchJobOutboundModel:
         
         outbound_model = InventoryIntakeBatchJobOutboundModel(
-            id=model.id,
-            start_time=model.start_time.isoformat(timespec='milliseconds').replace('+00:00','Z'),
-            end_time=model.end_time.isoformat(timespec='milliseconds').replace('+00:00','Z'), 
+            id=model.id, 
             status=model.status,
             status_details=model.status_details,
             restricted_retailer_location_ids =  model.restricted_retailer_location_ids,

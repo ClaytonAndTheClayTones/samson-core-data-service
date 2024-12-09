@@ -61,8 +61,7 @@ class GenericHistoricalSaleObject:
         self, 
         pos_sale_id: str,
         sale_timestamp: datetime, 
-        total: float,
-        listed_category: str | None = None, 
+        total: float, 
         sub_total: float | None = None,
         discount: float | None = None,
         tax: float | None = None,
@@ -72,8 +71,7 @@ class GenericHistoricalSaleObject:
         
         self.pos_sale_id = pos_sale_id
         self.sale_timestamp = sale_timestamp
-        self.total = total
-        self.listed_category = listed_category 
+        self.total = total 
         self.sub_total = sub_total
         self.discount = discount
         self.tax = tax

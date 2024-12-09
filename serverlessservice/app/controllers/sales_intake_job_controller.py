@@ -128,7 +128,7 @@ class SalesIntakeJobController:
         request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
 
         model: SalesIntakeJobUpdateModel = (
-           self.adapter.convert_from_inbound_update_model_to_create_model(
+           self.adapter.convert_from_inbound_update_model_to_update_model(
                 inbound_model))
 
         result: None | SalesIntakeJobModel = self.manager.update_sales_intake_job(id, model, request_operators)

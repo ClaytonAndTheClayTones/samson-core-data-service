@@ -47,14 +47,15 @@ class SalesIntakeJobDataAdapter:
             retailer_id=None,
             retailer_location_id=inbound_create_model.retailer_location_id,
             parent_batch_job_id=inbound_create_model.parent_batch_job_id,
-            snapshot_hour=inbound_create_model.snapshot_hour,
+            start_time=inbound_create_model.start_time,
+            end_time=inbound_create_model.end_time,
             status=inbound_create_model.status,
             status_details=inbound_create_model.status_details,
         )
 
         return model
 
-    def convert_from_inbound_update_model_to_create_model(
+    def convert_from_inbound_update_model_to_update_model(
         self, 
         inbound_update_model: SalesIntakeJobInboundUpdateModel
     ) -> SalesIntakeJobUpdateModel:
@@ -95,9 +96,7 @@ class SalesIntakeJobDataAdapter:
                 if inbound_search_model.parent_batch_job_ids is not None 
                 else 
                     None
-            ),       
-            snapshot_hour_min=inbound_search_model.snapshot_hour_min,
-            snapshot_hour_max=inbound_search_model.snapshot_hour_max, 
+            ),        
             status=inbound_search_model.status,
         )
 
@@ -124,9 +123,7 @@ class SalesIntakeJobDataAdapter:
             
         if model.status is not None:
             search_terms.append(ExactMatchSearchTerm('status', model.status.value, True))
-        
-        if model.snapshot_hour_min is not None or model.snapshot_hour_max is not None:
-            search_terms.append(RangeSearchTerm('snapshot_hour', model.snapshot_hour_min, model.snapshot_hour_max))
+ 
 
         return search_terms
 
@@ -139,7 +136,8 @@ class SalesIntakeJobDataAdapter:
             'retailer_id': str(model.retailer_id) if model.retailer_id is not None else None ,
             'retailer_location_id': str(model.retailer_location_id) if model.retailer_location_id is not None else None ,
             'parent_batch_job_id': str(model.parent_batch_job_id) if model.parent_batch_job_id is not None else None ,
-            'snapshot_hour': model.snapshot_hour,
+            'start_time': model.start_time,
+            'end_time': model.end_time,
             'status': model.status.value if model.status is not None else None, 
             'status_details': json.dumps(model.status_details) if model.status_details is not None else None,
         }
@@ -168,7 +166,8 @@ class SalesIntakeJobDataAdapter:
             retailer_id=database_model['retailer_id'],
             retailer_location_id=database_model['retailer_location_id'],
             parent_batch_job_id=database_model['parent_batch_job_id'],
-            snapshot_hour=database_model['snapshot_hour'],
+            start_time=database_model['start_time'],    
+            end_time=database_model['end_time'],
             status=database_model['status'],
             status_details=database_model['status_details'],
             created_at=database_model['created_at'],
@@ -190,7 +189,8 @@ class SalesIntakeJobDataAdapter:
             retailer_location = self.retailer_location_adapter.convert_from_model_to_outbound_model(model.retailer_location) if model.retailer_location is not None else None,
             parent_batch_job_id=model.parent_batch_job_id,
             parent_batch_job=self.sales_intake_batch_job_adapter.convert_from_model_to_outbound_model(model.parent_batch_job) if model.parent_batch_job is not None else None,
-            snapshot_hour=model.snapshot_hour.isoformat(timespec='milliseconds').replace('+00:00','Z'),
+            start_time=model.start_time.isoformat(timespec='milliseconds').replace('+00:00','Z'),
+            end_time=model.end_time.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             status=model.status,
             status_details=model.status_details,
             created_at=model.created_at.isoformat(timespec='milliseconds').replace('+00:00','Z'),

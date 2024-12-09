@@ -18,7 +18,8 @@ class SalesIntakeJobCreateModel():
         parent_batch_job_id: str | None = None,
         parent_batch_job: SalesIntakeBatchJobCreateModel | None = None,
         create_parent_batch_job_if_null: bool | None = False,
-        snapshot_hour: str | None = None,
+        start_time: str | None = None,
+        end_time: str | None = None,
         status: str | None = None,
         status_details: dict[str,Any] | None = None,
     ) -> None:
@@ -30,7 +31,8 @@ class SalesIntakeJobCreateModel():
         self.parent_batch_job = parent_batch_job
         self.create_parent_batch_job_if_null = create_parent_batch_job_if_null
         
-        self.snapshot_hour = snapshot_hour
+        self.start_time = start_time
+        self.end_time = end_time
         self.status = status
         self.status_details = status_details
          
@@ -54,7 +56,8 @@ class SalesIntakeJobModel():
         retailer_location_id: str,
         retailer_id: str,
         parent_batch_job_id: str,
-        snapshot_hour: str,
+        start_time: str,
+        end_time: str,
         status: str,
         created_at: datetime.datetime,
         retailer_location: RetailerLocationModel | None = None, 
@@ -67,7 +70,8 @@ class SalesIntakeJobModel():
         self.id = id
         self.retailer_location_id = retailer_location_id
         self.retailer_id = retailer_id
-        self.snapshot_hour = snapshot_hour
+        self.start_time = start_time
+        self.end_time = end_time
         self.status = status
         self.parent_batch_job_id = parent_batch_job_id
         self.retailer = RetailerModel(**retailer) if retailer is not None else None
@@ -83,9 +87,7 @@ class SalesIntakeJobSearchModel(PagingRequestModel):
         ids: str | None = None,  
         retailer_ids: str | None = None,  
         retailer_location_ids: str | None = None,  
-        parent_batch_job_ids: str | None = None,
-        snapshot_hour_min: str | None = None,
-        snapshot_hour_max: str | None = None,
+        parent_batch_job_ids: str | None = None, 
         status: str | None = None,
         page: int | None = None,
         page_length: int | None = None,
@@ -104,9 +106,7 @@ class SalesIntakeJobSearchModel(PagingRequestModel):
         self.retailer_ids = retailer_ids 
         self.retailer_location_ids = retailer_location_ids 
         self.parent_batch_job_ids = parent_batch_job_ids 
-            
-        self.snapshot_hour_min = snapshot_hour_min
-        self.snapshot_hour_max = snapshot_hour_max
+             
         self.status = status
  
  
@@ -135,7 +135,8 @@ def mint_default_sales_intake_job(
         del overrides.parent_batch_job
         
     default_sales_intake_job: SalesIntakeJobCreateModel = SalesIntakeJobCreateModel(
-        snapshot_hour = '2024-11-01T11:00:00.000Z',
+        start_time = '2024-11-01T11:11:11.111Z',
+        end_time = '2024-12-02T22:22:22.222Z',
         status = 'Requested',
         status_details = {
             "key": "value"
@@ -162,7 +163,7 @@ def create_sales_intake_job(
  
         result_dict = result.json()
 
-        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "retailer_id", "retailer", "retailer_location_id", "retailer_location", "parent_batch_job_id", "parent_batch_job", "status", "status_details"])
+        assert_objects_are_equal(result_dict, post_object.__dict__, ["id", "created_at", "updated_at", "end_time", "retailer_id", "retailer", "retailer_location_id", "retailer_location", "parent_batch_job_id", "parent_batch_job", "status", "status_details"])
 
         assert result_dict['id'] is not None
         assert result_dict['created_at'] is not None
@@ -177,6 +178,11 @@ def create_sales_intake_job(
             assert result_dict['status_details'] == {}
         else:
             assert result_dict['status_details'] == post_object.status_details
+             
+        if(post_object.end_time is None):
+            assert result_dict['end_time'] is not None
+        else:
+            assert result_dict['end_time'] == post_object.end_time
    
     return_object = SalesIntakeJobModel(**result.json())
     

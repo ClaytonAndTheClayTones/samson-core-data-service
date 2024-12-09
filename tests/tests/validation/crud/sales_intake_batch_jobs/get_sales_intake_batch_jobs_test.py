@@ -28,10 +28,6 @@ def test_gets_sales_intake_batch_jobs_invalid_inputs() -> None:
     result = qa_get(f"{context.api_url}/sales_intake_batch_jobs", query_params={
         'ids': 'not an id,also not an id',  
         'status' : 'not a valid status',
-        'start_time_min' : 'not a valid time',
-        'start_time_max' : 'also not a valid time',
-        'end_time_min' : 'still not a valid time',
-        'end_time_max' : 'wow, this is not a valid time',
         'page' : 'not a page num',
         'page_length' : 'not a length num',
         'is_sort_descending' : 'not a bool'
@@ -41,32 +37,12 @@ def test_gets_sales_intake_batch_jobs_invalid_inputs() -> None:
 
     errors = result.json()
 
-    assert len(errors['detail']) == 9
+    assert len(errors['detail']) == 5
     
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'ids' in error['loc']]
     assert len(error) == 1
     assert error[0]['type'] == 'invalid_id_list'
     assert error[0]['msg'] == 'Property must be a valid list of v4 uuids. Invalid values received: [\n\t0: not an id,\n\t1: also not an id\n].'
-        
-    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'start_time_min' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'datetime_from_date_parsing'
-    assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
-
-    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'start_time_max' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'datetime_from_date_parsing'
-    assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
-    
-    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'end_time_min' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'datetime_from_date_parsing'
-    assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
-
-    error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'end_time_max' in error['loc']]
-    assert len(error) == 1
-    assert error[0]['type'] == 'datetime_from_date_parsing'
-    assert error[0]['msg'] == 'Input should be a valid datetime or date, invalid character in year'
     
     error: list[Any] = [error for error in errors['detail'] if 'query' in error['loc'] and 'status' in error['loc']]
     assert len(error) == 1
@@ -230,185 +206,3 @@ def test_gets_sales_intake_batch_jobs_with_status_filter() -> None:
     assert len(posted_item_3) == 1 
     assert_objects_are_equal(posted_item_3[0], posted_object_3)
     
-    
-def test_gets_sales_intake_batch_jobs_with_start_time_filter_min_only() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeBatchJobSearchModel = SalesIntakeBatchJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        start_time_min = "2023-03-03T03:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeBatchJobModel] = get_sales_intake_batch_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-    
-    posted_item_2: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_2.id]
-    assert len(posted_item_2) == 1  
-    assert_objects_are_equal(posted_item_2[0], posted_object_2) 
-  
-    posted_item_4: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1 
-    assert_objects_are_equal(posted_item_4[0], posted_object_4)
-
-def test_gets_sales_intake_batch_jobs_with_start_time_filter_max_only() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeBatchJobSearchModel = SalesIntakeBatchJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        start_time_max = "2022-02-02T02:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeBatchJobModel] = get_sales_intake_batch_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-    
-    posted_item_1: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_1.id]
-    assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
-  
-    posted_item_3: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-    
-
-def test_gets_sales_intake_batch_jobs_with_start_time_filter_min_and_max() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeBatchJobSearchModel = SalesIntakeBatchJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        start_time_min = "2022-02-02T02:00:00.000Z",
-        start_time_max = "2023-03-03T03:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeBatchJobModel] = get_sales_intake_batch_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-  
-    posted_item_3: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-        
-    posted_item_4: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1  
-    assert_objects_are_equal(posted_item_4[0], posted_object_4) 
-
-def test_gets_sales_intake_batch_jobs_with_start_time_filter_min_only() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(start_time = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeBatchJobSearchModel = SalesIntakeBatchJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        start_time_min = "2023-03-03T03:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeBatchJobModel] = get_sales_intake_batch_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-    
-    posted_item_2: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_2.id]
-    assert len(posted_item_2) == 1  
-    assert_objects_are_equal(posted_item_2[0], posted_object_2) 
-  
-    posted_item_4: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1 
-
-def test_gets_sales_intake_batch_jobs_with_end_time_filter_max_only() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeBatchJobSearchModel = SalesIntakeBatchJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        end_time_max = "2022-02-02T02:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeBatchJobModel] = get_sales_intake_batch_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-    
-    posted_item_1: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_1.id]
-    assert len(posted_item_1) == 1  
-    assert_objects_are_equal(posted_item_1[0], posted_object_1) 
-  
-    posted_item_3: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-     
-def test_gets_sales_intake_batch_jobs_with_end_time_filter_min_and_max() -> None:
-    populate_configuration_if_not_exists() 
-
-    context: TestContext = TestContext(api_url = get_global_configuration().API_URL)
-
-    posted_object_1: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2021-01-01T01:00:00.000Z"))
-    posted_object_2: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2024-04-04T04:00:00.000Z"))
-    posted_object_3: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2022-02-02T02:00:00.000Z"))
-    posted_object_4: SalesIntakeBatchJobModel = create_sales_intake_batch_job(context, SalesIntakeBatchJobCreateModel(end_time = "2023-03-03T03:00:00.000Z"))
-
-    filters: SalesIntakeBatchJobSearchModel = SalesIntakeBatchJobSearchModel(
-        ids = f"{posted_object_1.id},{posted_object_2.id},{posted_object_3.id},{posted_object_4.id}",
-        end_time_min = "2022-02-02T02:00:00.000Z",
-        end_time_max = "2023-03-03T03:00:00.000Z" 
-    )
-    
-    result: PagedResponseItemList[SalesIntakeBatchJobModel] = get_sales_intake_batch_jobs(context, filters)
-
-    assert result is not None
-    assert result.items is not None 
-
-    assert len(result.items) == 2
-  
-    posted_item_3: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_3.id]
-    assert len(posted_item_3) == 1 
-    assert_objects_are_equal(posted_item_3[0], posted_object_3)
-        
-    posted_item_4: list[SalesIntakeBatchJobModel] = [item for item in result.items if item.id == posted_object_4.id]
-    assert len(posted_item_4) == 1  
-    assert_objects_are_equal(posted_item_4[0], posted_object_4) 

@@ -6,7 +6,7 @@ from uuid import UUID
 import requests
  
 from integrations.common import ServiceCaller
-from integrations.types import GenericHistoricalSaleObject, GenericInventoryObject 
+from integrations.types import GenericHistoricalSaleItemObject, GenericHistoricalSaleObject, GenericInventoryObject 
  
 from models.product_model import ProductCreateModel, ProductModel, ProductVendorConfirmationStatuses
 from models.retailer_location_model import RetailerLocationModel 
@@ -340,7 +340,7 @@ class PosabitIntegration:
         
         return return_list 
 
-    def get_inventory_sales(
+    def get_historical_sales(
         self,  
         integration_key: str,
         start_time: datetime,
@@ -356,7 +356,7 @@ class PosabitIntegration:
          
         for inventory_item in inventory_items:
               
-            samson_inventory_snapshot_item = self.convert_from_posabit_inventory_object_to_generic_inventory_object( 
+            samson_inventory_snapshot_item = self.convert_from_posabit_sales_history_object_to_generic_historical_sale_object( 
                 posabit_inventory_object= inventory_item
             )
             
@@ -382,17 +382,52 @@ class PosabitIntegration:
     def convert_from_posabit_sales_history_object_to_generic_historical_sale_object(
         self,  
         posabit_inventory_object: PosabitSalesHistoryObject,  
-    ) -> GenericInventoryObject:
-        
-        
+    ) -> GenericHistoricalSaleObject:
         
         sales_object = GenericHistoricalSaleObject( 
-            sku = posabit_inventory_object.sku,
-            stock_on_hand= posabit_inventory_object.quantity_on_hand,
-            price = posabit_inventory_object.price,  
-            product_name= posabit_inventory_object.name,
-            listed_vendor = posabit_inventory_object.vendor,
-            listed_brand = posabit_inventory_object.brand,
-            listed_category = posabit_inventory_object.category,
+            pos_sale_id = posabit_inventory_object.id,
+            sale_timestamp = posabit_inventory_object.ordered_at,
+            total = posabit_inventory_object.total,   
+            
+            sub_total = posabit_inventory_object.sub_total,
+            discount = posabit_inventory_object.discount,
+            tax = posabit_inventory_object.tax,
+            cost = posabit_inventory_object.cost, 
+            
         )  
+         
+        sales_object.sale_items = [self.convert_from_posabit_sales_history_item_to_generic_historical_sale_item(item, posabit_inventory_object) for item in posabit_inventory_object.sales_tenders]
+        
+        return sales_object
     
+    
+    def convert_from_posabit_sales_history_item_to_generic_historical_sale_item(
+        self,  
+        posabit_sale_item_object: PosabitSalesHistoryItemObject,  
+        posabit_sales_history_object: PosabitSalesHistoryObject
+    ) -> GenericHistoricalSaleObject:
+        
+        sales_object = GenericHistoricalSaleItemObject( 
+            cost=posabit_sale_item_object.cost,
+            discount=posabit_sale_item_object.discount,
+            quantity=posabit_sale_item_object.quantity,
+            sku=posabit_sale_item_object.sku,
+            sub_total=posabit_sale_item_object.sub_total,
+            tax=posabit_sale_item_object.tax,
+            total=posabit_sale_item_object.total,
+            unit_of_weight=posabit_sale_item_object.unit_of_weight,
+            weight_in_units=posabit_sale_item_object.weight,
+            product_name=posabit_sale_item_object.product_name,
+            listed_vendor=posabit_sale_item_object.brand,
+            listed_brand=posabit_sale_item_object.brand,
+            listed_category=posabit_sale_item_object.category,
+            lot_identifier=posabit_sale_item_object.lot_number,
+            pos_product_id=posabit_sale_item_object.product_id,
+            pos_sale_id=posabit_sale_item_object.sales_history_id,
+            sale_count=posabit_sale_item_object.quantity, 
+            sale_item_name=posabit_sale_item_object.product_name,
+            sale_timestamp=posabit_sales_history_object.ordered_at,
+            
+        )  
+          
+        return sales_object 

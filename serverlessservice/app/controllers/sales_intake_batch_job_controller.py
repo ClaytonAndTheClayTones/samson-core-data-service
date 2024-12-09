@@ -128,7 +128,7 @@ class SalesIntakeBatchJobController:
         request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
 
         model: SalesIntakeBatchJobUpdateModel = (
-           self.adapter.convert_from_inbound_update_model_to_create_model(
+           self.adapter.convert_from_inbound_update_model_to_update_model(
                 inbound_model))
 
         result: None | SalesIntakeBatchJobModel = self.manager.update_sales_intake_batch_job(id, model, request_operators)

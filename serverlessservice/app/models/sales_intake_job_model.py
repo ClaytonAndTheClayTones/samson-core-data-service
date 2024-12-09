@@ -32,6 +32,8 @@ class SalesIntakeJobInboundCreateModel(BaseModel):
     parent_batch_job_id: Annotated[Optional[UUID4], Strict(False)] = Field(default=None) 
     status: Optional[SalesIntakeJobStatuses] = Field(default=None)
     status_details: Optional[dict[str,Any]] = Field(default=None)
+    start_time: Optional[datetime] = Field(default=None)
+    end_time: Optional[datetime] = Field(default=None)
 
 
 # Pydantic causes these class variables to safely be instance variables.
@@ -54,7 +56,8 @@ class SalesIntakeJobCreateModel:
     def __init__(
         self,
         retailer_location_id: UUID , 
-        snapshot_hour: datetime,
+        start_time: datetime,
+        end_time: datetime | None = None,
         retailer_id: UUID | None = None,
         parent_batch_job_id: UUID | None = None,
         status: SalesIntakeJobStatuses | None = None,
@@ -65,9 +68,10 @@ class SalesIntakeJobCreateModel:
         self.retailer_location_id = retailer_location_id
         self.parent_batch_job_id = parent_batch_job_id
         self.retailer_id = retailer_id
-        self.snapshot_hour = snapshot_hour
+        self.start_time = start_time
         self.status = status
         self.status_details = status_details
+        self.end_time = end_time
 
 
 class SalesIntakeJobUpdateModel:
@@ -112,13 +116,13 @@ class SalesIntakeJobDatabaseModel(CommonDatabaseModel):
         self,
         id: UUID,
         retailer_id: UUID,
-        retailer_location_id: UUID,
-        snapshot_hour: datetime,
+        retailer_location_id: UUID, 
         status: SalesIntakeJobStatuses,
         status_details: dict[str,Any],
+        start_time: datetime,
+        end_time: datetime,
         created_at: datetime, 
-        parent_batch_job_id: UUID | None = None,
-
+        parent_batch_job_id: UUID | None = None, 
         updated_at: datetime | None = None,
         
     ):
@@ -127,10 +131,11 @@ class SalesIntakeJobDatabaseModel(CommonDatabaseModel):
 
         self.retailer_id = retailer_id
         self.retailer_location_id = retailer_location_id
-        self.parent_batch_job_id = parent_batch_job_id
-        self.snapshot_hour = snapshot_hour
+        self.parent_batch_job_id = parent_batch_job_id 
         self.status = status
         self.status_details = status_details
+        self.start_time = start_time
+        self.end_time = end_time
 
 
 class SalesIntakeJobModel(CommonModel):
@@ -140,7 +145,8 @@ class SalesIntakeJobModel(CommonModel):
         id: UUID,
         retailer_id: UUID,
         retailer_location_id: UUID,
-        snapshot_hour: datetime,
+        start_time: datetime,
+        end_time: datetime,
         status: SalesIntakeJobStatuses,
         status_details: dict[str,Any], 
         created_at: datetime, 
@@ -156,7 +162,8 @@ class SalesIntakeJobModel(CommonModel):
         self.retailer_id = retailer_id
         self.retailer_location_id = retailer_location_id        
         self.parent_batch_job_id = parent_batch_job_id        
-        self.snapshot_hour = snapshot_hour
+        self.start_time = start_time
+        self.end_time = end_time
         self.status = status
         self.status_details = status_details
          
@@ -170,7 +177,8 @@ class SalesIntakeJobOutboundModel(CommonOutboundResponseModel):
     retailer_id: UUID   
     retailer_location_id: UUID
     parent_batch_job_id: UUID | None = None
-    snapshot_hour: str
+    start_time: str
+    end_time: str
     status: SalesIntakeJobStatuses 
     status_details: dict[str,Any] 
     retailer: RetailerOutboundModel | None = None

@@ -114,7 +114,7 @@ class PosIntegrationController:
         
         request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
         
-        model: PosIntegrationUpdateModel =self.adapter.convert_from_inbound_update_model_to_create_model(inbound_model)
+        model: PosIntegrationUpdateModel =self.adapter.convert_from_inbound_update_model_to_update_model(inbound_model)
         
         result: None | PosIntegrationModel = self.manager.update_pos_integration(
             id, 

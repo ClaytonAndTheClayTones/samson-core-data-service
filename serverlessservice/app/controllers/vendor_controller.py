@@ -111,7 +111,7 @@ class VendorController:
         request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
 
         model: VendorUpdateModel = (
-           self.adapter.convert_from_inbound_update_model_to_create_model(
+           self.adapter.convert_from_inbound_update_model_to_update_model(
                 inbound_model))
 
         result: None | VendorModel = self.manager.update_vendor(id, model, request_operators)

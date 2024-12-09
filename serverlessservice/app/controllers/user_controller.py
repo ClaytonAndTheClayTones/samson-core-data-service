@@ -110,7 +110,7 @@ class UserController:
         request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
 
         model: UserUpdateModel = (
-           self.adapter.convert_from_inbound_update_model_to_create_model(
+           self.adapter.convert_from_inbound_update_model_to_update_model(
                 inbound_model))
 
         result: None | UserModel = self.manager.update_user(id, model, request_operators)
