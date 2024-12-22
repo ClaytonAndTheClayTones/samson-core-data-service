@@ -55,9 +55,10 @@ Note: all migrations are idempotent, meaning they can be run over and over.  If 
 
 1. Open the database folder in Visual Studio Code
 2. Open the terminal and run ```pip install -r requirements.txt```
-3. Go to the Debug Tab on the left and, near the top, select the "Python Debugger: DB Migrator" option.
-4. Hit F5 on your keyboard.  You should see the console run some steps.
-5. Connect to your database and check that all the steps ran.
+3. If step 2 does not work and complains about pg_config executable, "brew install postgresql" should fix your issue.
+4. Go to the Debug Tab on the left and, near the top, select the "Python Debugger: DB Migrator" option.
+5. Hit F5 on your keyboard.  You should see the console run some steps.
+6. Connect to your database and check that all the steps ran.
 
 For more information on the database, check out the ReadMe.md in the database folder!
 
