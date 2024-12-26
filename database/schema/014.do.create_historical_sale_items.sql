@@ -19,7 +19,8 @@ create table if not exists historical_sale_items (
   unit_of_weight varchar(255)   NULL,
   weight_in_units decimal(19,3)   NULL,
 
-  sale_item_name varchar(255) NULL, 
+  sale_product_name varchar(255) NULL,  
+  product_name varchar(255) NULL, 
   sub_total integer   NULL,
   discount integer   NULL,
   tax integer   NULL,
@@ -41,7 +42,8 @@ CREATE INDEX IF NOT EXISTS idx_historical_sale_items_historical_sale_id ON publi
 
 create index if not exists idx_historical_sale_items_sku ON public.historical_sale_items(sku);
 CREATE INDEX IF NOT EXISTS idx_historical_sale_items_sale_timestamp ON public.historical_sale_items(sale_timestamp); 
-Create index if not exists idx_historical_sale_items_sale_item_name ON public.historical_sale_items(sale_item_name);
+
+Create index if not exists idx_historical_sale_items_sale_product_name ON public.historical_sale_items(sale_product_name); 
 CREATE INDEX IF NOT EXISTS idx_historical_sale_items_created_at ON public.historical_sale_items(created_at); 
  
 -- FKs

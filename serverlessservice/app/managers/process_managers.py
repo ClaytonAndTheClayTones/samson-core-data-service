@@ -1,4 +1,5 @@
 import processes.ingest_inventory_snapshots as ingest_inventory_snapshots
+import processes.ingest_historical_sales as ingest_historical_sales
 
 from uuid import UUID 
 
@@ -39,6 +40,7 @@ class ProcessManager:
         sales_intake_job_accessor: SalesIntakeJobDataAccessor = SalesIntakeJobDataAccessor(),
         sales_intake_batch_job_accessor: SalesIntakeBatchJobDataAccessor = SalesIntakeBatchJobDataAccessor(),
         ingest_inventory_snapshots_process: ingest_inventory_snapshots.IngestInventorySnapshotsProcess = ingest_inventory_snapshots.IngestInventorySnapshotsProcess(),
+        ingest_historical_sales_process: ingest_historical_sales.IngestHistoricalSalesProcess = ingest_historical_sales.IngestHistoricalSalesProcess(),
         common_utilities: CommonUtilities = CommonUtilities()
         
     ) -> None: 
@@ -50,6 +52,7 @@ class ProcessManager:
         self.sales_intake_job_accessor = sales_intake_job_accessor
         self.sales_intake_batch_job_accessor = sales_intake_batch_job_accessor
         self.common_utilities = common_utilities
+        self.ingest_historical_sales_process = ingest_historical_sales_process
    
     def run_inventory_intake_batch_job(
         self, 
@@ -110,7 +113,7 @@ class ProcessManager:
         request_operators: RequestOperators | None = None
     ) -> SalesIntakeJobModel | None:
         
-        job_to_run: InventoryIntakeJobModel = self.inventory_intake_job_accessor.select_by_id(
+        job_to_run: SalesIntakeJobModel = self.sales_intake_job_accessor.select_by_id(
             id = id,
             request_operators = request_operators
         )
@@ -119,7 +122,7 @@ class ProcessManager:
             return None
         
         
-        result = self.ingest_inventory_snapshots_process.run_process(
+        result = self.ingest_historical_sales_process.run_process(
             job_to_run.id, 
             self.common_utilities.generate_random_string(
                 len = 20,
@@ -128,3 +131,5 @@ class ProcessManager:
         )
 
         return result
+    
+        

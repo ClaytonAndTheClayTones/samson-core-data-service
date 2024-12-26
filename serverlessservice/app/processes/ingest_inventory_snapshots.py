@@ -2,11 +2,12 @@
 from uuid import UUID
 from integrations.posabit_integration import PosabitIntegration
 from integrations.types import GenericInventoryObject
+from models.historical_sale_model import HistoricalSaleModel, HistoricalSaleSearchModel
 from models.inventory_intake_job_model import InventoryIntakeJobModel, InventoryIntakeJobStatuses, InventoryIntakeJobUpdateModel
 from models.inventory_product_snapshot_model import InventoryProductSnapshotModel, InventoryProductSnapshotSearchModel, InventoryProductSnapshotCreateModel
 from models.pos_integration_model import PosIntegrationModel, PosIntegrationSearchModel, PosPlatforms
 from models.product_model import ProductCreateModel, ProductVendorConfirmationStatuses, ProductModel
-from processes.common import ProcessException
+from processes.common import CommonProcessUtilities, ProcessException
 from util.common import RequestOperators
 from util.database import PagingModel 
 import managers.managers as managers 
@@ -18,10 +19,12 @@ class IngestInventorySnapshotsProcess:
         self, 
         posabit_integration: PosabitIntegration = PosabitIntegration(),
         manager: managers.Manager = managers.Manager(),
+        common_process_utilities: CommonProcessUtilities = CommonProcessUtilities(),
     ) -> None:  
         self.posabit_integration = posabit_integration
         self.manager = manager 
-             
+    
+        self.common_process_utilities = common_process_utilities
         self.process_name = "Ingest Inventory Snapshots"
         self.product_inactivity_threshold_in_days = 180
     
@@ -95,11 +98,10 @@ class IngestInventorySnapshotsProcess:
                     
                     try:
                         
-                        existing_snapshot = self.retrieve_existing_snapshot(integration.retailer_location_id, inventory_snapshot_item.sku)
+                        existing_snapshot = self.common_process_utilities.retrieve_existing_snapshot_or_sale(integration.retailer_location_id, inventory_snapshot_item.sku)
 
                         product: ProductModel | None = None
-                        
-                                
+                         
                         if(existing_snapshot is None):
                             
                             # Create Candidate Product
@@ -235,18 +237,3 @@ class IngestInventorySnapshotsProcess:
                 )
             case _:
                 raise Exception(f"Pos Integration Platform {integration.pos_platform} not supported for action retrieve_inventory_snapshots")
-  
-    def retrieve_existing_snapshot(
-        self,
-        retailer_location_id: UUID,
-        sku: str
-    ) -> InventoryProductSnapshotModel | None:
-        existing_snapshot_item_search_model = InventoryProductSnapshotSearchModel(
-            retailer_location_ids = [retailer_location_id],
-            sku = sku,
-        )
-   
-        existing_snapshot = self.manager.search_inventory_product_snapshots(existing_snapshot_item_search_model)
-        
-        return existing_snapshot.items[0] if existing_snapshot is not None and len(existing_snapshot.items) > 0 else None
-     

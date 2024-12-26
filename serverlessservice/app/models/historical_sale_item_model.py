@@ -47,7 +47,7 @@ class HistoricalSaleItemInboundCreateModel(BaseModel):
     sale_count: float = Field(...) 
     unit_of_weight: Optional[ProductUnitOfMeasurements] = Field(default=None, max_length=32)
     weight_in_units: Optional[float] = Field( default=None)
-    sale_item_name: Optional[str] = Field(default=None, max_length=255)
+    sale_product_name: Optional[str] = Field(default=None, max_length=255)
     
     sale_timestamp: datetime = Field(...)   
     
@@ -75,7 +75,7 @@ class HistoricalSaleItemInboundSearchModel(CommonInboundSearchModel):
     sale_timestamp_min:  Optional[datetime] = Query(default=None) 
     sale_timestamp_max: Optional[datetime] = Query(default=None) 
     skus: Optional[str] = Query(default=None)
-    sale_item_name: Optional[str] = Query(default=None)
+    sale_product_name: Optional[str] = Query(default=None)
     
 
 class HistoricalSaleItemCreateModel:
@@ -92,8 +92,8 @@ class HistoricalSaleItemCreateModel:
         retailer_id: UUID | None = None, 
         sales_intake_job_id: UUID | None = None, 
         retailer_location_id: UUID | None = None,
-        product_vendor_id: UUID | None = None,
-        sale_item_name: str | None = None,
+        product_vendor_id: UUID | None = None, 
+        sale_product_name: str | None = None,
         lot_identifier: str | None = None,
         pos_sale_id: str | None = None,
         pos_product_id: str | None = None,
@@ -119,7 +119,7 @@ class HistoricalSaleItemCreateModel:
         self.cost = cost
         self.retailer_id = retailer_id
         self.product_vendor_id = product_vendor_id
-        self.sale_item_name = sale_item_name
+        self.sale_product_name = sale_product_name
         self.lot_identifier = lot_identifier
         self.unit_of_weight = unit_of_weight
         self.weight_in_units = weight_in_units
@@ -144,7 +144,7 @@ class HistoricalSaleItemSearchModel(CommonSearchModel):
         lot_identifiers: list[str] | None = None,
         historical_sale_ids: list[UUID] | None = None,
         skus: list[str] | None = None,
-        sale_item_name: str | None = None,
+        sale_product_name: str | None = None,
         sale_timestamp_min: datetime | None = None,
         sale_timestamp_max: datetime | None = None 
     ) -> None:
@@ -161,7 +161,7 @@ class HistoricalSaleItemSearchModel(CommonSearchModel):
         self.lot_identifiers = lot_identifiers
         self.historical_sale_ids = historical_sale_ids
         self.skus = skus
-        self.sale_item_name = sale_item_name
+        self.sale_product_name = sale_product_name
         self.sale_timestamp_min = sale_timestamp_min
         self.sale_timestamp_max = sale_timestamp_max 
 
@@ -186,7 +186,7 @@ class HistoricalSaleItemDatabaseModel(CommonDatabaseModel):
         lot_identifier: str | None = None,
         unit_of_weight: ProductUnitOfMeasurements | None = None,
         weight_in_units: float | None = None,
-        sale_item_name: str | None = None,
+        sale_product_name: str | None = None,
         discount: int | None = None,
         tax: int | None = None,
         cost : int | None = None,
@@ -209,7 +209,7 @@ class HistoricalSaleItemDatabaseModel(CommonDatabaseModel):
         self.lot_identifier = lot_identifier
         self.unit_of_weight = unit_of_weight
         self.weight_in_units = weight_in_units
-        self.sale_item_name = sale_item_name
+        self.sale_product_name = sale_product_name
         self.sale_timestamp = sale_timestamp
         self.sku = sku
         self.sale_count = sale_count
@@ -240,7 +240,7 @@ class HistoricalSaleItemModel(CommonModel):
         lot_identifier: str | None = None,
         unit_of_weight: ProductUnitOfMeasurements | None = None,
         weight_in_units: float | None = None,
-        sale_item_name: str | None = None,
+        sale_product_name: str | None = None,
         discount: int | None = None,
         tax: int | None = None,
         cost : int | None = None,
@@ -269,7 +269,7 @@ class HistoricalSaleItemModel(CommonModel):
         self.lot_identifier = lot_identifier
         self.unit_of_weight = unit_of_weight
         self.weight_in_units = weight_in_units
-        self.sale_item_name = sale_item_name
+        self.sale_product_name = sale_product_name
         self.sale_timestamp = sale_timestamp
         self.sku = sku
         self.sale_count = sale_count
@@ -305,7 +305,7 @@ class HistoricalSaleItemOutboundModel(CommonOutboundResponseModel):
     lot_identifier: str | None = None
     unit_of_weight: ProductUnitOfMeasurements | None = None
     weight_in_units: float | None = None
-    sale_item_name: str | None = None
+    sale_product_name: str | None = None
     discount: int | None = None
     tax: int | None = None
     cost : int | None = None

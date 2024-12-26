@@ -61,7 +61,7 @@ class HistoricalSaleItemDataAdapter:
             lot_identifier=inbound_create_model.lot_identifier,
             unit_of_weight=inbound_create_model.unit_of_weight,
             weight_in_units=inbound_create_model.weight_in_units,
-            sale_item_name=inbound_create_model.sale_item_name,
+            sale_product_name=inbound_create_model.sale_product_name,
             sku=inbound_create_model.sku,
             sale_count=inbound_create_model.sale_count,
             
@@ -150,7 +150,7 @@ class HistoricalSaleItemDataAdapter:
                 else    
                     None
             ),
-            sale_item_name=inbound_search_model.sale_item_name,
+            sale_product_name=inbound_search_model.sale_product_name,
             
             sale_timestamp_min=inbound_search_model.sale_timestamp_min,
             sale_timestamp_max=inbound_search_model.sale_timestamp_max,
@@ -202,8 +202,8 @@ class HistoricalSaleItemDataAdapter:
         if model.skus is not None:
             search_terms.append(InListSearchTerm('sku', model.skus))
             
-        if model.sale_item_name is not None:
-            search_terms.append(ExactMatchSearchTerm('sale_item_name', model.sale_item_name, True))
+        if model.sale_product_name is not None:
+            search_terms.append(ExactMatchSearchTerm('sale_product_name', model.sale_product_name, True))
              
         return search_terms
 
@@ -227,7 +227,7 @@ class HistoricalSaleItemDataAdapter:
             'lot_identifier': model.lot_identifier,
             'unit_of_weight': model.unit_of_weight,
             'weight_in_units': model.weight_in_units,
-            'sale_item_name': model.sale_item_name,
+            'sale_product_name': model.sale_product_name,
             'sale_timestamp': model.sale_timestamp,
             'total': model.total,
             'sub_total': model.sub_total,
@@ -257,7 +257,7 @@ class HistoricalSaleItemDataAdapter:
             lot_identifier=database_model['lot_identifier'],
             unit_of_weight=database_model['unit_of_weight'],
             weight_in_units=database_model['weight_in_units'],
-            sale_item_name=database_model['sale_item_name'],
+            sale_product_name=database_model['sale_product_name'],
             sale_timestamp=database_model['sale_timestamp'],
             sku=database_model['sku'],
             sale_count=database_model['sale_count'],
@@ -296,7 +296,7 @@ class HistoricalSaleItemDataAdapter:
             lot_identifier=model.lot_identifier,
             unit_of_weight=model.unit_of_weight,
             weight_in_units=model.weight_in_units,
-            sale_item_name=model.sale_item_name,
+            sale_product_name=model.sale_product_name,
             sale_timestamp=model.sale_timestamp.isoformat(timespec='milliseconds').replace('+00:00','Z'),
             sku=model.sku,
             sale_count=model.sale_count,

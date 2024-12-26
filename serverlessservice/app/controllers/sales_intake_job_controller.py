@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from adapters.sales_intake_job_adapters import SalesIntakeJobDataAdapter
 from adapters.common_adapters import CommonAdapters 
 from managers.managers import Manager
+from managers.process_managers import ProcessManager
 from models.sales_intake_job_model import (
     SalesIntakeJobCreateModel,
     SalesIntakeJobDatabaseModel,
@@ -30,12 +31,14 @@ class SalesIntakeJobController:
         self, 
         adapter: SalesIntakeJobDataAdapter = SalesIntakeJobDataAdapter(),
         common_adapter: CommonAdapters = CommonAdapters(),
-        manager: Manager = Manager()
+        manager: Manager = Manager(),
+        process_manager: ProcessManager = ProcessManager()
     ) -> None:
         
         self.adapter = adapter
         self.common_adapter = common_adapter
         self.manager = manager
+        self.process_manager = process_manager
         
     def create( 
         self, 
@@ -75,9 +78,15 @@ class SalesIntakeJobController:
 
         return response_model
     
-    def run(self, id: UUID) -> SalesIntakeJobOutboundModel | None:
+    def run (
+        self, 
+        id: UUID,
+        headers: dict[str,str]
+    ) -> SalesIntakeJobOutboundModel | None:
 
-        result = self.manager.run_sales_intake_job(id)
+        request_operators = self.common_adapter.convert_from_headers_to_operators(headers)
+        
+        result = self.process_manager.run_sales_intake_job(id, request_operators)
 
         if result is None:
             raise HTTPException(

@@ -30,6 +30,7 @@ from models.common_model import (
 class SalesIntakeJobInboundCreateModel(BaseModel):  
     retailer_location_id: Annotated[UUID4, Strict(False)] = Field(...)
     parent_batch_job_id: Annotated[Optional[UUID4], Strict(False)] = Field(default=None) 
+    simulator_response_id: Annotated[Optional[UUID4], Strict(False)] = Field(default=None)
     status: Optional[SalesIntakeJobStatuses] = Field(default=None)
     status_details: Optional[dict[str,Any]] = Field(default=None)
     start_time: Optional[datetime] = Field(default=None)
@@ -62,6 +63,7 @@ class SalesIntakeJobCreateModel:
         parent_batch_job_id: UUID | None = None,
         status: SalesIntakeJobStatuses | None = None,
         status_details: dict[str,Any] | None = None,
+        simulator_response_id: UUID | None = None,
         
     ) -> None:
  
@@ -72,6 +74,7 @@ class SalesIntakeJobCreateModel:
         self.status = status
         self.status_details = status_details
         self.end_time = end_time
+        self.simulator_response_id = simulator_response_id
 
 
 class SalesIntakeJobUpdateModel:
@@ -123,7 +126,9 @@ class SalesIntakeJobDatabaseModel(CommonDatabaseModel):
         end_time: datetime,
         created_at: datetime, 
         parent_batch_job_id: UUID | None = None, 
+        simulator_response_id: UUID | None = None,
         updated_at: datetime | None = None,
+        
         
     ):
 
@@ -133,6 +138,7 @@ class SalesIntakeJobDatabaseModel(CommonDatabaseModel):
         self.retailer_location_id = retailer_location_id
         self.parent_batch_job_id = parent_batch_job_id 
         self.status = status
+        self.simulator_response_id = simulator_response_id
         self.status_details = status_details
         self.start_time = start_time
         self.end_time = end_time
@@ -154,6 +160,7 @@ class SalesIntakeJobModel(CommonModel):
         retailer: RetailerModel | None = None,
         retailer_location: RetailerLocationModel | None = None,
         parent_batch_job: SalesIntakeBatchJobModel | None = None,
+        simulator_response_id: UUID | None = None,
         updated_at: datetime | None = None,
     ):
 
@@ -166,6 +173,7 @@ class SalesIntakeJobModel(CommonModel):
         self.end_time = end_time
         self.status = status
         self.status_details = status_details
+        self.simulator_response_id = simulator_response_id
          
         self.retailer = retailer
         self.retailer_location = retailer_location
@@ -177,6 +185,7 @@ class SalesIntakeJobOutboundModel(CommonOutboundResponseModel):
     retailer_id: UUID   
     retailer_location_id: UUID
     parent_batch_job_id: UUID | None = None
+    simulator_response_id: UUID | None = None
     start_time: str
     end_time: str
     status: SalesIntakeJobStatuses 

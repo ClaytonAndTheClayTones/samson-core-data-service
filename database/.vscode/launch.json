@@ -17,6 +17,13 @@
             "request": "launch",
             "program": "./db_bighammer.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Debugger: File Tester",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./file_tester.py",
+            "console": "integratedTerminal"
         }
     ]
 }

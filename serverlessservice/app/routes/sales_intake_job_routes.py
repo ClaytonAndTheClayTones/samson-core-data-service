@@ -15,7 +15,6 @@ from util.environment import Environment
 
 controller: SalesIntakeJobController = SalesIntakeJobController()
 
-
 def set_sales_intake_job_routes(app: FastAPI):
 
     @app.post(
